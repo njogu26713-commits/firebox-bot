@@ -14,7 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "@whiskeysockets/baileys": "^7.0.0-rc13",
-    "axios": "^1.16.1",
+    "axios": "^1.19.0",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "fluent-ffmpeg": "^2.1.3",
@@ -26,7 +26,7 @@
     "mumaker": "^2.0.0",
     "node-cache": "^5.1.2",
     "nodemon": "^3.1.14",
-    "pg": "^8.21.0",
+    "pg": "^8.22.0",
     "pg-hstore": "^2.3.4",
     "qrcode": "^1.5.4",
     "qrcode-terminal": "^0.12.0",
