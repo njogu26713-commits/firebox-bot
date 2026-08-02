@@ -237,9 +237,10 @@ module.exports = {
             for (const cat of categoryConfig) {
                 const cmds = categories[cat.key];
                 if (!cmds || cmds.length === 0) continue;
-                menuBody += `┏━━━ ${cat.icon} *${cat.label}*\n`;
-                menuBody += `  ┃ ${cmds.map(c => `.${c.name}`).join("  ")}\n`;
-                menuBody += `┗━━━━━━━━━━━\n`;
+                menuBody += `┌─────── ${cat.icon} *${cat.label}*\n`;
+                cmds.forEach(c => {
+                    menuBody += `│ .${c.name}\n`;
+                });
             }
 
             menuBody += `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰\n`;
