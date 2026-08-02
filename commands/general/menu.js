@@ -195,44 +195,55 @@ module.exports = {
 
             // Category display config
             const categoryConfig = [
-                { key: "admin",     icon: "🌐", label: "ADMIN"     },
-                { key: "ai",        icon: "🤖", label: "AI"        },
-                { key: "download",  icon: "📥", label: "DOWNLOAD"  },
-                { key: "group",     icon: "👥", label: "GROUP"     },
-                { key: "sticker",   icon: "🎨", label: "STICKER"   },
-                { key: "owner",     icon: "📦", label: "OWNER"     },
-                { key: "general",   icon: "🌍", label: "GENERAL"   },
-                { key: "sports",    icon: "⚽", label: "SPORTS"    },
-                { key: "anime",     icon: "🎭", label: "ANIME"     },
-                { key: "games",     icon: "🕹️", label: "GAMES"     },
-                { key: "social",    icon: "🤝", label: "SOCIAL"    },
-                { key: "fun",       icon: "🎉", label: "FUN"       },
-                { key: "economy",   icon: "💰", label: "ECONOMY"   },
-                { key: "media",     icon: "🎬", label: "MEDIA"     },
-                { key: "system",    icon: "🛰️", label: "SYSTEM"    },
-                { key: "textmaker", icon: "✨", label: "TEXTMAKER" },
-                { key: "religion",  icon: "⛪", label: "RELIGION"  },
-                { key: "dp",        icon: "🖼️", label: "DP"        },
+                { key: "general",   icon: "🔵", label: "𝐆𝐞𝐧𝐞𝐫𝐚𝐥"           },
+                { key: "ai",        icon: "🤖", label: "𝐀𝐈"                  },
+                { key: "download",  icon: "🎵", label: "𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝"           },
+                { key: "sticker",   icon: "🛠️", label: "𝐓𝐨𝐨𝐥𝐬"               },
+                { key: "fun",       icon: "✨", label: "𝐅𝐮𝐧"                 },
+                { key: "media",     icon: "🎬", label: "𝐌𝐞𝐝𝐢𝐚"               },
+                { key: "religion",  icon: "⛪", label: "𝐑𝐞𝐥𝐢𝐠𝐢𝐨𝐧"           },
+                { key: "group",     icon: "👥", label: "𝐆𝐫𝐨𝐮𝐩"               },
+                { key: "admin",     icon: "🛡️", label: "𝐆𝐫𝐨𝐮𝐩 𝐏𝐫𝐨𝐭𝐞𝐜𝐭𝐢𝐨𝐧"   },
+                { key: "games",     icon: "🎮", label: "𝐆𝐚𝐦𝐞𝐬"               },
+                { key: "anime",     icon: "🎭", label: "𝐀𝐧𝐢𝐦𝐞"               },
+                { key: "social",    icon: "🤝", label: "𝐒𝐨𝐜𝐢𝐚𝐥"               },
+                { key: "sports",    icon: "⚽", label: "𝐒𝐩𝐨𝐫𝐭𝐬"              },
+                { key: "economy",   icon: "💰", label: "𝐄𝐜𝐨𝐧𝐨𝐦𝐲"             },
+                { key: "textmaker", icon: "✍️", label: "𝐓𝐞𝐱𝐭𝐦𝐚𝐤𝐞𝐫"          },
+                { key: "dp",        icon: "🖼️", label: "𝐃𝐏"                  },
+                { key: "system",    icon: "🛰️", label: "𝐒𝐲𝐬𝐭𝐞𝐦"              },
+                { key: "owner",     icon: "👑", label: "𝐎𝐰𝐧𝐞𝐫"               },
             ];
 
-            let menuBody = `╭━━━━━━━━━━━━━━━━━◇\n`;
-            menuBody += `┃ ✨ *${botName.toUpperCase()}*\n`;
-            menuBody += `┃ ${greeting}, *${pushName}*\n`;
-            menuBody += `┃ 📅 ${date}  ⌚ ${time}\n`;
-            menuBody += `┃ ⭐ Users: ${userCount}\n`;
-            menuBody += `╰━━━━━━━━━━━━━━━━━◇\n\n`;
+            // Compute uptime
+            const uptimeSec = Math.floor(process.uptime());
+            const uh = Math.floor(uptimeSec / 3600);
+            const um = Math.floor((uptimeSec % 3600) / 60);
+            const us = uptimeSec % 60;
+            const uptimeStr = `${uh}𝑕 ${um}𝑚 ${us}𝑠`;
+
+            const settings2 = getSettings();
+            const mode = (settings2.mode || "public").toUpperCase();
+            const prefix = (settings2.prefix || ".");
+
+            let menuBody = `╔══════════════════════╗\n`;
+            menuBody += `║  🔥  *𝐅𝐈𝐑𝐄𝐁𝐎𝐗  𝐁𝐎𝐓*  🔥  ║\n`;
+            menuBody += `╚══════════════════════╝\n\n`;
+            menuBody += `📌 ᴘʀᴇꜰɪx » ${prefix}   ⏱️ ᴜᴘᴛɪᴍᴇ » ${uptimeStr}\n`;
+            menuBody += `🌐 ᴍᴏᴅᴇ   » *${mode}*\n`;
+            menuBody += `👤 ᴜꜱᴇʀ   » ${pushName}   ⭐ ᴜꜱᴇʀꜱ » ${userCount}\n`;
+            menuBody += `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰\n`;
 
             for (const cat of categoryConfig) {
                 const cmds = categories[cat.key];
                 if (!cmds || cmds.length === 0) continue;
-                menuBody += `╭─ ${cat.icon} *${cat.label}*\n`;
-                const names = cmds.map(c => `*.${c.name}*`).join("  ");
-                menuBody += `┃ ${names}\n`;
-                menuBody += `╰──────────────────\n`;
+                menuBody += `┏━━━ ${cat.icon} *${cat.label}*\n`;
+                menuBody += `  ┃ ${cmds.map(c => `.${c.name}`).join("  ")}\n`;
+                menuBody += `┗━━━━━━━━━━━\n`;
             }
 
-            menuBody += `\n💡 _Type .m <category> for details (e.g. .m fun)_\n`;
-            menuBody += `💡 _Type .m <command> for command help (e.g. .m ping)_`;
+            menuBody += `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰\n`;
+            menuBody += `𝑇𝑦𝑝𝑒 .𝚑𝚎𝚕𝚙 <𝚌𝚖𝚍> 𝑓𝑜𝑟 𝑑𝑒𝑡𝑎𝑖𝑙𝑠 𝑜𝑛 𝑎𝑛𝑦 𝚌𝚘𝚖𝚖𝚊𝚗𝚍`;
 
             const footerText = `${botName} • Support & Updates`;
 

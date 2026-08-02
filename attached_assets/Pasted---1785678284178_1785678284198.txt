@@ -1,0 +1,254 @@
+╔══════════════════════╗
+║  🔥  𝐅𝐈𝐑𝐄𝐁𝐎𝐗  𝐁𝐎𝐓  🔥  ║
+╚══════════════════════╝
+
+📌 ᴘʀᴇꜰɪx » .   ⏱️ ᴜᴘᴛɪᴍᴇ » 0𝑕 0𝑚 24𝑠
+🌐 ᴍᴏᴅᴇ   » 𝐏𝐔𝐁𝐋𝐈𝐂
+▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
+┏━━━ 🔵 𝐆𝐞𝐧𝐞𝐫𝐚𝐥
+  ┃ .ping
+  ┃ .info
+  ┃ .owner
+  ┃ .runtime
+  ┃ .botstatus
+  ┃ .pair
+  ┃ .repo
+  ┃ .help
+┗━━━━━━━━━━━
+
+┏━━━ 🤖 𝐀𝐈 𝐂𝐡𝐚𝐭
+  ┃ .ai
+  ┃ .analyze
+  ┃ .code
+  ┃ .blackbox
+  ┃ .deepseek
+  ┃ .translate
+  ┃ .story
+  ┃ .summarize
+  ┃ .recipe
+  ┃ .teach
+  ┃ .simi
+  ┃ .doppleai
+┗━━━━━━━━━━━
+
+┏━━━ 🎨 𝐀𝐈 𝐈𝐦𝐚𝐠𝐞
+  ┃ .dalle
+  ┃ .generate
+┗━━━━━━━━━━━
+
+┏━━━ 🎵 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝
+  ┃ .play
+  ┃ .video
+  ┃ .song
+  ┃ .tiktok
+  ┃ .tiktokaudio
+  ┃ .instagram
+  ┃ .facebook
+  ┃ .twitter
+  ┃ .pinterest
+  ┃ .savestatus
+  ┃ .image
+  ┃ .wallpaper
+  ┃ .apk
+  ┃ .mediafire
+  ┃ .gitclone
+┗━━━━━━━━━━━
+
+┏━━━ 🔍 𝐒𝐞𝐚𝐫𝐜𝐡
+  ┃ .lyrics
+  ┃ .songinfo
+  ┃ .shazam
+  ┃ .weather
+  ┃ .define
+  ┃ .imdb
+  ┃ .yts
+┗━━━━━━━━━━━
+
+┏━━━ 🛠️ 𝐓𝐨𝐨𝐥𝐬
+  ┃ .sticker
+  ┃ .toimg
+  ┃ .vv
+  ┃ .read
+  ┃ .tts
+  ┃ .fancy
+  ┃ .qrcode
+  ┃ .tinyurl
+  ┃ .calculate
+  ┃ .genpass
+  ┃ .getpp
+  ┃ .emojimix
+┗━━━━━━━━━━━
+
+┏━━━ ✨ 𝐅𝐮𝐧 & 𝐄𝐱𝐭𝐫𝐚𝐬
+  ┃ .time
+  ┃ .anon
+  ┃ .confess
+  ┃ .compliment
+  ┃ .roast
+  ┃ .wyr
+  ┃ .riddle
+  ┃ .reverse
+  ┃ .morse
+  ┃ .binary
+  ┃ .wordcount
+  ┃ .age
+  ┃ .countdown
+  ┃ .repeat
+  ┃ .guess
+┗━━━━━━━━━━━
+
+┏━━━ 🎵 𝐀𝐮𝐝𝐢𝐨 𝐄𝐟𝐟𝐞𝐜𝐭𝐬
+  ┃ .bass
+  ┃ .blown
+  ┃ .deep
+  ┃ .earrape
+  ┃ .robot
+  ┃ .reverseaudio
+  ┃ .tomp3
+  ┃ .toptt
+  ┃ .volaudio
+┗━━━━━━━━━━━
+
+┏━━━ 🖼️ 𝐈𝐦𝐚𝐠𝐞 𝐄𝐟𝐟𝐞𝐜𝐭𝐬
+  ┃ .blur
+  ┃ .cartoon
+  ┃ .anime
+  ┃ .sketch
+  ┃ .neon
+  ┃ .glitch
+  ┃ .wasted
+  ┃ .wanted
+  ┃ .sepia
+  ┃ .invert
+┗━━━━━━━━━━━
+
+┏━━━ 🖼️ 𝐌𝐨𝐫𝐞 𝐄𝐟𝐟𝐞𝐜𝐭𝐬
+  ┃ .greyscale
+  ┃ .pixelate
+  ┃ .watercolor
+  ┃ .oil
+  ┃ .fire
+  ┃ .snow
+  ┃ .rainbow
+  ┃ .vintage
+  ┃ .mirror
+  ┃ .comicbook
+┗━━━━━━━━━━━
+
+┏━━━ ⛪ 𝐑𝐞𝐥𝐢𝐠𝐢𝐨𝐧
+  ┃ .bible
+  ┃ .quran
+┗━━━━━━━━━━━
+
+┏━━━ 👥 𝐆𝐫𝐨𝐮𝐩
+  ┃ .tagall
+  ┃ .hidetag
+  ┃ .tagadmin
+  ┃ .kick
+  ┃ .add
+  ┃ .promote
+  ┃ .demote
+  ┃ .mute
+  ┃ .unmute
+  ┃ .poll
+┗━━━━━━━━━━━
+
+┏━━━ 🛡️ 𝐆𝐫𝐨𝐮𝐩 𝐏𝐫𝐨𝐭𝐞𝐜𝐭𝐢𝐨𝐧
+  ┃ .warn
+  ┃ .antilink
+  ┃ .antiban
+  ┃ .anticall
+  ┃ .antibadword
+  ┃ .antibot
+  ┃ .antidemote
+  ┃ .setwelcome
+  ┃ .groupinfo
+  ┃ .link
+┗━━━━━━━━━━━
+
+┏━━━ 🎮 𝐆𝐚𝐦𝐞𝐬
+  ┃ .8ball
+  ┃ .truth
+  ┃ .dare
+  ┃ .trivia
+  ┃ .joke
+  ┃ .fact
+  ┃ .quote
+  ┃ .memes
+  ┃ .dice
+  ┃ .coinflip
+  ┃ .rps
+  ┃ .truthdetector
+  ┃ .xxqc
+┗━━━━━━━━━━━
+
+┏━━━ 💻 𝐇𝐚𝐜𝐤𝐢𝐧𝐠
+  ┃ .iplookup
+  ┃ .whois
+  ┃ .dns
+  ┃ .hash
+  ┃ .checkpass
+  ┃ .b64encode
+  ┃ .b64decode
+  ┃ .cipher
+  ┃ .sslcheck
+  ┃ .numlookup
+  ┃ .scamalyze
+  ┃ .hack
+┗━━━━━━━━━━━
+
+┏━━━ 👑 𝐎𝐰𝐧𝐞𝐫
+  ┃ .mode
+  ┃ .aichat
+  ┃ .autoreply
+  ┃ .broadcast
+  ┃ .schedule
+  ┃ .tostatus
+  ┃ .away
+  ┃ .block
+  ┃ .unblock
+  ┃ .delete
+  ┃ .restart
+  ┃ .forward
+  ┃ .setprefix
+  ┃ .disk
+  ┃ .update
+┗━━━━━━━━━━━
+
+┏━━━ ⚙️ 𝐎𝐰𝐧𝐞𝐫 𝐀𝐮𝐭𝐨
+  ┃ .autoviewstatus
+  ┃ .autoreactstatus
+  ┃ .autostatusreply
+  ┃ .autosavestatus
+  ┃ .antideletestatus
+  ┃ .alwaysonline
+  ┃ .autoread
+  ┃ .autoreact
+  ┃ .autorecord
+  ┃ .autotype
+  ┃ .autobio
+  ┃ .chatbot
+  ┃ .antidelete
+  ┃ .antiedit
+  ┃ .antiviewonce
+┗━━━━━━━━━━━
+
+┏━━━ 🔧 𝐎𝐰𝐧𝐞𝐫 𝐒𝐞𝐭𝐭𝐢𝐧𝐠𝐬
+  ┃ .setbotname
+  ┃ .setownername
+  ┃ .settimezone
+  ┃ .setstickerauthor
+  ┃ .setstickerpackname
+  ┃ .setwatermark
+  ┃ .setmenu
+  ┃ .setmenuimage
+  ┃ .setfont
+  ┃ .getsettings
+  ┃ .resetsetting
+  ┃ .addsudo
+  ┃ .delsudo
+  ┃ .listsudo
+  ┃ .setwarn
+┗━━━━━━━━━━━
+▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
+𝑇𝑦𝑝𝑒 .𝚑𝚎𝚕𝚙 <𝚌𝚖𝚍> 𝑓𝑜𝑟 𝑑𝑒𝑡𝑎𝑖𝑙𝑠 𝑜𝑛 𝑎𝑛𝑦 𝑐𝑜𝑚𝑚𝑎𝑛𝑑
