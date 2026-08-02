@@ -303,6 +303,7 @@
     <div class="method-tabs">
       <button class="method-tab active" id="tab-pair" onclick="switchMethod('pair')">📲 Pairing Code</button>
       <button class="method-tab" id="tab-qr" onclick="switchMethod('qr')">🔳 QR Code</button>
+      <button class="method-tab" id="tab-restore" onclick="switchMethod('restore')" style="border-left:1px solid var(--border);">🔑 Restore Session</button>
     </div>
 
     <!-- Pairing Code pane -->
@@ -340,6 +341,24 @@
         <button class="btn-ghost" id="qr-refresh-btn" onclick="loadQR()">↻ Refresh QR</button>
       </div>
       <p class="hint" style="text-align:center;">Open WhatsApp → <strong>Linked Devices → Link a Device</strong> → scan this code</p>
+    </div>
+
+    <!-- Restore Session pane -->
+    <div class="method-pane" id="pane-restore">
+      <p style="font-size:0.85rem;color:var(--muted);margin-bottom:14px;line-height:1.6;">
+        Already have a <code style="color:var(--fire2)">FIREBOX~...</code> Session ID from a previous deployment? Paste it below to restore your WhatsApp session without scanning a QR code again.
+      </p>
+      <label for="restore-input">Session ID</label>
+      <textarea id="restore-input" rows="4"
+        placeholder="FIREBOX~eyJub2lzZUtleS..."
+        style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:11px 14px;font-size:0.8rem;font-family:'Courier New',monospace;outline:none;resize:vertical;line-height:1.5;transition:border-color 0.2s;"
+        onfocus="this.style.borderColor='var(--fire1)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+      <div style="margin-top:10px;">
+        <button class="btn-primary" id="restore-btn" onclick="restoreSession()">Restore &amp; Restart Bot</button>
+      </div>
+      <div id="restore-error" class="error-box"></div>
+      <div id="restore-success" style="display:none;margin-top:14px;background:#0f2d1a;border:1px solid #22c55e55;border-radius:8px;padding:14px 16px;font-size:0.88rem;color:#4ade80;"></div>
+      <p class="hint" style="margin-top:12px;">The bot will restart automatically after restoring. The page will reload once it's back online.</p>
     </div>
   </div>
 
@@ -395,11 +414,64 @@
     // ── Method tabs ──────────────────────────────────────────────────────────
     function switchMethod(method) {
       activeMethod = method;
-      document.getElementById("tab-pair").classList.toggle("active", method === "pair");
-      document.getElementById("tab-qr").classList.toggle("active", method === "qr");
-      document.getElementById("pane-pair").classList.toggle("visible", method === "pair");
-      document.getElementById("pane-qr").classList.toggle("visible", method === "qr");
+      ["pair","qr","restore"].forEach(m => {
+        document.getElementById("tab-" + m).classList.toggle("active", method === m);
+        document.getElementById("pane-" + m).classList.toggle("visible", method === m);
+      });
       if (method === "qr") loadQR();
+    }
+
+    // ── Restore Session ──────────────────────────────────────────────────────
+    async function restoreSession() {
+      const input   = document.getElementById("restore-input").value.trim();
+      const btn     = document.getElementById("restore-btn");
+      const errEl   = document.getElementById("restore-error");
+      const succEl  = document.getElementById("restore-success");
+      errEl.style.display  = "none";
+      succEl.style.display = "none";
+
+      if (!input || !input.includes("~")) {
+        errEl.textContent = "⚠️ Please paste your full FIREBOX~... Session ID.";
+        errEl.style.display = "block";
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>Restoring…';
+
+      try {
+        const r    = await fetch("/api/restore-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sessionId: input })
+        });
+        const data = await r.json();
+        if (!r.ok || data.error) {
+          errEl.textContent = "⚠️ " + (data.error || "Failed to restore session.");
+          errEl.style.display = "block";
+          btn.disabled = false;
+          btn.textContent = "Restore & Restart Bot";
+        } else {
+          succEl.textContent = "✅ " + data.message;
+          succEl.style.display = "block";
+          btn.textContent = "Restarting…";
+          // Poll until the bot is back online, then reload
+          let reloadAttempts = 0;
+          const reloadTimer = setInterval(async () => {
+            reloadAttempts++;
+            try {
+              const s = await fetch("/api/bot/status");
+              if (s.ok) { clearInterval(reloadTimer); window.location.reload(); }
+            } catch (_) {}
+            if (reloadAttempts > 30) { clearInterval(reloadTimer); window.location.reload(); }
+          }, 2000);
+        }
+      } catch (e) {
+        errEl.textContent = "⚠️ Network error. Make sure the bot server is running.";
+        errEl.style.display = "block";
+        btn.disabled = false;
+        btn.textContent = "Restore & Restart Bot";
+      }
     }
 
     // ── Step navigation ──────────────────────────────────────────────────────
