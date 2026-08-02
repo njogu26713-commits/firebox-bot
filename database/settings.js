@@ -59,7 +59,7 @@ if (sequelize) {
             type: DataTypes.STRING, 
             defaultValue: '🕵️ *Firebox Anti-Delete Update*' 
         },
-        footer: { type: DataTypes.STRING, defaultValue: '© Firebox Bot • Channel: https://whatsapp.com/channel/0029VbD62UY7IUYU6cftzu02' },
+        footer: { type: DataTypes.STRING, defaultValue: '© Firebox Bot • Channel: https://whatsapp.com/channel/0029Vb8elJp77qVJlCeiNX26' },
         ownerNumber: { type: DataTypes.STRING, defaultValue: '' },
         lockedCommands: { type: DataTypes.TEXT, defaultValue: '' },
         botName: { type: DataTypes.STRING, defaultValue: 'Firebox Bot' },
@@ -123,7 +123,7 @@ const getBotSettings = async () => {
         welcomeMsg: 'Hi @user, welcome to *@group*! 👋',
         goodbyeMsg: 'Goodbye @user, we hope to see you back soon! 😢',
         antiDeleteNotification: '🕵️ *Firebox Anti-Delete Update*',
-        footer: '© Firebox Bot • Channel: https://whatsapp.com/channel/0029VbD62UY7IUYU6cftzu02',
+        footer: '© Firebox Bot • Channel: https://whatsapp.com/channel/0029Vb8elJp77qVJlCeiNX26',
         ownerNumber: '',
         lockedCommands: '',
         botName: 'Firebox Bot',

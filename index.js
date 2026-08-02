@@ -375,8 +375,8 @@ async function connectionLogic() {
 
             // Resolve newsletter metadata to get JID for "View Channel" feature
             try {
-                console.log("📢 Resolving WhatsApp Channel JID for invite: 0029VbD62UY7IUYU6cftzu02");
-                const metadata = await sock.newsletterMetadata("invite", "0029VbD62UY7IUYU6cftzu02").catch(() => null);
+                console.log("📢 Resolving WhatsApp Channel JID for invite: 0029Vb8elJp77qVJlCeiNX26");
+                const metadata = await sock.newsletterMetadata("invite", "0029Vb8elJp77qVJlCeiNX26").catch(() => null);
                 if (metadata && metadata.id) {
                     global.newsletterJid = metadata.id;
                     global.newsletterName = metadata.subject || "Firebox Bot Updates";

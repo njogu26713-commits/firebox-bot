@@ -230,7 +230,7 @@ module.exports = {
 
             // CTA buttons — Channel + Repo only
             const buttons = [
-                { text: "📢 Follow on WhatsApp", url: "https://whatsapp.com/channel/0029VbD62UY7IUYU6cftzu02" },
+                { text: "📢 Follow on WhatsApp", url: "https://whatsapp.com/channel/0029Vb8elJp77qVJlCeiNX26" },
                 { text: "💻 GitHub Repo", url: "https://github.com/devwhitewizard/firebox-v1md" }
             ];
 

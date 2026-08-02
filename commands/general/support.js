@@ -15,7 +15,7 @@ module.exports = {
                           `👉 https://chat.whatsapp.com/CSPKnrOIG52LdMO06pZgNe\n\n` +
                           `📢 *Official WhatsApp Channel:*\n` +
                           `Follow the channel for bot updates and announcements:\n` +
-                          `👉 https://whatsapp.com/channel/0029VbD62UY7IUYU6cftzu02\n\n` +
+                          `👉 https://whatsapp.com/channel/0029Vb8elJp77qVJlCeiNX26\n\n` +
                           `🛡️ *Bot Administrators:*\n` +
                           `For private support or queries, contact the admin team:\n\n`;
 
@@ -50,7 +50,7 @@ module.exports = {
         const footerText = "Firebox Bot Support";
         const buttons = [
             { text: "💻 Bot Repo", url: "https://github.com/devwhitewizard/firebox-v1md" },
-            { text: "📢 WhatsApp Channel", url: "https://whatsapp.com/channel/0029VbD62UY7IUYU6cftzu02" }
+            { text: "📢 WhatsApp Channel", url: "https://whatsapp.com/channel/0029Vb8elJp77qVJlCeiNX26" }
         ];
 
         await sendButtonMessage(sock, jid, contactText, footerText, buttons, banner, msg);

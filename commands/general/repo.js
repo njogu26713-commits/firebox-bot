@@ -10,7 +10,7 @@ module.exports = {
         const text = `📂 *FIREBOX BOT SOURCE CODE*\n\n` +
                      `You can get the bot script and deployment guide from the official repository:\n\n` +
                      `🔗 *GitHub:* https://github.com/devwhitewizard/firebox-v1md\n` +
-                     `📢 *Official Channel:* https://whatsapp.com/channel/0029VbD62UY7IUYU6cftzu02\n` +
+                     `📢 *Official Channel:* https://whatsapp.com/channel/0029Vb8elJp77qVJlCeiNX26\n` +
                      `💬 *Support Group:* https://chat.whatsapp.com/CSPKnrOIG52LdMO06pZgNe\n\n` +
                      `👤 *Developer:* White Wizard\n` +
                      `🌐 *Portfolio:* https://jonathanmwanza.vercel.app/\n\n` +
@@ -32,7 +32,7 @@ module.exports = {
         const footerText = "Firebox Bot Script";
         const buttons = [
             { text: "💻 Bot Repo", url: "https://github.com/devwhitewizard/firebox-v1md" },
-            { text: "📢 WhatsApp Channel", url: "https://whatsapp.com/channel/0029VbD62UY7IUYU6cftzu02" }
+            { text: "📢 WhatsApp Channel", url: "https://whatsapp.com/channel/0029Vb8elJp77qVJlCeiNX26" }
         ];
 
         await sendButtonMessage(sock, jid, text, footerText, buttons, banner, msg);
