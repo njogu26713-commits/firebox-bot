@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Firebox Bot — Pair Device</title>
+  <style>
+    :root {
+      --fire1: #ff6b00;
+      --fire2: #ff9a00;
+      --bg: #0d0d0d;
+      --surface: #161616;
+      --surface2: #1e1e1e;
+      --border: #2a2a2a;
+      --text: #f0f0f0;
+      --muted: #888;
+      --success: #22c55e;
+      --error: #ef4444;
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 16px 60px;
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+    .logo-wrap {
+      width: 64px; height: 64px;
+      background: linear-gradient(135deg, var(--fire1), var(--fire2));
+      border-radius: 18px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px;
+      box-shadow: 0 0 24px rgba(255,107,0,0.4);
+    }
+    header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--fire1), var(--fire2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    header p { color: var(--muted); font-size: 0.9rem; text-align: center; }
+
+    /* ── Status chip ── */
+    #status-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 14px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      margin-bottom: 28px;
+      transition: all 0.3s;
+    }
+    #status-chip .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--muted);
+      transition: background 0.3s;
+    }
+    #status-chip.online  { border-color: #22c55e55; background: #0f2d1a; }
+    #status-chip.online  .dot { background: var(--success); box-shadow: 0 0 6px var(--success); }
+    #status-chip.offline { border-color: #ef444455; background: #2d0f0f; }
+    #status-chip.offline .dot { background: var(--error); }
+    #status-chip.connecting { border-color: #f59e0b55; background: #2d1f0f; }
+    #status-chip.connecting .dot { background: #f59e0b; animation: pulse 1s infinite; }
+
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    /* ── Card ── */
+    .card {
+      width: 100%; max-width: 460px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+    }
+    .card + .card { margin-top: 16px; }
+
+    .card h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .card h2 .icon { font-size: 1.1rem; }
+
+    /* ── Form ── */
+    label {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .phone-row {
+      display: flex; gap: 8px;
+    }
+    .phone-row input {
+      flex: 1;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 11px 14px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .phone-row input:focus { border-color: var(--fire1); }
+    .phone-row input::placeholder { color: var(--muted); }
+
+    button#pair-btn {
+      background: linear-gradient(135deg, var(--fire1), var(--fire2));
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 20px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    button#pair-btn:hover { opacity: 0.9; }
+    button#pair-btn:active { transform: scale(0.97); }
+    button#pair-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .hint { font-size: 0.78rem; color: var(--muted); margin-top: 8px; }
+
+    /* ── Result ── */
+    #result-area {
+      margin-top: 20px;
+      display: none;
+    }
+    #error-msg {
+      background: #2d0f0f;
+      border: 1px solid #ef444455;
+      border-radius: 8px;
+      padding: 12px 14px;
+      color: #f87171;
+      font-size: 0.88rem;
+      display: none;
+      margin-top: 14px;
+    }
+
+    .code-display {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 22px;
+      text-align: center;
+    }
+    .code-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    #pair-code {
+      font-size: 2.4rem;
+      font-weight: 800;
+      letter-spacing: 0.25em;
+      background: linear-gradient(90deg, var(--fire1), var(--fire2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-variant-numeric: tabular-nums;
+    }
+    .copy-btn {
+      margin-top: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 6px;
+      padding: 7px 16px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .copy-btn:hover { border-color: var(--fire1); background: var(--surface2); }
+    .copy-btn.copied { border-color: var(--success); color: var(--success); }
+
+    /* ── Instructions ── */
+    .steps { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .steps li {
+      display: flex; align-items: flex-start; gap: 12px;
+      font-size: 0.88rem; color: var(--muted);
+    }
+    .steps li .num {
+      min-width: 22px; height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--fire1), var(--fire2));
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem; font-weight: 700;
+      flex-shrink: 0;
+    }
+    .steps li span { padding-top: 2px; }
+
+    /* ── Warning ── */
+    .already-connected {
+      background: #0f2d1a;
+      border: 1px solid #22c55e55;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 0.88rem;
+      color: #4ade80;
+      text-align: center;
+      margin-top: 16px;
+      display: none;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo-wrap">🔥</div>
+    <h1>Firebox Bot</h1>
+    <p>Connect your WhatsApp account with a pairing code</p>
+  </header>
+
+  <div id="status-chip">
+    <span class="dot"></span>
+    <span id="status-text">Checking…</span>
+  </div>
+
+  <!-- Pair Card -->
+  <div class="card">
+    <h2><span class="icon">📱</span> Get Pairing Code</h2>
+
+    <label for="phone-input">WhatsApp Number (with country code, no + or spaces)</label>
+    <div class="phone-row">
+      <input
+        id="phone-input"
+        type="tel"
+        placeholder="e.g. 254712345678"
+        autocomplete="tel"
+        maxlength="20"
+      />
+      <button id="pair-btn" onclick="requestCode()">Get Code</button>
+    </div>
+    <p class="hint">Enter your full number starting with the country code, digits only.</p>
+
+    <div id="already-connected" class="already-connected">
+      ✅ Bot is already connected to WhatsApp. Disconnect the current session first to pair a new device.
+    </div>
+
+    <div id="error-msg"></div>
+
+    <div id="result-area">
+      <div class="code-display">
+        <div class="code-label">Your Pairing Code</div>
+        <div id="pair-code">— — — —</div>
+        <button class="copy-btn" id="copy-btn" onclick="copyCode()">Copy Code</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Instructions Card -->
+  <div class="card" style="margin-top:16px;">
+    <h2><span class="icon">📋</span> How to Use</h2>
+    <ol class="steps">
+      <li>
+        <span class="num">1</span>
+        <span>Enter your WhatsApp number above and tap <strong>Get Code</strong>.</span>
+      </li>
+      <li>
+        <span class="num">2</span>
+        <span>Open WhatsApp on your phone and tap <strong>⋮ Menu → Linked Devices</strong>.</span>
+      </li>
+      <li>
+        <span class="num">3</span>
+        <span>Tap <strong>Link a Device</strong>, then choose <strong>Link with phone number instead</strong>.</span>
+      </li>
+      <li>
+        <span class="num">4</span>
+        <span>Enter the 8-digit code shown above. The bot will connect automatically.</span>
+      </li>
+    </ol>
+  </div>
+
+  <script>
+    let currentCode = "";
+
+    async function fetchStatus() {
+      try {
+        const r = await fetch("/api/bot/status");
+        const data = await r.json();
+        const chip = document.getElementById("status-chip");
+        const txt  = document.getElementById("status-text");
+        const conn = document.getElementById("already-connected");
+
+        chip.className = "";
+        if (data.status === "online") {
+          chip.classList.add("online");
+          txt.textContent = "Connected — " + (data.user?.name || data.user?.id || "Bot Online");
+          conn.style.display = "block";
+          document.getElementById("pair-btn").disabled = true;
+        } else if (data.status === "connecting") {
+          chip.classList.add("connecting");
+          txt.textContent = "Connecting…";
+          conn.style.display = "none";
+          document.getElementById("pair-btn").disabled = false;
+        } else {
+          chip.classList.add("offline");
+          txt.textContent = "Offline";
+          conn.style.display = "none";
+          document.getElementById("pair-btn").disabled = false;
+        }
+      } catch {
+        const chip = document.getElementById("status-chip");
+        chip.className = "offline";
+        document.getElementById("status-text").textContent = "Unreachable";
+      }
+    }
+
+    async function requestCode() {
+      const phone = document.getElementById("phone-input").value.replace(/\D/g, "");
+      const btn   = document.getElementById("pair-btn");
+      const errEl = document.getElementById("error-msg");
+      const resEl = document.getElementById("result-area");
+
+      errEl.style.display = "none";
+      resEl.style.display = "none";
+
+      if (!phone || phone.length < 7) {
+        showError("Please enter a valid phone number with country code.");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>Generating…';
+
+      try {
+        const r = await fetch("/api/pair-code", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phone })
+        });
+        const data = await r.json();
+
+        if (!r.ok || data.error) {
+          showError(data.error || "Failed to generate pairing code.");
+        } else {
+          currentCode = data.code;
+          document.getElementById("pair-code").textContent = formatCode(data.code);
+          resEl.style.display = "block";
+          resetCopyBtn();
+          // Start polling status to detect connection
+          pollUntilConnected();
+        }
+      } catch (e) {
+        showError("Network error. Make sure the bot server is running.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Get Code";
+      }
+    }
+
+    function formatCode(code) {
+      // Format as XXXX-XXXX if 8 chars
+      const c = code.replace(/[-\s]/g, "");
+      if (c.length === 8) return c.slice(0, 4) + "-" + c.slice(4);
+      return code;
+    }
+
+    function showError(msg) {
+      const el = document.getElementById("error-msg");
+      el.textContent = "⚠️ " + msg;
+      el.style.display = "block";
+    }
+
+    function copyCode() {
+      if (!currentCode) return;
+      const clean = currentCode.replace(/[-\s]/g, "");
+      navigator.clipboard.writeText(clean).then(() => {
+        const btn = document.getElementById("copy-btn");
+        btn.textContent = "✓ Copied!";
+        btn.classList.add("copied");
+        setTimeout(resetCopyBtn, 2500);
+      });
+    }
+
+    function resetCopyBtn() {
+      const btn = document.getElementById("copy-btn");
+      btn.textContent = "Copy Code";
+      btn.classList.remove("copied");
+    }
+
+    let pollTimer = null;
+    function pollUntilConnected() {
+      if (pollTimer) clearInterval(pollTimer);
+      let attempts = 0;
+      pollTimer = setInterval(async () => {
+        attempts++;
+        await fetchStatus();
+        const chip = document.getElementById("status-chip");
+        if (chip.classList.contains("online") || attempts > 30) {
+          clearInterval(pollTimer);
+        }
+      }, 3000);
+    }
+
+    // Initial status fetch + periodic refresh
+    fetchStatus();
+    setInterval(fetchStatus, 15000);
+  </script>
+</body>
+</html>

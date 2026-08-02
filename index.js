@@ -683,12 +683,21 @@ async function connectionLogic() {
 
 connectionLogic();
 
+// 🌐 Serve static public assets (dashboard, etc.)
+const publicPath = require("path").join(__dirname, "public");
+app.use(express.static(publicPath));
+
 // 🌐 Health Check Server
 app.get("/", (req, res) => {
     const { getSettings } = require("./lib/settings");
     const settings = getSettings();
     const botName = settings.botName || "Firebox Bot";
     res.send(`🤖 ${botName} is Online and Healthy!`);
+});
+
+// 📱 Pairing Dashboard
+app.get("/pair", (req, res) => {
+    res.sendFile(require("path").join(__dirname, "public", "pair.html"));
 });
 
 // 🛠️ Admin Control Panel APIs

@@ -1,47 +1,64 @@
 # Firebox Bot
 
-A lightweight, customizable WhatsApp automation and userbot built on the [`@whiskeysockets/baileys`](https://github.com/WhiskeySockets/Baileys) library.
+A feature-rich WhatsApp bot built with Node.js and the [@whiskeysockets/baileys](https://github.com/WhiskeySockets/Baileys) library.
 
 ## Stack
+
 - **Runtime**: Node.js
-- **WhatsApp API**: Baileys (`@whiskeysockets/baileys`)
-- **Database**: PostgreSQL (via `DATABASE_URL`) or SQLite fallback (`database/firebox.db`)
-- **HTTP server**: Express (health check + Admin API)
-- **AI**: GROQ / OpenAI (optional)
+- **WhatsApp**: Baileys (`@whiskeysockets/baileys`)
+- **Web server**: Express (port 3000)
+- **Database**: SQLite (default) / MongoDB (optional via `MONGODB_URI`)
+- **AI**: Groq / OpenAI (optional)
+
+## How to run
+
+The bot starts automatically via the **Firebox Bot** workflow (`node index.js`).
+
+On first run (no session set) the bot shows a QR code in the terminal. You can also connect via pairing code at the dashboard:
+
+```
+http://localhost:3000/pair
+```
+
+## Configuration
+
+Copy `.env.example` to `.env` and fill in:
+
+| Variable | Required | Description |
+|---|---|---|
+| `SESSION_ID` | Yes (or pair) | Encoded session string starting with `FIREBOX~` |
+| `SUDO` | Optional | Super-admin phone number (with country code) |
+| `OWNERS` | Optional | Comma-separated additional admin numbers |
+| `PAIRING_NUMBER` | Optional | Auto-pair on startup without QR |
+| `PREFIX` | Optional | Command prefix (default `.`) |
+| `MODE` | Optional | `public` or `private` (default `public`) |
+| `MONGODB_URI` | Optional | MongoDB Atlas connection string |
+| `GROQ_API_KEY` | Optional | For `.ai` / `.chat` commands |
+| `OPENAI_API_KEY` | Optional | For `.imagine` and GPT commands |
+
+## Key routes
+
+| Route | Description |
+|---|---|
+| `GET /` | Health check |
+| `GET /pair` | Pairing code dashboard |
+| `POST /api/pair-code` | Generate a WhatsApp pairing code (body: `{ phone }`) |
+| `GET /api/bot/status` | Bot connection status (public) |
+| `POST /api/bot/restart` | Restart bot (requires `Authorization: Bearer <ADMIN_TOKEN>`) |
 
 ## Project structure
-```
-index.js            — entry point; starts WhatsApp connection & Express server
-config.js           — static config (version, owner numbers, prefixes)
-commands/           — all bot commands, grouped by category
-firebox/            — core DB models, JSON store fallback, auth helpers
-lib/                — business logic (admin API, AI helper, economy, automation, etc.)
-database/           — settings, badwords, rules, warnings helpers
-assets/             — Firebox Bot branding images
-```
 
-## Running the bot
-```bash
-npm start       # production
-npm run dev     # development (nodemon, auto-restart on file change)
 ```
-
-## Required environment variables
-| Variable | Description |
-|---|---|
-| `SUDO` | Your WhatsApp number with country code (e.g. `254712345678`) |
-| `SESSION_ID` | Base64 gzip session string (`FIREBOX~...`) from first QR scan |
-
-## Optional environment variables
-| Variable | Description |
-|---|---|
-| `OWNERS` | Comma-separated secondary admin numbers |
-| `DATABASE_URL` | PostgreSQL/MySQL URL — falls back to SQLite if empty |
-| `OPENAI_API_KEY` | For `.ai` OpenAI commands |
-| `GROQ_API_KEY` | For `.ai` GROQ commands |
-| `PREFIX` | Command prefix (default: `.`) |
-| `MODE` | `public` or `private` (default: `public`) |
-| `ADMIN_TOKEN` | Bearer token for the Admin API (auto-generated if not set) |
+index.js          — Entry point; express server + Baileys connection logic
+config.js         — Bot config (owners, prefix, auth folder)
+commands/         — All bot commands, organised by category
+lib/              — Utilities: command handler, admin API, settings, DB helpers
+firebox/          — Database models and message storage
+public/           — Static web assets (pair dashboard)
+assets/           — Bot images and logos
+session/          — WhatsApp auth state (auto-created, gitignored)
+```
 
 ## User preferences
-- Project should be fully branded as **Firebox Bot** — no Nexus references
+
+- Keep existing project structure; do not restructure or migrate the stack.
