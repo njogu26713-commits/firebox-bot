@@ -65,18 +65,9 @@ module.exports = {
                 if (connection === "open") {
                     const credsPath = path.join(tempSessionDir, "creds.json");
                     const credsData = fs.readFileSync(credsPath, "utf-8");
-                    const sessionId = "Firebox~" + Buffer.from(credsData).toString("base64");
+                    const sessionId = "FIREBOX~" + Buffer.from(credsData).toString("base64");
 
-                    await sock.sendMessage(jid, { 
-                        text: `✅ *Session Generated!*\nCopy the code below:`
-                    });
-
-                    // Send ID as separate message for 1-tap copy
                     await sock.sendMessage(jid, { text: sessionId });
-
-                    await sock.sendMessage(jid, { 
-                        text: `💎 *How to use:* \n1. Copy the code above.\n2. Paste it as \`SESSION_ID\` in your Render/Heroku environment variables.`
-                    });
 
                     // Cleanup
                     pairSock.ev.removeAllListeners();

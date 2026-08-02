@@ -18,27 +18,8 @@ module.exports = {
 
             const creds = fs.readFileSync(credsPath, "utf-8");
             const sessionId = Buffer.from(creds).toString("base64");
-            const finalizedId = `Firebox~${sessionId}`;
+            const finalizedId = `FIREBOX~${sessionId}`;
 
-            // 1️⃣ Instructions header
-            await sock.sendMessage(jid, {
-                text: `📦 *FIREBOX BOT SESSION ID*\n━━━━━━━━━━━━━━━━━━━\n\n` +
-                    `Your Session ID is ready! Here's how to use it:\n\n` +
-                    `1️⃣ Copy the code in the *last message*\n` +
-                    `2️⃣ Go to your hosting dashboard (e.g. Render)\n` +
-                    `3️⃣ Add it as an env variable: \`SESSION_ID\`\n\n` +
-                    `⚠️ *KEEP THIS PRIVATE!* Anyone with this code controls your WhatsApp.`
-            }, { quoted: msg });
-
-            // 2️⃣ creds.json backup file
-            await sock.sendMessage(jid, {
-                document: fs.readFileSync(credsPath),
-                fileName: "creds.json",
-                mimetype: "application/json",
-                caption: "📁 *Backup File* — Place this in your `session/` folder if you ever need to restore manually."
-            }, { quoted: msg });
-
-            // 3️⃣ Raw ID — easy one-tap copy (sent last to appear below all other messages)
             await sock.sendMessage(jid, { text: finalizedId });
 
         } catch (err) {
