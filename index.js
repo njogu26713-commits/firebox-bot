@@ -687,8 +687,13 @@ connectionLogic();
 const publicPath = require("path").join(__dirname, "public");
 app.use(express.static(publicPath));
 
-// 🌐 Health Check Server
+// 🌐 Root — redirect to pairing dashboard
 app.get("/", (req, res) => {
+    res.redirect("/pair");
+});
+
+// 🩺 Health check (used by uptime monitors)
+app.get("/health", (req, res) => {
     const { getSettings } = require("./lib/settings");
     const settings = getSettings();
     const botName = settings.botName || "Firebox Bot";
