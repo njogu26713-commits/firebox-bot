@@ -1,0 +1,19 @@
+{"message":"  ^","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T16:48:53.398995216Z"}
+{"message":"","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T16:48:53.398998241Z"}
+{"message":"Error: Cannot find module 'dotenv'","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T16:48:53.399001201Z"}
+{"message":"Require stack:","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T16:48:53.399004201Z"}
+{"message":"- /app/index.js","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T16:48:53.399007557Z"}
+{"message":"    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T16:48:53.399010604Z"}
+{"message":"    at Module._load (node:internal/modules/cjs/loader:1038:27)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T16:48:53.399013330Z"}
+{"message":"    at Module.require (node:internal/modules/cjs/loader:1289:19)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T16:48:53.399016319Z"}
+{"message":"    at require (node:internal/modules/helpers:182:18)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T16:48:53.399019155Z"}
+{"message":"    at Object.<anonymous> (/app/index.js:2:19)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T16:48:53.399021916Z"}
+{"message":"    at Module._compile (node:internal/modules/cjs/loader:1521:14)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T16:48:53.399024966Z"}
+{"message":"    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T16:48:53.399027742Z"}
+{"message":"    at Module.load (node:internal/modules/cjs/loader:1266:32)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T16:48:53.399030572Z"}
+{"message":"    at Module._load (node:internal/modules/cjs/loader:1091:12)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T16:48:53.399033427Z"}
+{"message":"    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T16:48:53.399036346Z"}
+{"message":"  code: 'MODULE_NOT_FOUND',","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T16:48:53.399039055Z"}
+{"message":"  requireStack: [ '/app/index.js' ]","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T16:48:53.399041975Z"}
+{"message":"}","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T16:48:53.399044718Z"}
+{"message":"","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T16:48:53.399047927Z"}
