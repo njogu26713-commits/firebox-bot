@@ -1,0 +1,8 @@
+[phases.setup]
+nixPkgs = ["nodejs_20", "ffmpeg", "imagemagick", "python3", "gnumake", "gcc"]
+
+[phases.install]
+cmds = ["npm install --legacy-peer-deps"]
+
+[start]
+cmd = "node index.js"
