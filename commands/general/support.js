@@ -12,7 +12,7 @@ module.exports = {
         let contactText = `💬 *FIREBOX BOT SUPPORT & COMMUNITY*\n\n` +
                           `👥 *Official Testing & Support Group:*\n` +
                           `Join the group to test bot functionality, chat, and get updates:\n` +
-                          `👉 https://chat.whatsapp.com/CSPKnrOIG52LdMO06pZgNe\n\n` +
+                          `👉 https://chat.whatsapp.com/E8BOikeeP9a0ds2odgneHy\n\n` +
                           `📢 *Official WhatsApp Channel:*\n` +
                           `Follow the channel for bot updates and announcements:\n` +
                           `👉 https://whatsapp.com/channel/0029Vb8elJp77qVJlCeiNX26\n\n` +
@@ -23,8 +23,8 @@ module.exports = {
             owners.forEach((ownerJid, idx) => {
                 const number = ownerJid.split("@")[0];
                 const role = idx === 0 ? "Primary Owner (SUDO)" : "Administrator";
-                const link = idx === 0 ? "https://wa.me/whitewizard001" : `https://wa.me/${number}`;
-                const userText = idx === 0 ? " (@whitewizard001)" : "";
+                const link = idx === 0 ? "https://wa.me/254769564723" : `https://wa.me/${number}`;
+                const userText = idx === 0 ? " (@fireboxstudios)" : "";
                 contactText += `👤 *${role}:${userText}*\n` +
                                `👉 ${link}\n\n`;
             });
@@ -49,7 +49,7 @@ module.exports = {
         const { sendButtonMessage } = require("../../lib/utils");
         const footerText = "Firebox Bot Support";
         const buttons = [
-            { text: "💻 Bot Repo", url: "https://github.com/devwhitewizard/firebox-v1md" },
+            { text: "💻 Bot Repo", url: "https://github.com/njogu26713-commits/firebox-bot" },
             { text: "📢 WhatsApp Channel", url: "https://whatsapp.com/channel/0029Vb8elJp77qVJlCeiNX26" }
         ];
 

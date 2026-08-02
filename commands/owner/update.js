@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 
 // 🔗 Always pull from the MAIN developer repo
-const UPSTREAM_REPO = "https://github.com/devwhitewizard/firebox-v1md.git";
+const UPSTREAM_REPO = "https://github.com/njogu26713-commits/firebox-bot.git";
 const UPSTREAM_BRANCH = "main";
 
 module.exports = {

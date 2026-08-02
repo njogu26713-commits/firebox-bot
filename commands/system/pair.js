@@ -9,7 +9,7 @@ module.exports = {
     category: "system",
     usage: "pair <number>",
     execute: async ({ sock, jid, args, msg }) => {
-        if (!args[0]) return await sock.sendMessage(jid, { text: "❌ Please provide a phone number with country code.\nExample: `.pair 254797715445`" });
+        if (!args[0]) return await sock.sendMessage(jid, { text: "❌ Please provide a phone number with country code.\nExample: `.pair 254769564723`" });
 
         const targetNumber = args[0].replace(/[^0-9]/g, "");
         if (targetNumber.length < 10) return await sock.sendMessage(jid, { text: "❌ Invalid phone number format." });

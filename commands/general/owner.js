@@ -10,20 +10,20 @@ module.exports = {
             const primaryOwner = ownerNumbers[0].split("@")[0];
             const vcard = 'BEGIN:VCARD\n' // metadata of the contact card
                 + 'VERSION:3.0\n' 
-                + 'FN:WHITE WIZARD\n' // full name
+                + 'FN:Firebox Studios\n' // full name
                 + 'ORG:Firebox Bot Owner;\n' // the organization of the contact
                 + `TEL;type=CELL;type=VOICE;waid=${primaryOwner}:+${primaryOwner}\n` // WhatsApp ID + phone number
                 + 'END:VCARD';
 
             await sock.sendMessage(jid, {
                 contacts: {
-                    displayName: "WHITE WIZARD",
+                    displayName: "Firebox Studios",
                     contacts: [{ vcard }]
                 }
             }, { quoted: msg });
 
             await sock.sendMessage(jid, { 
-                text: `👑 *FIREBOX BOT OWNER*\n\nMy master is *WHITE WIZARD*.\n\n📱 *Number:* +${primaryOwner}\n🌐 *WhatsApp:* @whitewizard001 (https://wa.me/whitewizard001)\n🌐 *GitHub:* github.com/devwhitewizard\n\n_Type .dev for more details._`
+                text: `👑 *FIREBOX BOT OWNER*\n\nMy master is *Firebox Studios*.\n\n📱 *Number:* +${primaryOwner}\n🌐 *WhatsApp:* https://wa.me/254769564723\n🌐 *GitHub:* github.com/njogu26713-commits/firebox-bot\n\n_Type .dev for more details._`
             }, { quoted: msg });
 
         } catch (err) {

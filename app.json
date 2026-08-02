@@ -8,7 +8,7 @@
       "type": "string"
     },
     "SUDO": {
-      "description": "The Super-Admin phone number with country code (e.g. 254797715445). Can run system commands.",
+      "description": "The Super-Admin phone number with country code (e.g. 254769564723). Can run system commands.",
       "required": true,
       "type": "string"
     },

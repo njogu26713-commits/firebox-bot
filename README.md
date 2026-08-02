@@ -20,7 +20,7 @@ Firebox Bot is a lightweight, customizable WhatsApp automation and userbot utili
 
 ### 💬 Official WhatsApp Group
 Stay updated, ask questions, and chat with other users by joining our official group:
-👉 **[Join Firebox Bot Support Group](https://chat.whatsapp.com/CSPKnrOIG52LdMO06pZgNe)**
+👉 **[Join Firebox Bot Support Group](https://chat.whatsapp.com/E8BOikeeP9a0ds2odgneHy)**
 
 ### ⭐ Support the Project
 If you like Firebox Bot, please take a moment to support the repository:
@@ -76,7 +76,7 @@ Ensure you have [Node.js](https://nodejs.org/) v18+ installed on your system.
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/devwhitewizard/firebox-v1md.git
+   git clone https://github.com/njogu26713-commits/firebox-bot.git
    cd Firebox Bot
    ```
 
@@ -139,7 +139,7 @@ The developers of Firebox Bot are not responsible for any damage, account bans, 
 
 ## 🔏 Copyright
 
-Copyright © 2026 DevWhiteWizard. All rights reserved.
+Copyright © 2026 Firebox Studios. All rights reserved.
 
 This repository and its source code are the intellectual property of the author and contributors. You are permitted to fork, modify, and run the software for personal, non-commercial use, provided the original credits remain intact.
 
@@ -149,6 +149,6 @@ This project is licensed under the **ISC License**. For more information, please
 
 ## 🏅 Credits
 
-- **DevWhiteWizard** - Creator & Lead Developer.
+- **Firebox Studios** - Creator & Lead Developer.
 - **Baileys Library** - Excellent WhatsApp Web API library (`@whiskeysockets/baileys`).
 - All open-source package authors whose modules are used in this project.

@@ -231,7 +231,7 @@ module.exports = {
             // CTA buttons — Channel + Repo only
             const buttons = [
                 { text: "📢 Follow on WhatsApp", url: "https://whatsapp.com/channel/0029Vb8elJp77qVJlCeiNX26" },
-                { text: "💻 GitHub Repo", url: "https://github.com/devwhitewizard/firebox-v1md" }
+                { text: "💻 GitHub Repo", url: "https://github.com/njogu26713-commits/firebox-bot" }
             ];
 
             // Plain text + image — most compatible, fast, and 100% reliable

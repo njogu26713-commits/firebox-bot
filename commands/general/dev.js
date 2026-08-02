@@ -7,13 +7,12 @@ module.exports = {
     description: "Short info about the developer.",
     category: "general",
     execute: async ({ sock, jid, msg }) => {
-        const text = `👨‍💻 *THE WIZARD'S PROFILE*\n\n` +
-                     `✨ *Name:* White Wizard\n` +
-                     `🌐 *WhatsApp:* @whitewizard001 (https://wa.me/whitewizard001)\n` +
-                     `👨‍💻 *Bio:* My passion and only purpose here is coding. I love building tools that make life easier and more fun!\n\n` +
-                     `🌐 *Portfolio:* https://jonathanmwanza.vercel.app/\n` +
-                     `📂 *GitHub:* https://github.com/devwhitewizard\n\n` +
-                     `_\"Magic is just science we don't understand yet, and code is the closest thing to magic I've found.\"_`;
+        const text = `👨‍💻 *DEVELOPER PROFILE*\n\n` +
+                     `✨ *Name:* Firebox Studios\n` +
+                     `🌐 *WhatsApp:* https://wa.me/254769564723\n` +
+                     `👨‍💻 *Bio:* Building powerful WhatsApp bots and automation tools for everyone!\n\n` +
+                     `📂 *GitHub:* https://github.com/njogu26713-commits/firebox-bot\n\n` +
+                     `_\"Built with passion by Firebox Studios.\"_`;
 
         const { getSettings } = require("../../lib/settings");
         const settings = getSettings();

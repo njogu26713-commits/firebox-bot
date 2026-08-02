@@ -33,7 +33,7 @@ module.exports = {
                      `🕒 *Uptime:* \`${uptimeStr}\`\n` +
                      `📟 *RAM:* \`${procMem} MB\`\n` +
                      `📡 *Latency:* \`${Math.floor(Math.random() * 50) + 10}ms\`\n\n` +
-                     `📂 *Repo:* github.com/devwhitewizard/firebox-v1md\n` +
+                     `📂 *Repo:* github.com/njogu26713-commits/firebox-bot\n` +
                      `_Type .menu to see what I can do!_`;
 
         let banner;
