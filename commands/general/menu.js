@@ -193,38 +193,46 @@ module.exports = {
                 userCount = 1;
             }
 
-            let menuBody = `╭━━━━━━━◇\n`;
-            menuBody += `┃ *${botName.toUpperCase()}*\n`;
-            menuBody += `┃ ◇━━━━━━━◇\n`;
-            menuBody += `┃ 🖼️ *${greeting}*\n`;
-            menuBody += `╰━━━━━━━◇\n\n`;
-            menuBody += `┃ 👤 *USER:* ${pushName}\n`;
-            menuBody += `┃ 📅 *DATE:* ${date}\n`;
-            menuBody += `┃ ⌚ *TIME:* ${time}\n`;
-            menuBody += `┃ ⭐ *USERS:* ${userCount}\n`;
-            menuBody += `╰━━━━━━━━━◇\n\n`;
-            menuBody += `*AVAILABLE CATEGORIES:*\n`;
-            menuBody += `💡 _Explore by typing .m <category>_\n\n`;
-            menuBody += `1. 🌐 *ADMIN MENU*\n`;
-            menuBody += `2. 🤖 *AI MENU*\n`;
-            menuBody += `3. 📥 *DOWNLOAD MENU*\n`;
-            menuBody += `4. 👥 *GROUP MENU*\n`;
-            menuBody += `5. 🎨 *STICKER MENU*\n`;
-            menuBody += `6. 📦 *OWNER MENU*\n`;
-            menuBody += `7. 🌍 *GENERAL MENU*\n`;
-            menuBody += `8. ⚽ *SPORTS MENU*\n`;
-            menuBody += `9. 💻 *DEV INFO* (Direct)\n`;
-            menuBody += `10. 🎭 *ANIME MENU*\n`;
-            menuBody += `11. 🕹️ *GAMES MENU*\n`;
-            menuBody += `12. 🤝 *SOCIAL MENU*\n`;
-            menuBody += `13. 🎉 *FUN MENU*\n`;
-            menuBody += `14. 💰 *ECONOMY MENU*\n`;
-            menuBody += `15. 🎬 *MEDIA MENU*\n`;
-            menuBody += `16. 🛰️ *SYSTEM MENU*\n`;
-            menuBody += `17. ✨ *TEXTMAKER MENU*\n`;
-            menuBody += `18. ⛪ *RELIGION MENU*\n`;
-            menuBody += `19. 🖼️ *DP MENU*\n\n`;
-            menuBody += `💎 _Type .m <category> to explore features_`;
+            // Category display config
+            const categoryConfig = [
+                { key: "admin",     icon: "🌐", label: "ADMIN"     },
+                { key: "ai",        icon: "🤖", label: "AI"        },
+                { key: "download",  icon: "📥", label: "DOWNLOAD"  },
+                { key: "group",     icon: "👥", label: "GROUP"     },
+                { key: "sticker",   icon: "🎨", label: "STICKER"   },
+                { key: "owner",     icon: "📦", label: "OWNER"     },
+                { key: "general",   icon: "🌍", label: "GENERAL"   },
+                { key: "sports",    icon: "⚽", label: "SPORTS"    },
+                { key: "anime",     icon: "🎭", label: "ANIME"     },
+                { key: "games",     icon: "🕹️", label: "GAMES"     },
+                { key: "social",    icon: "🤝", label: "SOCIAL"    },
+                { key: "fun",       icon: "🎉", label: "FUN"       },
+                { key: "economy",   icon: "💰", label: "ECONOMY"   },
+                { key: "media",     icon: "🎬", label: "MEDIA"     },
+                { key: "system",    icon: "🛰️", label: "SYSTEM"    },
+                { key: "textmaker", icon: "✨", label: "TEXTMAKER" },
+                { key: "religion",  icon: "⛪", label: "RELIGION"  },
+                { key: "dp",        icon: "🖼️", label: "DP"        },
+            ];
+
+            let menuBody = `╭━━━━━━━━━━━━━━━━━◇\n`;
+            menuBody += `┃ ✨ *${botName.toUpperCase()}*\n`;
+            menuBody += `┃ ${greeting}, *${pushName}*\n`;
+            menuBody += `┃ 📅 ${date}  ⌚ ${time}\n`;
+            menuBody += `┃ ⭐ Users: ${userCount}\n`;
+            menuBody += `╰━━━━━━━━━━━━━━━━━◇\n\n`;
+
+            for (const cat of categoryConfig) {
+                const cmds = categories[cat.key];
+                if (!cmds || cmds.length === 0) continue;
+                menuBody += `╭─ ${cat.icon} *${cat.label}*\n`;
+                const names = cmds.map(c => `*.${c.name}*`).join("  ");
+                menuBody += `┃ ${names}\n`;
+                menuBody += `╰──────────────────\n`;
+            }
+
+            menuBody += `\n💡 _Type .m <category> for details (e.g. .m fun)_\n`;
+            menuBody += `💡 _Type .m <command> for command help (e.g. .m ping)_`;
 
             const footerText = `${botName} • Support & Updates`;
 
