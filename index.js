@@ -318,8 +318,21 @@ async function connectionLogic() {
                 console.log("1. Open WhatsApp on your phone.");
                 console.log("2. Go to Linked Devices > Link with Phone Number.");
                 console.log(`3. Enter the code shown above.`);
+
+                // Resolve dashboard pairing promise if one is waiting
+                global.latestPairingCode = code;
+                if (global.pairingCodeResolve) {
+                    global.pairingCodeResolve(code);
+                    global.pairingCodeResolve = null;
+                    global.pairingCodeReject = null;
+                }
             } catch (err) {
                 console.error("❌ Failed to generate pairing code:", err);
+                if (global.pairingCodeReject) {
+                    global.pairingCodeReject(err);
+                    global.pairingCodeResolve = null;
+                    global.pairingCodeReject = null;
+                }
             }
         }, 6000);
     }
@@ -523,6 +536,15 @@ async function connectionLogic() {
             if (global.alwaysOnlineInterval) {
                 clearInterval(global.alwaysOnlineInterval);
             }
+
+            // ── Dashboard pairing restart: skip failure counting and session wipe ──
+            if (global.pairingRestartInProgress) {
+                global.pairingRestartInProgress = false;
+                console.log("🔄 [Dashboard] Restarting socket in pairing-code mode...");
+                setTimeout(() => connectionLogic(), 2000);
+                return;
+            }
+
             const statusCode = lastDisconnect?.error?.output?.statusCode || lastDisconnect?.error?.output?.payload?.statusCode;
 
             console.log(`🔌 Connection closed. Status Code: ${statusCode}`);
@@ -682,6 +704,42 @@ async function connectionLogic() {
 }
 
 connectionLogic();
+
+// 📱 Dashboard pairing trigger — restarts the socket in phone-pairing mode
+// and resolves when the code is ready (or rejects on timeout/error).
+global.triggerPairingRestart = function(phone) {
+    return new Promise((resolve, reject) => {
+        // Store callbacks so the pairing code section above can resolve them
+        global.pairingCodeResolve = resolve;
+        global.pairingCodeReject = reject;
+
+        const timer = setTimeout(() => {
+            if (global.pairingCodeResolve === resolve) {
+                global.pairingCodeResolve = null;
+                global.pairingCodeReject = null;
+                reject(new Error("Timed out waiting for pairing code (25s). Make sure the bot is not already connected."));
+            }
+        }, 25000);
+
+        // Ensure timer doesn't block process exit
+        if (timer.unref) timer.unref();
+
+        // Set phone so connectionLogic picks it up as PAIRING_NUMBER
+        process.env.PAIRING_NUMBER = phone;
+        delete process.env.SESSION_ID;
+        delete process.env.SESSION_ID_FAILED;
+
+        global.pairingRestartInProgress = true;
+
+        const sock = global.sock;
+        if (sock) {
+            try { sock.end(new Error("Dashboard pairing restart")); } catch (_) {}
+        } else {
+            // No socket yet — start fresh
+            setTimeout(() => connectionLogic(), 100);
+        }
+    });
+};
 
 // 🌐 Serve static public assets (dashboard, etc.)
 const publicPath = require("path").join(__dirname, "public");
