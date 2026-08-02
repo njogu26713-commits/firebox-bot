@@ -1,0 +1,89 @@
+{"message":"Starting Container","severity":"info","attributes":{"level":"info"},"timestamp":"2026-08-02T15:52:57.363371455Z"}
+{"message":"    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:58.696107782Z"}
+{"message":"  code: 'MODULE_NOT_FOUND',","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:58.696113521Z"}
+{"message":"  requireStack: [ '/app/index.js' ]","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:58.696119500Z"}
+{"message":"}","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:58.696124674Z"}
+{"message":"","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:58.696130616Z"}
+{"message":"node:internal/modules/cjs/loader:1210","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:58.696139782Z"}
+{"message":"  throw err;","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:58.696145904Z"}
+{"message":"  ^","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:58.696150716Z"}
+{"message":"","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:58.696155838Z"}
+{"message":"Error: Cannot find module 'dotenv'","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:58.696160424Z"}
+{"message":"Require stack:","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:58.696165121Z"}
+{"message":"- /app/index.js","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:58.696170797Z"}
+{"message":"    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:58.696175292Z"}
+{"message":"    at Module._load (node:internal/modules/cjs/loader:1038:27)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:58.696179691Z"}
+{"message":"    at Module.require (node:internal/modules/cjs/loader:1289:19)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:58.696184336Z"}
+{"message":"    at require (node:internal/modules/helpers:182:18)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:58.696189163Z"}
+{"message":"    at Object.<anonymous> (/app/index.js:2:19)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:58.696193426Z"}
+{"message":"    at Module._compile (node:internal/modules/cjs/loader:1521:14)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:58.696197620Z"}
+{"message":"    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:58.696201787Z"}
+{"message":"    at Module.load (node:internal/modules/cjs/loader:1266:32)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:58.696207286Z"}
+{"message":"    at Module._load (node:internal/modules/cjs/loader:1091:12)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:58.696211646Z"}
+{"message":"  ^","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:58.696253419Z"}
+{"message":"","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:58.696259825Z"}
+{"message":"Node.js v20.20.2","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:58.696272704Z"}
+{"message":"node:internal/modules/cjs/loader:1210","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:58.696284540Z"}
+{"message":"  throw err;","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:58.696289976Z"}
+{"message":"}","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:59.793241160Z"}
+{"message":"Error: Cannot find module 'dotenv'","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:59.793248405Z"}
+{"message":"","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:59.793252802Z"}
+{"message":"Require stack:","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:59.793257452Z"}
+{"message":"    at Module._load (node:internal/modules/cjs/loader:1038:27)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:59.793258560Z"}
+{"message":"Node.js v20.20.2","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:59.793262395Z"}
+{"message":"- /app/index.js","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:59.793267114Z"}
+{"message":"    at Module._compile (node:internal/modules/cjs/loader:1521:14)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:59.793268713Z"}
+{"message":"    at Module.require (node:internal/modules/cjs/loader:1289:19)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:59.793272618Z"}
+{"message":"    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:59.793278504Z"}
+{"message":"    at require (node:internal/modules/helpers:182:18)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:59.793281833Z"}
+{"message":"    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:59.793283472Z"}
+{"message":"    at Object.<anonymous> (/app/index.js:2:19)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:59.793288162Z"}
+{"message":"    at Module.load (node:internal/modules/cjs/loader:1266:32)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:59.793292532Z"}
+{"message":"    at Module._load (node:internal/modules/cjs/loader:1091:12)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:59.793299292Z"}
+{"message":"    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:59.793305685Z"}
+{"message":"  code: 'MODULE_NOT_FOUND',","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:59.793313819Z"}
+{"message":"  requireStack: [ '/app/index.js' ]","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:52:59.793319890Z"}
+{"message":"node:internal/modules/cjs/loader:1210","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:01.060463779Z"}
+{"message":"  throw err;","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:01.060471311Z"}
+{"message":"  ^","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:01.060478014Z"}
+{"message":"","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:01.060486048Z"}
+{"message":"Error: Cannot find module 'dotenv'","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:01.060493426Z"}
+{"message":"    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:01.060638758Z"}
+{"message":"    at Module._load (node:internal/modules/cjs/loader:1038:27)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:01.060645846Z"}
+{"message":"    at Module.require (node:internal/modules/cjs/loader:1289:19)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:01.060654124Z"}
+{"message":"","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:01.060654429Z"}
+{"message":"    at require (node:internal/modules/helpers:182:18)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:01.060663128Z"}
+{"message":"Node.js v20.20.2","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:01.060664619Z"}
+{"message":"Require stack:","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:01.060665297Z"}
+{"message":"    at Object.<anonymous> (/app/index.js:2:19)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:01.060671646Z"}
+{"message":"    at Module.load (node:internal/modules/cjs/loader:1266:32)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:01.060675794Z"}
+{"message":"- /app/index.js","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:01.060679875Z"}
+{"message":"    at Module._compile (node:internal/modules/cjs/loader:1521:14)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:01.060681968Z"}
+{"message":"    at Module._load (node:internal/modules/cjs/loader:1091:12)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:01.060685771Z"}
+{"message":"    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:01.060690546Z"}
+{"message":"    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:01.060696039Z"}
+{"message":"  code: 'MODULE_NOT_FOUND',","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:01.060701528Z"}
+{"message":"  requireStack: [ '/app/index.js' ]","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:01.060709817Z"}
+{"message":"}","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:01.060716559Z"}
+{"message":"    at Object.<anonymous> (/app/index.js:2:19)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:02.493743822Z"}
+{"message":"}","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:02.493745962Z"}
+{"message":"    at Module._compile (node:internal/modules/cjs/loader:1521:14)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:02.493751608Z"}
+{"message":"","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:02.493758906Z"}
+{"message":"    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:02.493758954Z"}
+{"message":"Node.js v20.20.2","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:02.493767923Z"}
+{"message":"- /app/index.js","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:02.493771646Z"}
+{"message":"    at Module.load (node:internal/modules/cjs/loader:1266:32)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:02.493779237Z"}
+{"message":"    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:02.493782727Z"}
+{"message":"    at Module._load (node:internal/modules/cjs/loader:1091:12)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:02.493789689Z"}
+{"message":"    at Module._load (node:internal/modules/cjs/loader:1038:27)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:02.493791091Z"}
+{"message":"node:internal/modules/cjs/loader:1210","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:02.493796633Z"}
+{"message":"    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:02.493797362Z"}
+{"message":"    at Module.require (node:internal/modules/cjs/loader:1289:19)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:02.493799662Z"}
+{"message":"  code: 'MODULE_NOT_FOUND',","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:02.493804893Z"}
+{"message":"  throw err;","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:02.493807670Z"}
+{"message":"    at require (node:internal/modules/helpers:182:18)","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:02.493810992Z"}
+{"message":"  requireStack: [ '/app/index.js' ]","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:02.493813522Z"}
+{"message":"  ^","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:02.493815290Z"}
+{"message":"","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:02.493821530Z"}
+{"message":"Error: Cannot find module 'dotenv'","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:02.493827616Z"}
+{"message":"Require stack:","severity":"error","attributes":{"level":"error"},"timestamp":"2026-08-02T15:53:02.493834371Z"}
