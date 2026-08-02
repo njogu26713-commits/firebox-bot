@@ -1,77 +1,52 @@
-const { Sequelize } = require("sequelize");
-const path = require("path");
+const mongoose = require("mongoose");
 
-const dbUrl = process.env.DATABASE_URL;
-
-// Global state tracking
 let isDatabaseOnline = false;
-let sequelize = null;
-
-const dbLog = (sql, duration) => {
-    if (duration > 50) {
-        console.warn(`🐢 [DB SLOW QUERY] (${duration}ms): ${sql}`);
-    }
-};
-
-if (dbUrl) {
-    // ☁️ Cloud database (PostgreSQL / MySQL on Heroku, Railway, etc.)
-    sequelize = new Sequelize(dbUrl, {
-        benchmark: true,
-        logging: dbLog,
-        dialectOptions: {
-            ssl: { require: true, rejectUnauthorized: false },
-            connectTimeout: 5000
-        },
-        retry: { max: 0 }
-    });
-} else {
-    // 💾 Local / Panel fallback — use SQLite (much faster than JSON file store!)
-    // sqlite3 is already installed. SQLite uses indexed B-tree lookups and WAL
-    // mode so reads/writes are non-blocking and don't load the entire file.
-    const dbPath = path.join(__dirname, "../database/firebox.db"); // firebox/ → database/
-    sequelize = new Sequelize({
-        dialect: "sqlite",
-        storage: dbPath,
-        benchmark: true,
-        logging: dbLog,
-        // WAL (Write-Ahead Log) mode: reads never block writes, writes never block reads
-        dialectOptions: {
-            mode: null
-        },
-        pool: {
-            max: 1,        // SQLite only supports 1 writer at a time
-            min: 0,
-            acquire: 10000,
-            idle: 5000
-        }
-    });
-}
 
 const initDb = async () => {
+    const uri = process.env.MONGODB_URI;
+    if (!uri) {
+        console.log("ℹ️  No MONGODB_URI set. Using JSON file fallback store.");
+        return;
+    }
     try {
-        await sequelize.authenticate();
-
-        // Enable WAL mode for SQLite (skipped silently for Postgres/MySQL)
-        if (!dbUrl) {
-            await sequelize.query("PRAGMA journal_mode=WAL;").catch(() => {});
-            await sequelize.query("PRAGMA synchronous=NORMAL;").catch(() => {});
-            await sequelize.query("PRAGMA cache_size=-16000;").catch(() => {}); // 16MB page cache
-            console.log("🗄️ SQLite database ready (WAL mode enabled).");
-        } else {
-            console.log("🗄️ Cloud database connected successfully.");
-        }
-
-        await sequelize.sync({ alter: true });
-        console.log("✅ Database models synchronized.");
+        await mongoose.connect(uri, { serverSelectionTimeoutMS: 5000 });
         isDatabaseOnline = true;
-    } catch (error) {
-        console.error("❌ Database initialization failed:", error.message);
+        console.log("🗄️ MongoDB connected successfully.");
+
+        mongoose.connection.on("disconnected", () => {
+            isDatabaseOnline = false;
+            console.warn("⚠️ MongoDB disconnected. Falling back to JSON store.");
+        });
+        mongoose.connection.on("reconnected", () => {
+            isDatabaseOnline = true;
+            console.log("✅ MongoDB reconnected.");
+        });
+    } catch (e) {
+        console.error("❌ MongoDB connection failed:", e.message);
         isDatabaseOnline = false;
     }
 };
 
-module.exports = {
-    sequelize,
-    initDb,
-    isOnline: () => isDatabaseOnline
-};
+/**
+ * Wraps a Mongoose document with Sequelize-compatible helpers
+ * (.dataValues, .update(), .save()) so existing commands work unchanged.
+ */
+function toCompat(doc) {
+    if (!doc) return null;
+    if (!Object.getOwnPropertyDescriptor(doc, "dataValues")) {
+        Object.defineProperty(doc, "dataValues", {
+            get() { return doc.toObject ? doc.toObject() : { ...doc }; },
+            configurable: true
+        });
+    }
+    if (!doc.update) {
+        doc.update = async (changes) => {
+            Object.assign(doc, changes);
+            await doc.save();
+            return doc;
+        };
+    }
+    return doc;
+}
+
+module.exports = { mongoose, initDb, isOnline: () => isDatabaseOnline, toCompat };

@@ -1,85 +1,61 @@
-const { DataTypes } = require("sequelize");
-const { sequelize, isOnline } = require("./db");
+const mongoose = require("mongoose");
+const { isOnline, toCompat } = require("./db");
 const jsonStore = require("./jsonStore");
 
-// Define User Model
-let User = null;
+const userSchema = new mongoose.Schema({
+    id:          { type: String, required: true, unique: true },
+    xp:          { type: Number, default: 0 },
+    level:       { type: Number, default: 1 },
+    coins:       { type: Number, default: 0 },
+    banned:      { type: Boolean, default: false },
+    inventory:   { type: String, default: "[]" },
+    lastDaily:   { type: Date, default: null },
+    lastWeekly:  { type: Date, default: null },
+    lastMonthly: { type: Date, default: null },
+    lastWork:    { type: Date, default: null },
+    lastCrime:   { type: Date, default: null },
+    lastRob:     { type: Date, default: null },
+}, { timestamps: true });
 
-if (sequelize) {
-    User = sequelize.define("User", {
-        id: {
-            type: DataTypes.STRING,
-            primaryKey: true,
-            allowNull: false,
-        },
-        xp: {
-            type: DataTypes.INTEGER,
-            defaultValue: 0,
-        },
-        level: {
-            type: DataTypes.INTEGER,
-            defaultValue: 1,
-        },
-        coins: {
-            type: DataTypes.INTEGER,
-            defaultValue: 0,
-        },
-        inventory: {
-            type: DataTypes.TEXT, // Store as JSON string
-            defaultValue: "[]",
-        },
-        lastDaily: { type: DataTypes.DATE, defaultValue: 0 },
-        lastWeekly: { type: DataTypes.DATE, defaultValue: 0 },
-        lastMonthly: { type: DataTypes.DATE, defaultValue: 0 },
-        lastWork: { type: DataTypes.DATE, defaultValue: 0 },
-        lastCrime: { type: DataTypes.DATE, defaultValue: 0 },
-        lastRob: { type: DataTypes.DATE, defaultValue: 0 },
-    }, {
-        timestamps: true, // Automatically adds createdAt and updatedAt
-    });
+let User = null;
+try {
+    User = mongoose.model("User");
+} catch {
+    User = mongoose.model("User", userSchema);
 }
 
-// Helper functions (keeping the same API for the rest of the bot)
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
 const getUser = async (id) => {
-    if (User && isOnline()) {
+    if (isOnline()) {
         try {
-            const [user, created] = await User.findOrCreate({
-                where: { id: id },
-                defaults: { xp: 0, level: 1, coins: 0, inventory: "[]" }
-            });
-            return user;
-        } catch (error) {
-            console.error("❌ getUser Error:", error);
+            const doc = await User.findOneAndUpdate(
+                { id },
+                { $setOnInsert: { id, xp: 0, level: 1, coins: 0, inventory: "[]" } },
+                { upsert: true, new: true, setDefaultsOnInsert: true }
+            );
+            return toCompat(doc);
+        } catch (e) {
+            console.error("❌ getUser Error:", e.message);
         }
     }
-    
-    // Fallback to JSON
+
+    // JSON fallback
     const key = `user_${id}`;
     let data = jsonStore.get(key);
     if (!data) {
         data = { id, xp: 0, level: 1, coins: 0, inventory: "[]" };
         jsonStore.set(key, data);
     }
-    
-    // Polyfill the sequelize methods for commands
     return {
         ...data,
         dataValues: data,
         update: async (updates) => {
-            const cleanUpdates = {};
-            for (const k in updates) {
-                if (k !== "dataValues" && k !== "update" && k !== "save" && typeof updates[k] !== "function") {
-                    cleanUpdates[k] = updates[k];
-                }
-            }
-            Object.assign(data, cleanUpdates);
+            Object.assign(data, updates);
             jsonStore.set(key, data);
             return data;
         },
-        save: async () => {
-            jsonStore.set(key, data);
-            return data;
-        }
+        save: async () => { jsonStore.set(key, data); return data; }
     };
 };
 
@@ -87,50 +63,29 @@ const xpCooldowns = new Map();
 
 const addXP = async (id, amount) => {
     const now = Date.now();
-    const lastXPTime = xpCooldowns.get(id) || 0;
-    if (now - lastXPTime < 60000) { // 60s cooldown to throttle database reads/writes
-        return null;
-    }
+    if (now - (xpCooldowns.get(id) || 0) < 60000) return null;
     xpCooldowns.set(id, now);
 
     const user = await getUser(id);
-    if (user) {
-        let currentXP = user.xp || 0;
-        let currentLevel = user.level || 1;
-        
-        currentXP += amount;
-        const nextLevelXP = currentLevel * 100;
-        if (currentXP >= nextLevelXP) {
-            currentLevel += 1;
-        }
-        
-        await user.update({ xp: currentXP, level: currentLevel });
-        return user.dataValues;
-    }
+    if (!user) return null;
+    const xp = (user.xp || 0) + amount;
+    const level = xp >= (user.level || 1) * 100 ? (user.level || 1) + 1 : (user.level || 1);
+    await user.update({ xp, level });
+    return user.dataValues;
 };
 
 const addCoins = async (id, amount) => {
     const user = await getUser(id);
-    if (user) {
-        let currentCoins = user.coins || 0;
-        currentCoins += amount;
-        await user.update({ coins: currentCoins });
-        return user.dataValues;
-    }
+    if (!user) return null;
+    await user.update({ coins: (user.coins || 0) + amount });
+    return user.dataValues;
 };
 
 const getUserCount = async () => {
-    if (User && isOnline()) {
-        try {
-            return await User.count();
-        } catch (e) {
-            // Fallback on error
-        }
+    if (isOnline()) {
+        try { return await User.countDocuments(); } catch {}
     }
-    
-    // Scan JSON store for keys starting with "user_"
-    const allData = jsonStore.getAll();
-    return Object.keys(allData).filter(k => k.startsWith("user_")).length;
+    return Object.keys(jsonStore.getAll()).filter(k => k.startsWith("user_")).length;
 };
 
 module.exports = { User, getUser, addXP, addCoins, getUserCount };

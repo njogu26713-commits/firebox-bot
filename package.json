@@ -22,6 +22,7 @@
     "jimp": "^1.6.1",
     "jsqr": "^1.4.0",
     "link-preview-js": "^3.2.0",
+    "mongoose": "^9.9.1",
     "mumaker": "^2.0.0",
     "node-cache": "^5.1.2",
     "nodemon": "^3.1.14",

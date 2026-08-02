@@ -1,76 +1,53 @@
 const { BufferJSON, initAuthCreds, proto } = require("@whiskeysockets/baileys");
-const { DataTypes } = require("sequelize");
-const { sequelize, isOnline } = require("./db");
 const { useMultiFileAuthState } = require("@whiskeysockets/baileys");
+const mongoose = require("mongoose");
+const { isOnline } = require("./db");
+
+const authSchema = new mongoose.Schema({
+    keyId: { type: String, required: true, unique: true },
+    value: { type: String },
+}, { timestamps: true });
 
 let BaileysAuth = null;
-
-if (sequelize) {
-    BaileysAuth = sequelize.define("BaileysAuth", {
-        keyId: {
-            type: DataTypes.STRING,
-            primaryKey: true,
-        },
-        value: {
-            type: DataTypes.TEXT,
-        }
-    }, {
-        tableName: "baileys_auths",
-        timestamps: true,
-    });
+try {
+    BaileysAuth = mongoose.model("BaileysAuth");
+} catch {
+    BaileysAuth = mongoose.model("BaileysAuth", authSchema);
 }
 
-/**
- * Custom database-backed state provider for Baileys.
- * Saves credentials, prekeys, sessions, and sender keys directly to SQLite or Postgres database.
- * If the database connection is offline, automatically falls back to standard file-system state.
- * 
- * @param {string} sessionName - Unique namespace prefix for the keys
- */
 async function useDatabaseAuthState(sessionName = "session") {
-    // If DB is offline, fall back to standard file-system state
-    if (!BaileysAuth || !isOnline()) {
-        console.log("💾 Database is offline/unavailable. Falling back to useMultiFileAuthState.");
-        return useMultiFileAuthState(sessionName);
-    }
-
-    // Sync table schema first to ensure the table exists
-    try {
-        await BaileysAuth.sync();
-    } catch (e) {
-        console.error("❌ Failed to synchronize BaileysAuth schema, falling back to file auth:", e.message);
+    if (!isOnline()) {
+        console.log("💾 MongoDB offline. Falling back to useMultiFileAuthState.");
         return useMultiFileAuthState(sessionName);
     }
 
     const writeData = async (data, keyId) => {
         try {
-            const valueStr = JSON.stringify(data, BufferJSON.replacer);
-            await BaileysAuth.upsert({ keyId, value: valueStr });
+            const value = JSON.stringify(data, BufferJSON.replacer);
+            await BaileysAuth.findOneAndUpdate({ keyId }, { keyId, value }, { upsert: true, new: true });
         } catch (e) {
-            console.error("❌ Failed to write auth key to DB:", e.message);
+            console.error("❌ Auth write error:", e.message);
         }
     };
 
     const readData = async (keyId) => {
         try {
-            const record = await BaileysAuth.findByPk(keyId);
-            if (!record) return null;
-            return JSON.parse(record.value, BufferJSON.reviver);
+            const record = await BaileysAuth.findOne({ keyId }).lean();
+            return record ? JSON.parse(record.value, BufferJSON.reviver) : null;
         } catch (e) {
-            console.error("❌ Failed to read auth key from DB:", e.message);
+            console.error("❌ Auth read error:", e.message);
             return null;
         }
     };
 
     const removeData = async (keyId) => {
         try {
-            await BaileysAuth.destroy({ where: { keyId } });
+            await BaileysAuth.deleteOne({ keyId });
         } catch (e) {
-            console.error("❌ Failed to remove auth key from DB:", e.message);
+            console.error("❌ Auth remove error:", e.message);
         }
     };
 
-    // Load or initialize creds
     const credsKey = `${sessionName}_creds`;
     let creds = await readData(credsKey);
     if (!creds) {
@@ -87,7 +64,7 @@ async function useDatabaseAuthState(sessionName = "session") {
                     await Promise.all(ids.map(async (id) => {
                         const keyId = `${sessionName}_${type}_${id}`;
                         let value = await readData(keyId);
-                        if (type === 'app-state-sync-key' && value) {
+                        if (type === "app-state-sync-key" && value) {
                             value = proto.Message.AppStateSyncKeyData.fromObject(value);
                         }
                         data[id] = value;
@@ -107,9 +84,7 @@ async function useDatabaseAuthState(sessionName = "session") {
                 }
             }
         },
-        saveCreds: async () => {
-            await writeData(creds, credsKey);
-        }
+        saveCreds: async () => writeData(creds, credsKey)
     };
 }
 

@@ -1,172 +1,84 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../firebox/db');
+const mongoose = require("mongoose");
+const { isOnline, toCompat } = require("../firebox/db");
+const jsonStore = require("../firebox/jsonStore");
 
-let SettingsDB = null;
+const SETTINGS_KEY = "bot_settings";
 
-if (sequelize) {
-    SettingsDB = sequelize.define('settings', {
-        // 1. Bot Mode
-        publicMode: { type: DataTypes.BOOLEAN, defaultValue: true },
-        
-        // 2. Automation Toggles
-        antiLink: { type: DataTypes.BOOLEAN, defaultValue: false },
-        antiTag: { type: DataTypes.BOOLEAN, defaultValue: false },
-        antiBadword: { type: DataTypes.BOOLEAN, defaultValue: false },
-        antiSpam: { type: DataTypes.BOOLEAN, defaultValue: true },
-        antiDelete: { type: DataTypes.BOOLEAN, defaultValue: true },
-        antiEdit: { type: DataTypes.BOOLEAN, defaultValue: true },
-        antiCall: { type: DataTypes.BOOLEAN, defaultValue: false },
-
-        statusAntiDelete: { type: DataTypes.BOOLEAN, defaultValue: false },
-        autoDelete: { type: DataTypes.BOOLEAN, defaultValue: false },
-        autoDeleteTime: { type: DataTypes.INTEGER, defaultValue: 30000 },
-        
-        // 3. Status/Presence Expansion
-        autoViewStatus: { type: DataTypes.BOOLEAN, defaultValue: true },
-        autoLikeStatus: { type: DataTypes.BOOLEAN, defaultValue: true },
-        autoReplyStatus: { type: DataTypes.BOOLEAN, defaultValue: false },
-        statusReplyText: { type: DataTypes.STRING, defaultValue: 'Nice status! ✨' },
-        statusLikeEmojis: { type: DataTypes.STRING, defaultValue: '❤️,✨,🔥,🙌,👍,⭐,💥,🎉,💯,😎,🤩,😍,👏' },
-        autoRead: { type: DataTypes.BOOLEAN, defaultValue: false },
-        autoType: { type: DataTypes.BOOLEAN, defaultValue: false },
-        autoRecord: { type: DataTypes.BOOLEAN, defaultValue: false },
-        alwaysOnline: { type: DataTypes.BOOLEAN, defaultValue: false },
-        autoBio: { type: DataTypes.BOOLEAN, defaultValue: false },
-        
-        // 4. Presence & AI
-        dmPresence: { type: DataTypes.BOOLEAN, defaultValue: false },
-        groupPresence: { type: DataTypes.BOOLEAN, defaultValue: false },
-        chatbotAI: { type: DataTypes.BOOLEAN, defaultValue: false },
-        greetDM: { type: DataTypes.BOOLEAN, defaultValue: false },
-        greetDMMsg: { type: DataTypes.STRING, defaultValue: 'Hello World' },
-        autoReactDM: { type: DataTypes.BOOLEAN, defaultValue: false },
-        autoReactGrp: { type: DataTypes.BOOLEAN, defaultValue: false },
-        
-        // 5. Group Events (Welcome/Goodbye)
-        welcome: { type: DataTypes.BOOLEAN, defaultValue: false },
-        goodbye: { type: DataTypes.BOOLEAN, defaultValue: false },
-        welcomeMsg: { 
-            type: DataTypes.STRING, 
-            defaultValue: 'Hi @user, welcome to *@group*! 👋' 
-        },
-        goodbyeMsg: { 
-            type: DataTypes.STRING, 
-            defaultValue: 'Goodbye @user, we hope to see you back soon! 😢' 
-        },
-
-        // 6. Custom Content
-        antiDeleteNotification: { 
-            type: DataTypes.STRING, 
-            defaultValue: '🕵️ *Firebox Anti-Delete Update*' 
-        },
-        footer: { type: DataTypes.STRING, defaultValue: '© Firebox Bot • Channel: https://whatsapp.com/channel/0029Vb8elJp77qVJlCeiNX26' },
-        ownerNumber: { type: DataTypes.STRING, defaultValue: '' },
-        lockedCommands: { type: DataTypes.TEXT, defaultValue: '' },
-        botName: { type: DataTypes.STRING, defaultValue: 'Firebox Bot' },
-        device: { type: DataTypes.STRING, defaultValue: 'Android' },
-        prefix: { type: DataTypes.STRING, defaultValue: '.' },
-        packName: { type: DataTypes.STRING, defaultValue: 'Firebox Bot' },
-        author: { type: DataTypes.STRING, defaultValue: 'White Wizard' },
-        timezone: { type: DataTypes.STRING, defaultValue: 'Africa/Nairobi' },
-        botImage: { type: DataTypes.STRING, defaultValue: 'Default' },
-        hideViewChannel: { type: DataTypes.BOOLEAN, defaultValue: false },
-        menuStyle: { type: DataTypes.INTEGER, defaultValue: 2 },
-        antiLinkGlobal: { type: DataTypes.STRING, defaultValue: 'off' },
-        antiLinkLimit: { type: DataTypes.INTEGER, defaultValue: 3 },
-        antiStatusMentionGlobal: { type: DataTypes.STRING, defaultValue: 'off' },
-        antiStatusMentionLimit: { type: DataTypes.INTEGER, defaultValue: 3 },
-        groupEventsGlobal: { type: DataTypes.BOOLEAN, defaultValue: false },
-        eventsPromote: { type: DataTypes.BOOLEAN, defaultValue: false }
-    }, {
-        timestamps: true
-    });
-}
-
-/**
- * Initializes the settings record if it doesn't exist
- */
-const getBotSettings = async () => {
-    const { isOnline } = require('../firebox/db');
-    const jsonStore = require('../firebox/jsonStore');
-
-    const defaults = { 
-        publicMode: true,
-        antiLink: false,
-        antiTag: false,
-        antiBadword: false,
-        antiSpam: true,
-        antiDelete: true,
-        antiEdit: true,
-        antiCall: false,
-        statusAntiDelete: false,
-        autoDelete: false,
-        autoDeleteTime: 30000,
-        autoViewStatus: true,
-        autoLikeStatus: true,
-        autoReplyStatus: false,
-        statusReplyText: 'Nice status! ✨',
-        statusLikeEmojis: '❤️,✨,🔥,🙌,👍,⭐,💥,🎉,💯,😎,🤩,😍,👏',
-        autoRead: false,
-        autoType: false,
-        autoRecord: false,
-        alwaysOnline: false,
-        autoBio: false,
-        dmPresence: false,
-        groupPresence: false,
-        chatbotAI: false,
-        greetDM: false,
-        greetDMMsg: 'Hello World',
-        autoReactDM: false,
-        autoReactGrp: false,
-        welcome: false,
-        goodbye: false,
-        welcomeMsg: 'Hi @user, welcome to *@group*! 👋',
-        goodbyeMsg: 'Goodbye @user, we hope to see you back soon! 😢',
-        antiDeleteNotification: '🕵️ *Firebox Anti-Delete Update*',
-        footer: '© Firebox Bot • Channel: https://whatsapp.com/channel/0029Vb8elJp77qVJlCeiNX26',
-        ownerNumber: '',
-        lockedCommands: '',
-        botName: 'Firebox Bot',
-        device: 'Android',
-        prefix: '.',
-        packName: 'Firebox Bot',
-        author: 'White Wizard',
-        timezone: 'Africa/Nairobi',
-        botImage: 'Default',
-        hideViewChannel: false,
-        menuStyle: 2,
-        antiLinkGlobal: 'off',
-        antiLinkLimit: 3,
-        antiStatusMentionGlobal: 'off',
-        antiStatusMentionLimit: 3,
-        groupEventsGlobal: false,
-        eventsPromote: false
-    };
-
-    if (!isOnline() || !SettingsDB) {
-        const [settings] = await jsonStore.findOrCreate({
-            where: { id: 1 },
-            defaults
-        });
-        return settings;
-    }
-
-    try {
-        const [settings] = await SettingsDB.findOrCreate({
-            where: { id: 1 },
-            defaults
-        });
-        return settings;
-    } catch (e) {
-        console.error("❌ getBotSettings Fallback:", e.message);
-        // Emergency fallback to JSON store if DB sync/find fails
-        const [settings] = await jsonStore.findOrCreate({ where: { id: 1 }, defaults });
-        return settings;
-    }
+const defaults = {
+    publicMode: true,
+    antiLink: false, antiTag: false, antiBadword: false,
+    antiSpam: true, antiDelete: true, antiEdit: true, antiCall: false,
+    statusAntiDelete: false, autoDelete: false, autoDeleteTime: 30000,
+    autoViewStatus: true, autoLikeStatus: true, autoReplyStatus: false,
+    statusReplyText: "Nice status! ✨",
+    statusLikeEmojis: "❤️,✨,🔥,🙌,👍,⭐,💥,🎉,💯,😎,🤩,😍,👏",
+    autoRead: false, autoType: false, autoRecord: false,
+    alwaysOnline: false, autoBio: false,
+    dmPresence: false, groupPresence: false, chatbotAI: false,
+    greetDM: false, greetDMMsg: "Hello, how can I help you today!",
+    autoReactDM: false, autoReactGrp: false,
+    welcome: false, goodbye: false,
+    welcomeMsg: "Hi @user, welcome to *@group*! 👋",
+    goodbyeMsg: "Goodbye @user, we hope to see you back soon! 😢",
+    antiDeleteNotification: "🕵️ *Firebox Anti-Delete Update*",
+    footer: "© Firebox Bot • Channel: https://whatsapp.com/channel/0029Vb8elJp77qVJlCeiNX26",
+    ownerNumber: "", lockedCommands: "",
+    botName: "Firebox Bot", device: "Android", prefix: ".",
+    packName: "Firebox Bot", author: "Firebox Studios",
+    timezone: "Africa/Nairobi", botImage: "Default",
+    hideViewChannel: false, menuStyle: 1,
+    antiLinkGlobal: "off", antiLinkLimit: 3,
+    antiStatusMentionGlobal: "off", antiStatusMentionLimit: 3,
+    groupEventsGlobal: false, eventsPromote: false
 };
 
-module.exports = { 
-    SettingsDB, 
+const settingsSchema = new mongoose.Schema(
+    Object.fromEntries(Object.entries(defaults).map(([k, v]) => {
+        const type = typeof v === "boolean" ? Boolean :
+                     typeof v === "number"  ? Number  : String;
+        return [k, { type, default: v }];
+    })),
+    { timestamps: true }
+);
+
+let SettingsDB = null;
+try {
+    SettingsDB = mongoose.model("Settings");
+} catch {
+    SettingsDB = mongoose.model("Settings", settingsSchema);
+}
+
+const getBotSettings = async () => {
+    if (isOnline()) {
+        try {
+            let doc = await SettingsDB.findOne();
+            if (!doc) doc = await SettingsDB.create(defaults);
+            return toCompat(doc);
+        } catch (e) {
+            console.error("❌ getBotSettings Error:", e.message);
+        }
+    }
+
+    // JSON fallback
+    let data = jsonStore.get(SETTINGS_KEY);
+    if (!data) {
+        data = { ...defaults };
+        jsonStore.set(SETTINGS_KEY, data);
+    }
+    return {
+        ...data,
+        dataValues: data,
+        update: async (updates) => {
+            Object.assign(data, updates);
+            jsonStore.set(SETTINGS_KEY, data);
+            return data;
+        },
+        save: async () => { jsonStore.set(SETTINGS_KEY, data); return data; }
+    };
+};
+
+module.exports = {
+    SettingsDB,
     getBotSettings,
-    initSettingsDB: async () => { if(SettingsDB) await SettingsDB.sync() }
+    initSettingsDB: async () => { /* No-op — Mongoose handles schema sync */ }
 };

@@ -1,48 +1,43 @@
-const { DataTypes } = require('sequelize');
-const { sequelize, isOnline } = require('../firebox/db');
-const jsonStore = require('../firebox/jsonStore');
+const mongoose = require("mongoose");
+const { isOnline } = require("../firebox/db");
+const jsonStore = require("../firebox/jsonStore");
+
+const rulesSchema = new mongoose.Schema({
+    groupId:   { type: String, required: true, unique: true },
+    rulesText: { type: String, default: "No rules set for this group yet." }
+}, { timestamps: true });
 
 let RulesDB = null;
-
-if (sequelize) {
-    RulesDB = sequelize.define('rules', {
-        groupId: { type: DataTypes.STRING, allowNull: false, unique: true },
-        rulesText: { type: DataTypes.TEXT, defaultValue: 'No rules set for this group yet.' }
-    }, {
-        timestamps: true
-    });
+try {
+    RulesDB = mongoose.model("Rules");
+} catch {
+    RulesDB = mongoose.model("Rules", rulesSchema);
 }
 
 module.exports = {
     RulesDB,
-    initRulesDB: async () => {
-        if (RulesDB) await RulesDB.sync({ alter: true });
-    },
-    
-    setRules: async (groupId, text) => {
-        if (RulesDB && isOnline()) {
-            const [rule] = await RulesDB.findOrCreate({
-                where: { groupId },
-                defaults: { rulesText: text }
-            });
-            rule.rulesText = text;
-            await rule.save();
-            return rule;
-        }
-        // Fallback to JSON
-        jsonStore.set(`rules_${groupId}`, text);
-        return { rulesText: text };
-    },
-    
-    getRules: async (groupId) => {
-        if (RulesDB && isOnline()) {
+    initRulesDB: async () => {},
+
+    setRules: async (groupId, rulesText) => {
+        if (isOnline()) {
             try {
-                const rule = await RulesDB.findOne({ where: { groupId } });
-                return rule ? rule.rulesText : 'No rules set for this group yet.';
-            } catch (e) {
-                return jsonStore.get(`rules_${groupId}`, 'No rules set for this group yet.');
-            }
+                const doc = await RulesDB.findOneAndUpdate(
+                    { groupId }, { groupId, rulesText }, { upsert: true, new: true }
+                );
+                return doc;
+            } catch (e) { console.error("❌ setRules:", e.message); }
         }
-        return jsonStore.get(`rules_${groupId}`, 'No rules set for this group yet.');
+        jsonStore.set(`rules_${groupId}`, rulesText);
+        return { rulesText };
+    },
+
+    getRules: async (groupId) => {
+        if (isOnline()) {
+            try {
+                const doc = await RulesDB.findOne({ groupId }).lean();
+                return doc ? doc.rulesText : "No rules set for this group yet.";
+            } catch (e) { console.error("❌ getRules:", e.message); }
+        }
+        return jsonStore.get(`rules_${groupId}`, "No rules set for this group yet.");
     }
 };

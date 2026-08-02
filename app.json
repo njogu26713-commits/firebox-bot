@@ -28,6 +28,11 @@
       "required": false,
       "type": "string",
       "value": "public"
+    },
+    "MONGODB_URI": {
+      "description": "MongoDB connection string (e.g. mongodb+srv://...). Falls back to local JSON store if not set.",
+      "required": false,
+      "type": "string"
     }
   }
 }
