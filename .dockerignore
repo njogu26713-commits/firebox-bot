@@ -1,0 +1,14 @@
+node_modules
+npm-debug.log*
+.env
+.env.*
+auth_info_baileys/
+session/
+database/*.db
+database/*.json
+temp/
+tmp/
+downloads/
+temp_media/
+.git
+attached_assets/
