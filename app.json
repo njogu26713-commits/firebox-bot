@@ -1,0 +1,33 @@
+{
+  "name": "Firebox Bot",
+  "description": "A powerful, multi-functional WhatsApp automation bot designed to elevate the general chat experience with smart tools and utilities.",
+  "env": {
+    "SESSION_ID": {
+      "description": "Your unique bot session ID (starts with FIREBOX~).",
+      "required": true,
+      "type": "string"
+    },
+    "SUDO": {
+      "description": "The Super-Admin phone number with country code (e.g. 254797715445). Can run system commands.",
+      "required": true,
+      "type": "string"
+    },
+    "OWNERS": {
+      "description": "Additional admin phone numbers, separated by commas (e.g., 254711111111,254722222222).",
+      "required": false,
+      "type": "string"
+    },
+    "PREFIX": {
+      "description": "The command prefix (default is .)",
+      "required": false,
+      "type": "string",
+      "value": "."
+    },
+    "MODE": {
+      "description": "Bot mode (public or private).",
+      "required": false,
+      "type": "string",
+      "value": "public"
+    }
+  }
+}
