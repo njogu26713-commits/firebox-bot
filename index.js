@@ -326,6 +326,9 @@ async function connectionLogic() {
                     global.pairingCodeResolve = null;
                     global.pairingCodeReject = null;
                 }
+                // Clear PAIRING_NUMBER so that the 401 disconnect WhatsApp sends
+                // after issuing the code does NOT trigger another pairing-code loop.
+                delete process.env.PAIRING_NUMBER;
             } catch (err) {
                 console.error("❌ Failed to generate pairing code:", err);
                 if (global.pairingCodeReject) {
@@ -728,6 +731,20 @@ global.triggerPairingRestart = function(phone) {
         process.env.PAIRING_NUMBER = phone;
         delete process.env.SESSION_ID;
         delete process.env.SESSION_ID_FAILED;
+
+        // Wipe stale session creds — old QR-mode credentials cause a 401
+        // immediately after the pairing code is issued if left in place.
+        try {
+            const _fs   = require("fs");
+            const _path = require("path");
+            const { authFolder: _af } = require("./config");
+            const _sessionDir = _path.join(__dirname, _af);
+            if (_fs.existsSync(_sessionDir)) {
+                _fs.readdirSync(_sessionDir).forEach(f => {
+                    try { _fs.unlinkSync(_path.join(_sessionDir, f)); } catch (_) {}
+                });
+            }
+        } catch (_) {}
 
         global.pairingRestartInProgress = true;
 
