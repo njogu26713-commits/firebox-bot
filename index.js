@@ -467,12 +467,13 @@ async function connectionLogic() {
                         `> Powered by Firebox Intelligence`
                 };
 
-                // 🛠️ TECHNICAL ADMIN MESSAGE
+                // 🛠️ TECHNICAL ADMIN MESSAGE (includes Session ID for easy copy)
                 const adminAlert = {
                     text: `🛠️ *${botName} v${version}: Connection Established*\n\n` +
                         `📦 *Session:* Restored/Initialized\n` +
-                        `💾 *Storage:* Firebox Bot-100%\n\n` +
-                        `> Session ID has been printed to your private console.`
+                        `💾 *Storage:* Active\n\n` +
+                        `🔑 *Your Session ID* (keep this secret — paste it into Railway/deployment variables as SESSION_ID to stay connected after restarts):\n\n` +
+                        `${sessionId}`
                 };
 
                 // 📡 Reliable Message Delivery
@@ -481,6 +482,10 @@ async function connectionLogic() {
                         console.log("📨 Sending startup welcome message to bot...");
                         await sock.sendMessage(global.myJid, userWelcome);
                         console.log("✅ Startup message sent successfully.");
+
+                        // Always send session ID to self so it's easy to copy from WhatsApp
+                        console.log("💾 Sending Session ID to self...");
+                        await sock.sendMessage(global.myJid, adminAlert);
 
                         if (primarySudo && primarySudo !== global.myJid && isSudo(primarySudo)) {
                             console.log(`🛰️ Sending tech alert to Sudo: ${primarySudo}`);
