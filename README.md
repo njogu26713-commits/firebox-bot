@@ -29,6 +29,24 @@ If you like Firebox Bot, please take a moment to support the repository:
 
 ---
 
+## 🚀 Deploy Firebox Bot
+
+<p align="center">
+  <a href="https://railway.app/new/template?template=https://github.com/njogu26713-commits/firebox-bot">
+    <img src="https://railway.app/button.svg" alt="Deploy on Railway" height="40">
+  </a>
+  &nbsp;&nbsp;
+  <a href="https://heroku.com/deploy?template=https://github.com/njogu26713-commits/firebox-bot">
+    <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy on Heroku" height="40">
+  </a>
+  &nbsp;&nbsp;
+  <a href="https://render.com/deploy?repo=https://github.com/njogu26713-commits/firebox-bot">
+    <img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy on Render" height="40">
+  </a>
+</p>
+
+---
+
 ## 📂 Command Categories
 
 Firebox Bot features a comprehensive suite of commands grouped into clear categories. You can type `.menu <category>` in WhatsApp to see all available commands.
