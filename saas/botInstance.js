@@ -50,6 +50,7 @@ class BotInstance {
         this.pairingCodeResolve = null;
         this.pairingCodeReject = null;
         this.pairingRestartInProgress = false;
+        this.pairingCodeRequested = false;
         this.pendingPairingNumber = null;
         this.sessionIdFailed = false;
         this.sessionIdInvalid = false;
@@ -114,6 +115,7 @@ class BotInstance {
             if (timer.unref) timer.unref();
 
             this.pendingPairingNumber = phone;
+            this.pairingCodeRequested = false;
             this.sessionId = null;
             this.sessionIdFailed = false;
 
@@ -316,9 +318,17 @@ class BotInstance {
             if (wdTimer.unref) wdTimer.unref();
         }
 
-        // Pairing code
-        if (usePairingCode && !state.creds.registered && !this.sessionId) {
-            setTimeout(async () => {
+        sock.ev.on("creds.update", saveCreds);
+
+        sock.ev.on("connection.update", async (update) => {
+            const { connection, lastDisconnect, qr } = update;
+
+            if (qr) this.latestQr = qr;
+
+            // Trigger pairing code on the QR event — this is when WhatsApp signals
+            // the connection is ready, ensuring the code is cryptographically valid.
+            if (qr && usePairingCode && this.pendingPairingNumber && !this.pairingCodeRequested) {
+                this.pairingCodeRequested = true;
                 try {
                     const pNum = this.pendingPairingNumber.replace(/[^0-9]/g, "");
                     const code = await sock.requestPairingCode(pNum);
@@ -336,16 +346,9 @@ class BotInstance {
                         this.pairingCodeResolve = null;
                         this.pairingCodeReject = null;
                     }
+                    this.pairingCodeRequested = false;
                 }
-            }, 6000);
-        }
-
-        sock.ev.on("creds.update", saveCreds);
-
-        sock.ev.on("connection.update", async (update) => {
-            const { connection, lastDisconnect, qr } = update;
-
-            if (qr) this.latestQr = qr;
+            }
 
             if (qr && (!this.sessionId || this.sessionIdFailed) && !usePairingCode) {
                 console.log(`[${this.userId}] 📱 QR code available`);
