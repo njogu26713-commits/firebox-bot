@@ -33,3 +33,4 @@ externalPort = 80
 
 [deployment]
 deploymentTarget = "cloudrun"
+run = ["node", "index.js"]
