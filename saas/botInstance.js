@@ -258,7 +258,7 @@ class BotInstance {
             logger,
             version,
             markOnline: true,
-            browser: Browsers.windows("Desktop"),
+            browser: Browsers.ubuntu("Chrome"),
             msgRetryCounterCache,
             defaultQueryTimeoutMs: 60000,
             syncFullHistory: false,
