@@ -32,8 +32,8 @@ const WYR = [
 ];
 
 module.exports = {
-    name: "wouldyourather",
-    aliases: ["wyr", "would"],
+    name: "wyr",
+    aliases: ["wouldyourather", "would"],
     description: "Get a random Would You Rather question.",
     category: "games",
     execute: async ({ sock, jid, msg }) => {

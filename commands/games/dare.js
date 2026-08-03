@@ -32,8 +32,8 @@ const DARES = [
 ];
 
 module.exports = {
-    name: "dare",
-    aliases: ["dared", "dareq"],
+    name: "challenge",
+    aliases: ["dare", "dared", "dareq"],
     description: "Get a random dare for Truth or Dare.",
     category: "games",
     execute: async ({ sock, jid, msg }) => {

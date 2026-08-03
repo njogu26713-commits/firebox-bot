@@ -32,8 +32,8 @@ const TRUTHS = [
 ];
 
 module.exports = {
-    name: "truth",
-    aliases: ["truthquestion", "trueq"],
+    name: "confess",
+    aliases: ["truth", "truthquestion", "trueq"],
     description: "Get a random truth question for Truth or Dare.",
     category: "games",
     execute: async ({ sock, jid, msg }) => {

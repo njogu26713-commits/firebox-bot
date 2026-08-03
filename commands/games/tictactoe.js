@@ -6,8 +6,8 @@ function renderBoard(board) {
 }
 
 module.exports = {
-    name: "tictactoe",
-    aliases: ["ttt", "xo"],
+    name: "xo",
+    aliases: ["tictactoe", "ttt"],
     description: "Challenge someone to Tic-Tac-Toe! Usage: .tictactoe @user",
     category: "games",
     execute: async ({ sock, jid, sender, msg }) => {

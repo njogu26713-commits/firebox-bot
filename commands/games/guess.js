@@ -1,8 +1,8 @@
 const { setGame } = require("../../lib/gameState");
 
 module.exports = {
-    name: "guess",
-    aliases: ["guessnumber", "numguess"],
+    name: "guessing",
+    aliases: ["guess", "guessnumber", "numguess"],
     description: "Guess the secret number between 1 and 100! (7 attempts)",
     category: "games",
     execute: async ({ sock, jid, msg }) => {

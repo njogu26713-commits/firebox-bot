@@ -5,8 +5,8 @@ function randomInt(min, max) {
 }
 
 module.exports = {
-    name: "math",
-    aliases: ["mathgame", "mathchallenge"],
+    name: "mathquiz",
+    aliases: ["math", "mathgame", "mathchallenge"],
     description: "Get a random math challenge. Type your answer to win!",
     category: "games",
     execute: async ({ sock, jid, msg }) => {

@@ -18,8 +18,8 @@ function shuffle(arr) {
 const SCIENCE_CATS = [17, 18, 19, 30];
 
 module.exports = {
-    name: "quiz",
-    aliases: ["quizme", "sciencequiz"],
+    name: "challengequiz",
+    aliases: ["quiz", "quizme", "sciencequiz"],
     description: "Multiple choice quiz (science & tech). Type A, B, C or D.",
     category: "games",
     cooldown: 5000,

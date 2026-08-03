@@ -17,8 +17,8 @@ function shuffle(arr) {
 }
 
 module.exports = {
-    name: "trivia",
-    aliases: ["triva", "triviaQ"],
+    name: "knowledge",
+    aliases: ["trivia", "triva", "triviaQ"],
     description: "Start a random trivia question. Type A, B, C or D to answer.",
     category: "games",
     cooldown: 5000,

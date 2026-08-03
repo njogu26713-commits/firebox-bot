@@ -24,8 +24,8 @@ const RIDDLES = [
 ];
 
 module.exports = {
-    name: "riddle",
-    aliases: ["riddleme", "brainteaser"],
+    name: "brainteaser",
+    aliases: ["riddle", "riddleme"],
     description: "Answer a riddle! Type your answer or type 'hint' for a clue.",
     category: "games",
     execute: async ({ sock, jid, msg }) => {
