@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Firebox Bot</title>
+  <style>
+    :root {
+      --fire1: #ff6b00; --fire2: #ff9a00;
+      --bg: #0d0d0d; --surface: #161616; --surface2: #1e1e1e;
+      --border: #2a2a2a; --text: #f0f0f0; --muted: #888;
+      --success: #22c55e; --error: #ef4444; --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* Nav */
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 14px 28px; background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 50; }
+    .nav-logo { display: flex; align-items: center; gap: 9px; text-decoration: none; }
+    .logo-icon { width: 34px; height: 34px; background: linear-gradient(135deg, var(--fire1), var(--fire2)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
+    .logo-name { font-size: 1rem; font-weight: 700; background: linear-gradient(90deg, var(--fire1), var(--fire2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+    .status-chip { display: flex; align-items: center; gap: 7px; padding: 5px 14px; border-radius: 999px; font-size: 0.8rem; font-weight: 600; transition: all 0.3s; border: 1px solid var(--border); background: var(--surface2); }
+    .status-chip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+    .status-chip.online { border-color: #22c55e55; background: #0f2d1a; }
+    .status-chip.online .dot { background: var(--success); box-shadow: 0 0 6px var(--success); }
+    .status-chip.offline .dot { background: var(--error); }
+    .status-chip.connecting { border-color: #f59e0b55; }
+    .status-chip.connecting .dot { background: #f59e0b; animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    /* Layout */
+    .layout { display: grid; grid-template-columns: 220px 1fr; min-height: calc(100vh - 57px); }
+    @media (max-width: 700px) { .layout { grid-template-columns: 1fr; } .sidebar { display: none; } }
+
+    /* Sidebar */
+    .sidebar { background: var(--surface); border-right: 1px solid var(--border); padding: 20px 12px; }
+    .sidebar-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 8px; margin-left: 8px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; font-size: 0.88rem; cursor: pointer; color: var(--muted); transition: background 0.15s, color 0.15s; margin-bottom: 2px; }
+    .nav-item:hover { background: var(--surface2); color: var(--text); }
+    .nav-item.active { background: rgba(255,107,0,0.12); color: var(--fire2); font-weight: 600; }
+    .nav-item .icon { font-size: 16px; width: 22px; text-align: center; }
+    .sidebar-sep { height: 1px; background: var(--border); margin: 14px 0; }
+
+    /* Main */
+    .main { padding: 28px; overflow-y: auto; }
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* Stat cards */
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 28px; }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
+    .stat-icon { font-size: 22px; margin-bottom: 10px; }
+    .stat-val { font-size: 1.5rem; font-weight: 800; }
+    .stat-label { font-size: 0.78rem; color: var(--muted); margin-top: 3px; }
+    .stat-card.green { border-color: #22c55e33; background: #0f2d1a22; }
+    .stat-card.orange { border-color: rgba(255,107,0,0.25); background: rgba(255,107,0,0.06); }
+
+    /* Section header */
+    .sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+    .sec-head h2 { font-size: 1.05rem; font-weight: 700; }
+
+    /* Panel */
+    .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; margin-bottom: 20px; }
+    .panel h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+
+    /* Toggle row */
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid var(--border); }
+    .toggle-row:last-child { border: none; padding-bottom: 0; }
+    .toggle-label { font-size: 0.88rem; }
+    .toggle-desc { font-size: 0.76rem; color: var(--muted); margin-top: 2px; }
+    .toggle { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; inset: 0; background: var(--border); border-radius: 12px; cursor: pointer; transition: 0.2s; }
+    .slider::before { content: ""; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px; background: var(--muted); border-radius: 50%; transition: 0.2s; }
+    input:checked + .slider { background: var(--fire1); }
+    input:checked + .slider::before { transform: translateX(18px); background: #fff; }
+
+    /* Buttons */
+    .btn { padding: 9px 18px; border-radius: 8px; font-size: 0.88rem; font-weight: 600; cursor: pointer; border: none; transition: opacity 0.2s; }
+    .btn-primary { background: linear-gradient(135deg, var(--fire1), var(--fire2)); color: #fff; }
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-ghost { background: var(--surface2); border: 1px solid var(--border); color: var(--text); }
+    .btn-ghost:hover { border-color: var(--fire1); }
+    .btn-danger { background: #2d0f0f; border: 1px solid #ef444455; color: #f87171; }
+    .btn-danger:hover { background: #3d1010; }
+    .btn-sm { padding: 7px 14px; font-size: 0.82rem; }
+
+    /* Session ID */
+    .session-id-box { font-family: monospace; font-size: 0.72rem; color: var(--fire2); word-break: break-all; background: #0d0d0d; border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 12px; max-height: 70px; overflow-y: auto; user-select: all; }
+
+    /* WhatsApp JID badge */
+    .jid-badge { display: inline-flex; align-items: center; gap: 7px; background: #0f2d1a; border: 1px solid #22c55e44; border-radius: 8px; padding: 8px 14px; font-size: 0.88rem; color: #4ade80; margin-bottom: 16px; }
+
+    /* Input row */
+    .input-row { display: flex; gap: 10px; }
+    .input-row input, .input-row select { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 10px 13px; font-size: 0.9rem; outline: none; }
+    .input-row input:focus, .input-row select:focus { border-color: var(--fire1); }
+
+    /* Alerts */
+    .alert { border-radius: 8px; padding: 12px 14px; font-size: 0.85rem; margin-bottom: 14px; display: none; }
+    .alert.success { background: #0f2d1a; border: 1px solid #22c55e44; color: #4ade80; }
+    .alert.error { background: #2d0f0f; border: 1px solid #ef444455; color: #f87171; }
+
+    .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; vertical-align: middle; margin-right: 6px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .chip { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 0.73rem; font-weight: 600; }
+    .chip-on { background: rgba(34,197,94,0.15); color: var(--success); }
+    .chip-off { background: var(--surface2); color: var(--muted); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">
+    <div class="logo-icon">🔥</div>
+    <span class="logo-name">Firebox Bot</span>
+  </a>
+  <div class="status-chip offline" id="status-chip">
+    <span class="dot"></span>
+    <span id="status-text">Offline</span>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-label">Dashboard</div>
+    <div class="nav-item active" onclick="showPage('overview')"><span class="icon">📊</span> Overview</div>
+    <div class="nav-item" onclick="showPage('connection')"><span class="icon">📱</span> Connection</div>
+    <div class="nav-item" onclick="showPage('settings')"><span class="icon">⚙️</span> Settings</div>
+    <div class="sidebar-sep"></div>
+    <div class="sidebar-label">Quick</div>
+    <div class="nav-item" onclick="showPage('session')"><span class="icon">💾</span> Session ID</div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- OVERVIEW PAGE -->
+    <div class="page active" id="page-overview">
+      <div class="sec-head"><h2>📊 Overview</h2></div>
+
+      <div id="not-connected-banner" style="display:none;background:#2d1f0f;border:1px solid #f59e0b44;border-radius:10px;padding:16px 20px;margin-bottom:20px;font-size:0.9rem;color:#fbbf24">
+        ⚠️ Your bot is not connected. <a href="/connect" style="color:var(--fire2);font-weight:600">Connect WhatsApp →</a>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card orange">
+          <div class="stat-icon">🤖</div>
+          <div class="stat-val" id="stat-status">—</div>
+          <div class="stat-label">Bot Status</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⏱️</div>
+          <div class="stat-val" id="stat-uptime">—</div>
+          <div class="stat-label">Uptime</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📱</div>
+          <div class="stat-val" id="stat-jid" style="font-size:0.9rem;word-break:break-all">—</div>
+          <div class="stat-label">Connected Number</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>🎯 Quick Actions</h3>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <a href="/connect" class="btn btn-primary btn-sm">📱 Connect / Reconnect</a>
+          <button class="btn btn-ghost btn-sm" onclick="stopBot()">⏹️ Disconnect Bot</button>
+          <button class="btn btn-ghost btn-sm" onclick="showPage('settings')">⚙️ Settings</button>
+          <button class="btn btn-ghost btn-sm" onclick="showPage('session')">💾 Save Session</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONNECTION PAGE -->
+    <div class="page" id="page-connection">
+      <div class="sec-head"><h2>📱 Connection</h2></div>
+
+      <div class="panel" id="conn-status-panel">
+        <h3>📶 Current Status</h3>
+        <div id="conn-jid-badge" style="display:none" class="jid-badge">✅ Connected as <strong id="conn-jid-num">—</strong></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <a href="/connect" class="btn btn-primary btn-sm">🔗 Connect / Reconnect</a>
+          <button class="btn btn-danger btn-sm" onclick="disconnectBot()">Disconnect</button>
+        </div>
+        <div class="alert success" id="conn-alert-success"></div>
+        <div class="alert error" id="conn-alert-error"></div>
+      </div>
+    </div>
+
+    <!-- SETTINGS PAGE -->
+    <div class="page" id="page-settings">
+      <div class="sec-head">
+        <h2>⚙️ Bot Settings</h2>
+        <button class="btn btn-primary btn-sm" onclick="saveSettings()">Save Changes</button>
+      </div>
+      <div class="alert success" id="settings-success"></div>
+      <div class="alert error" id="settings-error"></div>
+
+      <div class="panel">
+        <h3>🤖 Bot Info</h3>
+        <div class="toggle-row">
+          <div><div class="toggle-label">Bot Name</div><div class="toggle-desc">Name shown in messages</div></div>
+          <div class="input-row" style="flex:0;min-width:180px"><input id="s-botName" placeholder="Firebox Bot" /></div>
+        </div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">Command Prefix</div><div class="toggle-desc">Character before commands (e.g. .)</div></div>
+          <div class="input-row" style="flex:0;min-width:80px"><input id="s-prefix" placeholder="." style="width:80px;flex:0" /></div>
+        </div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">Public Mode</div><div class="toggle-desc">Everyone can use the bot (off = owner only)</div></div>
+          <label class="toggle"><input type="checkbox" id="s-publicMode" /><span class="slider"></span></label>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>🛡️ Protection</h3>
+        <div class="toggle-row"><div><div class="toggle-label">Anti-Link</div><div class="toggle-desc">Delete WhatsApp invite links in groups</div></div><label class="toggle"><input type="checkbox" id="s-antiLink" /><span class="slider"></span></label></div>
+        <div class="toggle-row"><div><div class="toggle-label">Anti-Spam</div><div class="toggle-desc">Delete spam floods</div></div><label class="toggle"><input type="checkbox" id="s-antiSpam" /><span class="slider"></span></label></div>
+        <div class="toggle-row"><div><div class="toggle-label">Anti-Delete</div><div class="toggle-desc">Recover deleted messages</div></div><label class="toggle"><input type="checkbox" id="s-antiDelete" /><span class="slider"></span></label></div>
+        <div class="toggle-row"><div><div class="toggle-label">Anti-Call</div><div class="toggle-desc">Auto-reject incoming calls</div></div><label class="toggle"><input type="checkbox" id="s-antiCall" /><span class="slider"></span></label></div>
+        <div class="toggle-row"><div><div class="toggle-label">Anti-Badword</div><div class="toggle-desc">Delete messages with bad words</div></div><label class="toggle"><input type="checkbox" id="s-antiBadword" /><span class="slider"></span></label></div>
+      </div>
+
+      <div class="panel">
+        <h3>🌟 Status Features</h3>
+        <div class="toggle-row"><div><div class="toggle-label">Auto View Status</div><div class="toggle-desc">Automatically view contacts' statuses</div></div><label class="toggle"><input type="checkbox" id="s-autoViewStatus" /><span class="slider"></span></label></div>
+        <div class="toggle-row"><div><div class="toggle-label">Auto Like Status</div><div class="toggle-desc">React to statuses automatically</div></div><label class="toggle"><input type="checkbox" id="s-autoLikeStatus" /><span class="slider"></span></label></div>
+        <div class="toggle-row"><div><div class="toggle-label">Always Online</div><div class="toggle-desc">Keep bot appearing online</div></div><label class="toggle"><input type="checkbox" id="s-alwaysOnline" /><span class="slider"></span></label></div>
+      </div>
+
+      <div class="panel">
+        <h3>👋 Group Events</h3>
+        <div class="toggle-row"><div><div class="toggle-label">Welcome Messages</div><div class="toggle-desc">Send welcome message when someone joins</div></div><label class="toggle"><input type="checkbox" id="s-welcome" /><span class="slider"></span></label></div>
+        <div class="toggle-row"><div><div class="toggle-label">Goodbye Messages</div><div class="toggle-desc">Send goodbye message when someone leaves</div></div><label class="toggle"><input type="checkbox" id="s-goodbye" /><span class="slider"></span></label></div>
+        <div class="toggle-row"><div><div class="toggle-label">Group Events</div><div class="toggle-desc">Announce promotions and demotions</div></div><label class="toggle"><input type="checkbox" id="s-groupEventsGlobal" /><span class="slider"></span></label></div>
+      </div>
+
+      <div class="panel">
+        <h3>🤖 AI / Automation</h3>
+        <div class="toggle-row"><div><div class="toggle-label">Chatbot AI</div><div class="toggle-desc">Reply automatically using AI</div></div><label class="toggle"><input type="checkbox" id="s-chatbotAI" /><span class="slider"></span></label></div>
+        <div class="toggle-row"><div><div class="toggle-label">Auto Read</div><div class="toggle-desc">Auto-mark messages as read</div></div><label class="toggle"><input type="checkbox" id="s-autoRead" /><span class="slider"></span></label></div>
+        <div class="toggle-row"><div><div class="toggle-label">Auto React (DM)</div><div class="toggle-desc">React to DMs with random emoji</div></div><label class="toggle"><input type="checkbox" id="s-autoReactDM" /><span class="slider"></span></label></div>
+        <div class="toggle-row"><div><div class="toggle-label">Auto React (Groups)</div><div class="toggle-desc">React to group messages</div></div><label class="toggle"><input type="checkbox" id="s-autoReactGrp" /><span class="slider"></span></label></div>
+      </div>
+    </div>
+
+    <!-- SESSION ID PAGE -->
+    <div class="page" id="page-session">
+      <div class="sec-head"><h2>💾 Session ID</h2></div>
+      <div class="panel">
+        <h3>Your Session ID</h3>
+        <p style="font-size:0.85rem;color:var(--muted);margin-bottom:16px">Save this to reconnect your bot after clearing your browser cookies, or to move it to another device.</p>
+        <div class="session-id-box" id="session-id-text">Loading…</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" onclick="copySessionId()">📋 Copy Session ID</button>
+          <button class="btn btn-ghost btn-sm" onclick="loadSessionId()">🔄 Refresh</button>
+        </div>
+        <p style="font-size:0.77rem;color:var(--muted);margin-top:14px;padding:10px 12px;background:var(--surface2);border-radius:6px;border-left:3px solid var(--fire1);line-height:1.5">⚠️ Keep this private. Anyone with this ID can control your bot session.</p>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  let currentSettings = {};
+
+  // ── Init ─────────────────────────────────────────────────────────────────────
+  window.addEventListener("DOMContentLoaded", () => {
+    pollStatus();
+    setInterval(pollStatus, 4000);
+    loadSettings();
+    loadSessionId();
+  });
+
+  // ── Navigation ────────────────────────────────────────────────────────────────
+  function showPage(name) {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.getElementById("page-" + name).classList.add("active");
+    document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+    event && event.currentTarget && event.currentTarget.classList.add("active");
+  }
+
+  // ── Status ────────────────────────────────────────────────────────────────────
+  async function pollStatus() {
+    try {
+      const r = await fetch("/api/bot/status");
+      const d = await r.json();
+      updateChip(d.status);
+      document.getElementById("stat-status").textContent = d.status === "online" ? "🟢 Online" : d.status === "connecting" ? "🟡 Connecting" : "🔴 Offline";
+      document.getElementById("stat-jid").textContent = d.myJid ? d.myJid.split("@")[0] : "—";
+      document.getElementById("stat-uptime").textContent = formatUptime(d.uptime || 0);
+      document.getElementById("not-connected-banner").style.display = d.status === "online" ? "none" : "block";
+
+      const jidBadge = document.getElementById("conn-jid-badge");
+      if (d.myJid && d.status === "online") {
+        jidBadge.style.display = "flex";
+        document.getElementById("conn-jid-num").textContent = d.myJid.split("@")[0];
+      } else {
+        jidBadge.style.display = "none";
+      }
+    } catch (_) {}
+  }
+
+  function updateChip(status) {
+    const chip = document.getElementById("status-chip");
+    const text = document.getElementById("status-text");
+    chip.className = "status-chip " + status;
+    text.textContent = status === "online" ? "Online" : status === "connecting" ? "Connecting…" : "Offline";
+  }
+
+  function formatUptime(secs) {
+    if (!secs) return "—";
+    const h = Math.floor(secs / 3600), m = Math.floor((secs % 3600) / 60), s = Math.floor(secs % 60);
+    if (h) return `${h}h ${m}m`;
+    if (m) return `${m}m ${s}s`;
+    return `${s}s`;
+  }
+
+  // ── Stop ──────────────────────────────────────────────────────────────────────
+  async function stopBot() {
+    if (!confirm("Disconnect the bot?")) return;
+    await fetch("/api/bot/stop", { method: "POST" });
+    pollStatus();
+  }
+
+  async function disconnectBot() {
+    if (!confirm("Disconnect and wipe the session?")) return;
+    await fetch("/api/bot/wipe-session", { method: "POST" });
+    showAlert("conn-alert-success", "Bot disconnected.");
+    pollStatus();
+  }
+
+  // ── Settings ──────────────────────────────────────────────────────────────────
+  const TOGGLE_FIELDS = ["publicMode","antiLink","antiSpam","antiDelete","antiCall","antiBadword","autoViewStatus","autoLikeStatus","alwaysOnline","welcome","goodbye","groupEventsGlobal","chatbotAI","autoRead","autoReactDM","autoReactGrp"];
+  const TEXT_FIELDS = ["botName","prefix"];
+
+  async function loadSettings() {
+    try {
+      const r = await fetch("/api/bot/settings");
+      if (!r.ok) return;
+      currentSettings = await r.json();
+      applySettingsToUI(currentSettings);
+    } catch (_) {}
+  }
+
+  function applySettingsToUI(s) {
+    for (const f of TOGGLE_FIELDS) {
+      const el = document.getElementById("s-" + f);
+      if (el) el.checked = !!s[f];
+    }
+    for (const f of TEXT_FIELDS) {
+      const el = document.getElementById("s-" + f);
+      if (el) el.value = s[f] || "";
+    }
+  }
+
+  async function saveSettings() {
+    const updates = {};
+    for (const f of TOGGLE_FIELDS) {
+      const el = document.getElementById("s-" + f);
+      if (el) updates[f] = el.checked;
+    }
+    for (const f of TEXT_FIELDS) {
+      const el = document.getElementById("s-" + f);
+      if (el && el.value.trim()) updates[f] = el.value.trim();
+    }
+    try {
+      const r = await fetch("/api/bot/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates),
+      });
+      const d = await r.json();
+      if (!r.ok) { showAlert("settings-error", d.error || "Save failed."); return; }
+      showAlert("settings-success", "✅ Settings saved!");
+    } catch (_) {
+      showAlert("settings-error", "Network error.");
+    }
+  }
+
+  // ── Session ID ────────────────────────────────────────────────────────────────
+  async function loadSessionId() {
+    try {
+      const r = await fetch("/api/bot/session-id");
+      if (!r.ok) { document.getElementById("session-id-text").textContent = "No session yet — connect WhatsApp first."; return; }
+      const d = await r.json();
+      document.getElementById("session-id-text").textContent = d.sessionId;
+    } catch (_) {}
+  }
+
+  function copySessionId() {
+    const text = document.getElementById("session-id-text").textContent;
+    navigator.clipboard.writeText(text).catch(() => {});
+    const btn = event.target;
+    btn.textContent = "✅ Copied!";
+    setTimeout(() => btn.textContent = "📋 Copy Session ID", 2000);
+  }
+
+  // ── Util ──────────────────────────────────────────────────────────────────────
+  function showAlert(id, msg) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = msg;
+    el.style.display = "block";
+    setTimeout(() => el.style.display = "none", 4000);
+  }
+</script>
+</body>
+</html>

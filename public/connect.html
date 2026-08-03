@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connect WhatsApp — Firebox Bot</title>
+  <style>
+    :root {
+      --fire1: #ff6b00; --fire2: #ff9a00;
+      --bg: #0d0d0d; --surface: #161616; --surface2: #1e1e1e;
+      --border: #2a2a2a; --text: #f0f0f0; --muted: #888;
+      --success: #22c55e; --error: #ef4444; --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 40px 16px 80px; }
+
+    .top-bar { width: 100%; max-width: 460px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+    .logo { display: flex; align-items: center; gap: 9px; text-decoration: none; }
+    .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--fire1), var(--fire2)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 0 16px rgba(255,107,0,0.3); }
+    .logo-name { font-size: 1rem; font-weight: 700; background: linear-gradient(90deg, var(--fire1), var(--fire2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .dash-link { font-size: 0.82rem; color: var(--fire2); text-decoration: none; padding: 5px 12px; border: 1px solid rgba(255,107,0,0.3); border-radius: 6px; }
+    .dash-link:hover { background: rgba(255,107,0,0.08); }
+
+    /* Status chip */
+    #status-chip { display: inline-flex; align-items: center; gap: 7px; padding: 5px 16px; border-radius: 999px; font-size: 0.8rem; font-weight: 600; background: var(--surface2); border: 1px solid var(--border); margin-bottom: 28px; transition: all 0.3s; }
+    #status-chip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); transition: background 0.3s; }
+    #status-chip.online { border-color: #22c55e55; background: #0f2d1a; }
+    #status-chip.online .dot { background: var(--success); box-shadow: 0 0 6px var(--success); }
+    #status-chip.offline { border-color: #ef444455; background: #2d0f0f; }
+    #status-chip.offline .dot { background: var(--error); }
+    #status-chip.connecting { border-color: #f59e0b55; background: #2d1f0f; }
+    #status-chip.connecting .dot { background: #f59e0b; animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    /* Steps */
+    .steps-track { display: flex; align-items: center; margin-bottom: 28px; width: 100%; max-width: 460px; }
+    .step-node { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; }
+    .step-circle { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--border); background: var(--surface2); color: var(--muted); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; transition: all 0.3s; position: relative; z-index: 1; }
+    .step-circle.active { border-color: var(--fire1); background: linear-gradient(135deg, var(--fire1), var(--fire2)); color: #fff; box-shadow: 0 0 12px rgba(255,107,0,0.4); }
+    .step-circle.done { border-color: var(--success); background: var(--success); color: #fff; }
+    .step-label { font-size: 0.7rem; color: var(--muted); text-align: center; white-space: nowrap; transition: color 0.3s; }
+    .step-node.active .step-label { color: var(--fire2); }
+    .step-node.done .step-label { color: var(--success); }
+    .step-line { flex: 1; height: 2px; background: var(--border); margin-bottom: 22px; transition: background 0.4s; }
+    .step-line.done { background: var(--success); }
+
+    /* Card */
+    .card { width: 100%; max-width: 460px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; display: none; }
+    .card.visible { display: block; }
+    .card + .card { margin-top: 16px; }
+    .card h2 { font-size: 1rem; font-weight: 600; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+
+    /* Method tabs */
+    .method-tabs { display: flex; gap: 0; margin-bottom: 22px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .method-tab { flex: 1; padding: 9px 12px; font-size: 0.85rem; font-weight: 500; background: none; border: none; color: var(--muted); cursor: pointer; transition: background 0.2s, color 0.2s; }
+    .method-tab:first-child { border-right: 1px solid var(--border); }
+    .method-tab.active { background: var(--surface2); color: var(--text); }
+    .method-pane { display: none; }
+    .method-pane.visible { display: block; }
+
+    label { display: block; font-size: 0.82rem; color: var(--muted); margin-bottom: 6px; }
+    .input-row { display: flex; gap: 8px; }
+    .input-row input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 11px 14px; font-size: 1rem; outline: none; transition: border-color 0.2s; }
+    .input-row input:focus { border-color: var(--fire1); }
+    .input-row input::placeholder { color: var(--muted); }
+
+    .btn-primary { background: linear-gradient(135deg, var(--fire1), var(--fire2)); color: #fff; border: none; border-radius: 8px; padding: 11px 20px; font-size: 0.95rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: opacity 0.2s, transform 0.1s; }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-primary:active { transform: scale(0.97); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-ghost { background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 9px 18px; font-size: 0.88rem; font-weight: 500; cursor: pointer; transition: border-color 0.2s; white-space: nowrap; }
+    .btn-ghost:hover { border-color: var(--fire1); }
+    .btn-full { width: 100%; justify-content: center; }
+
+    .hint { font-size: 0.78rem; color: var(--muted); margin-top: 8px; }
+    .error-box { background: #2d0f0f; border: 1px solid #ef444455; border-radius: 8px; padding: 12px 14px; color: #f87171; font-size: 0.88rem; display: none; margin-top: 14px; }
+    .already-box { background: #0f2d1a; border: 1px solid #22c55e55; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; color: #4ade80; text-align: center; display: none; margin-bottom: 16px; }
+
+    /* Pairing code */
+    .code-display { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 24px; text-align: center; margin-top: 18px; }
+    .code-label { font-size: 0.75rem; color: var(--muted); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
+    #pair-code { font-size: 2.6rem; font-weight: 800; letter-spacing: 0.3em; background: linear-gradient(90deg, var(--fire1), var(--fire2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-variant-numeric: tabular-nums; }
+    .countdown-wrap { margin-top: 10px; }
+    #countdown-bar-bg { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; margin-bottom: 5px; }
+    #countdown-bar { height: 100%; width: 100%; background: var(--fire2); border-radius: 2px; transition: width 1s linear, background 1s; }
+    #countdown-text { font-size: 0.75rem; color: var(--muted); }
+    #countdown-text.urgent { color: var(--error); }
+    .code-actions { display: flex; gap: 8px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
+
+    /* QR */
+    .qr-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 20px 0; }
+    #qr-img { width: 220px; height: 220px; border-radius: 10px; background: var(--surface2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
+    #qr-img img { width: 100%; height: 100%; border-radius: 10px; }
+    #qr-status { font-size: 0.82rem; color: var(--muted); text-align: center; }
+
+    /* Session ID */
+    .session-display { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-top: 4px; }
+    .session-label { font-size: 0.75rem; color: var(--muted); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
+    #session-id-text { font-family: "Courier New", monospace; font-size: 0.72rem; color: var(--fire2); word-break: break-all; line-height: 1.5; max-height: 80px; overflow-y: auto; background: #0d0d0d; border-radius: 6px; padding: 10px 12px; border: 1px solid var(--border); margin-bottom: 12px; user-select: all; }
+    .session-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .success-badge { display: inline-flex; align-items: center; gap: 6px; background: #0f2d1a; border: 1px solid #22c55e55; color: #4ade80; border-radius: 999px; padding: 4px 12px; font-size: 0.78rem; font-weight: 600; margin-bottom: 16px; }
+    .warning-note { font-size: 0.78rem; color: var(--muted); margin-top: 10px; padding: 10px 12px; background: var(--surface2); border-radius: 6px; border-left: 3px solid var(--fire1); line-height: 1.5; }
+
+    /* Spinner */
+    .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; vertical-align: middle; margin-right: 8px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* How-to steps */
+    .how-steps { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .how-steps li { display: flex; align-items: flex-start; gap: 12px; font-size: 0.88rem; color: var(--muted); }
+    .how-steps li .num { min-width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(135deg, var(--fire1), var(--fire2)); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; flex-shrink: 0; }
+    .how-steps li span { padding-top: 2px; line-height: 1.5; }
+
+    .waiting-box { display: flex; align-items: center; gap: 12px; background: #2d1f0f; border: 1px solid #f59e0b44; border-radius: 8px; padding: 14px 16px; margin-top: 18px; font-size: 0.88rem; color: #fbbf24; }
+    .waiting-spinner { width: 18px; height: 18px; border: 2px solid rgba(245,158,11,0.3); border-top-color: #f59e0b; border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+
+<div class="top-bar">
+  <a href="/" class="logo">
+    <div class="logo-icon">🔥</div>
+    <span class="logo-name">Firebox Bot</span>
+  </a>
+  <a href="/dashboard" class="dash-link" id="dashLink" style="display:none">Dashboard →</a>
+</div>
+
+<!-- Status chip -->
+<div id="status-chip" class="offline">
+  <span class="dot"></span>
+  <span id="status-text">Offline</span>
+</div>
+
+<!-- Step tracker -->
+<div class="steps-track">
+  <div class="step-node active" id="sn1">
+    <div class="step-circle active" id="sc1">1</div>
+    <div class="step-label">Connect</div>
+  </div>
+  <div class="step-line" id="sl1"></div>
+  <div class="step-node" id="sn2">
+    <div class="step-circle" id="sc2">2</div>
+    <div class="step-label">Authorize</div>
+  </div>
+  <div class="step-line" id="sl2"></div>
+  <div class="step-node" id="sn3">
+    <div class="step-circle" id="sc3">3</div>
+    <div class="step-label">Session</div>
+  </div>
+</div>
+
+<!-- Step 1: Choose method -->
+<div class="card visible" id="card-method">
+  <div class="already-box" id="already-box">
+    ✅ <strong>Already connected!</strong> Your bot is online — <a href="/dashboard" style="color:var(--fire2)">go to Dashboard</a>
+  </div>
+  <h2>📱 Connect your WhatsApp</h2>
+  <div class="method-tabs">
+    <button class="method-tab active" onclick="switchTab('pairing')">📞 Pairing Code</button>
+    <button class="method-tab" onclick="switchTab('qr')">📷 QR Code</button>
+  </div>
+
+  <!-- Pairing Code pane -->
+  <div class="method-pane visible" id="pane-pairing">
+    <label>Phone number (with country code)</label>
+    <div class="input-row">
+      <input id="phone-input" type="tel" placeholder="e.g. 254712345678" />
+      <button class="btn-primary" id="pair-btn" onclick="requestPairingCode()">Get Code</button>
+    </div>
+    <p class="hint">No +, spaces, or dashes — digits only. E.g. 254712345678</p>
+    <div class="error-box" id="pair-error"></div>
+
+    <div class="code-display" id="code-display" style="display:none">
+      <div class="code-label">Your Pairing Code</div>
+      <div id="pair-code">----</div>
+      <div class="countdown-wrap">
+        <div id="countdown-bar-bg"><div id="countdown-bar"></div></div>
+        <div id="countdown-text">60s remaining</div>
+      </div>
+      <div class="code-actions">
+        <button class="btn-ghost" onclick="copyCode()">📋 Copy</button>
+        <button class="btn-ghost" onclick="resetPairingCode()">🔄 New Code</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Code pane -->
+  <div class="method-pane" id="pane-qr">
+    <div class="qr-wrap">
+      <div id="qr-img"><span style="color:var(--muted);font-size:0.85rem">Loading…</span></div>
+      <div id="qr-status">Starting bot — QR will appear shortly…</div>
+      <button class="btn-ghost" id="qr-refresh-btn" style="font-size:0.82rem" onclick="refreshQR()">🔄 Refresh QR</button>
+    </div>
+
+    <ul class="how-steps">
+      <li><div class="num">1</div><span>Open WhatsApp on your phone</span></li>
+      <li><div class="num">2</div><span>Go to <strong>Settings → Linked Devices → Link a Device</strong></span></li>
+      <li><div class="num">3</div><span>Point your camera at the QR code above</span></li>
+    </ul>
+  </div>
+
+  <div class="waiting-box" id="waiting-box" style="display:none">
+    <div class="waiting-spinner"></div>
+    <span id="waiting-text">Waiting for WhatsApp to confirm…</span>
+  </div>
+</div>
+
+<!-- Step 2: Session ID -->
+<div class="card" id="card-session">
+  <div class="success-badge">✅ Bot Connected</div>
+  <h2>💾 Save your Session ID</h2>
+  <p style="font-size:0.88rem;color:var(--muted);margin-bottom:18px">Copy and save this Session ID. If you clear your browser cookies, paste it back here to reconnect instantly — without scanning again.</p>
+  <div class="session-display">
+    <div class="session-label">Your Session ID</div>
+    <div id="session-id-text">Loading…</div>
+    <div class="session-actions">
+      <button class="btn-ghost" onclick="copySessionId()">📋 Copy</button>
+      <button class="btn-primary" onclick="goToDashboard()">Go to Dashboard →</button>
+    </div>
+  </div>
+  <p class="warning-note">⚠️ Keep this private. Anyone with this ID can control your bot session. Store it somewhere safe like a password manager.</p>
+</div>
+
+<!-- Restore session -->
+<div class="card visible" id="card-restore" style="margin-top:16px">
+  <h2>🔑 Have a Session ID?</h2>
+  <p style="font-size:0.88rem;color:var(--muted);margin-bottom:16px">Paste your FIREBOX~ Session ID to restore a previous connection without scanning again.</p>
+  <div class="input-row">
+    <input id="restore-input" type="text" placeholder="FIREBOX~..." style="font-family:monospace;font-size:0.8rem" />
+    <button class="btn-primary" onclick="restoreSession()">Restore</button>
+  </div>
+  <div class="error-box" id="restore-error"></div>
+</div>
+
+<script>
+  let currentTab = "pairing";
+  let countdownInterval = null;
+  let qrPollInterval = null;
+  let statusPollInterval = null;
+  let currentPairCode = null;
+
+  // ── Init ────────────────────────────────────────────────────────────────────
+  window.addEventListener("DOMContentLoaded", async () => {
+    await checkStatus();
+    statusPollInterval = setInterval(checkStatus, 3000);
+  });
+
+  async function checkStatus() {
+    try {
+      const r = await fetch("/api/bot/status");
+      const d = await r.json();
+      updateStatusChip(d.status);
+
+      if (d.status === "online") {
+        document.getElementById("already-box").style.display = "block";
+        document.getElementById("dashLink").style.display = "inline";
+        setStep(3);
+        loadSessionId();
+        stopQRPoll();
+      } else if (d.status === "connecting") {
+        document.getElementById("waiting-box").style.display = "flex";
+      } else {
+        document.getElementById("already-box").style.display = "none";
+        document.getElementById("waiting-box").style.display = "none";
+      }
+
+      if (d.hasQr && currentTab === "qr") {
+        await refreshQR();
+      }
+    } catch (_) {}
+  }
+
+  function updateStatusChip(status) {
+    const chip = document.getElementById("status-chip");
+    const text = document.getElementById("status-text");
+    chip.className = status;
+    text.textContent = status === "online" ? "Bot Online" : status === "connecting" ? "Connecting…" : "Offline";
+  }
+
+  // ── Tabs ────────────────────────────────────────────────────────────────────
+  function switchTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll(".method-tab").forEach((t, i) => {
+      t.classList.toggle("active", (i === 0 && tab === "pairing") || (i === 1 && tab === "qr"));
+    });
+    document.getElementById("pane-pairing").classList.toggle("visible", tab === "pairing");
+    document.getElementById("pane-qr").classList.toggle("visible", tab === "qr");
+
+    if (tab === "qr") {
+      startBot().then(() => { refreshQR(); startQRPoll(); });
+    } else {
+      stopQRPoll();
+    }
+  }
+
+  // ── Start bot ────────────────────────────────────────────────────────────────
+  async function startBot() {
+    try { await fetch("/api/bot/start", { method: "POST" }); } catch (_) {}
+  }
+
+  // ── QR ───────────────────────────────────────────────────────────────────────
+  async function refreshQR() {
+    try {
+      const r = await fetch("/api/bot/qr");
+      if (!r.ok) {
+        document.getElementById("qr-status").textContent = "Waiting for QR…";
+        document.getElementById("qr-img").innerHTML = '<span style="color:var(--muted);font-size:0.85rem">Waiting…</span>';
+        return;
+      }
+      const d = await r.json();
+      document.getElementById("qr-img").innerHTML = `<img src="${d.qr}" alt="QR Code" />`;
+      document.getElementById("qr-status").textContent = "Scan this QR with WhatsApp";
+    } catch (_) {}
+  }
+
+  function startQRPoll() {
+    stopQRPoll();
+    startBot().catch(() => {});
+    qrPollInterval = setInterval(async () => {
+      const r = await fetch("/api/bot/status").then(r => r.json()).catch(() => ({}));
+      if (r.status === "online") { stopQRPoll(); checkStatus(); return; }
+      if (r.hasQr) refreshQR();
+    }, 4000);
+  }
+
+  function stopQRPoll() {
+    if (qrPollInterval) { clearInterval(qrPollInterval); qrPollInterval = null; }
+  }
+
+  // ── Pairing code ─────────────────────────────────────────────────────────────
+  async function requestPairingCode() {
+    const phone = document.getElementById("phone-input").value.trim();
+    const errBox = document.getElementById("pair-error");
+    errBox.style.display = "none";
+
+    if (!phone) { showError(errBox, "Please enter your phone number."); return; }
+
+    const btn = document.getElementById("pair-btn");
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>';
+
+    // Start bot first
+    await startBot();
+
+    try {
+      const r = await fetch("/api/bot/pair-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone }),
+      });
+      const d = await r.json();
+      if (!r.ok) { showError(errBox, d.error || "Failed."); btn.disabled = false; btn.textContent = "Get Code"; return; }
+
+      currentPairCode = d.code;
+      document.getElementById("pair-code").textContent = d.code;
+      document.getElementById("code-display").style.display = "block";
+      document.getElementById("waiting-box").style.display = "flex";
+      startCountdown(60);
+      setStep(2);
+    } catch (e) {
+      showError(errBox, "Network error. Please try again.");
+      btn.disabled = false;
+      btn.textContent = "Get Code";
+    }
+
+    btn.disabled = false;
+    btn.textContent = "Get Code";
+  }
+
+  function startCountdown(secs) {
+    if (countdownInterval) clearInterval(countdownInterval);
+    let remaining = secs;
+    const bar = document.getElementById("countdown-bar");
+    const text = document.getElementById("countdown-text");
+    const update = () => {
+      bar.style.width = (remaining / secs * 100) + "%";
+      text.textContent = remaining + "s remaining";
+      if (remaining <= 15) { bar.style.background = "var(--error)"; text.classList.add("urgent"); }
+      remaining--;
+      if (remaining < 0) { clearInterval(countdownInterval); text.textContent = "Expired — request a new code"; }
+    };
+    update();
+    countdownInterval = setInterval(update, 1000);
+  }
+
+  function copyCode() {
+    if (currentPairCode) { navigator.clipboard.writeText(currentPairCode).catch(() => {}); }
+  }
+
+  function resetPairingCode() {
+    document.getElementById("code-display").style.display = "none";
+    document.getElementById("pair-error").style.display = "none";
+    if (countdownInterval) clearInterval(countdownInterval);
+  }
+
+  // ── Session ID ────────────────────────────────────────────────────────────────
+  async function loadSessionId() {
+    try {
+      const r = await fetch("/api/bot/session-id");
+      if (!r.ok) return;
+      const d = await r.json();
+      document.getElementById("session-id-text").textContent = d.sessionId;
+      document.getElementById("card-session").classList.add("visible");
+    } catch (_) {}
+  }
+
+  function copySessionId() {
+    const text = document.getElementById("session-id-text").textContent;
+    navigator.clipboard.writeText(text).catch(() => {});
+    const btn = event.target;
+    btn.textContent = "✅ Copied!";
+    setTimeout(() => btn.textContent = "📋 Copy", 2000);
+  }
+
+  function goToDashboard() { window.location.href = "/dashboard"; }
+
+  // ── Restore session ───────────────────────────────────────────────────────────
+  async function restoreSession() {
+    const val = document.getElementById("restore-input").value.trim();
+    const err = document.getElementById("restore-error");
+    err.style.display = "none";
+    if (!val) { showError(err, "Please paste your Session ID."); return; }
+
+    try {
+      const r = await fetch("/api/bot/restore-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId: val }),
+      });
+      const d = await r.json();
+      if (!r.ok) { showError(err, d.error || "Failed to restore session."); return; }
+      document.getElementById("waiting-box").style.display = "flex";
+      document.getElementById("waiting-text").textContent = "Restoring session and connecting…";
+    } catch (e) {
+      showError(err, "Network error. Please try again.");
+    }
+  }
+
+  // ── Steps UI ──────────────────────────────────────────────────────────────────
+  function setStep(n) {
+    for (let i = 1; i <= 3; i++) {
+      const circle = document.getElementById(`sc${i}`);
+      const node = document.getElementById(`sn${i}`);
+      if (i < n) { circle.className = "step-circle done"; circle.textContent = "✓"; node.className = "step-node done"; }
+      else if (i === n) { circle.className = "step-circle active"; circle.textContent = i; node.className = "step-node active"; }
+      else { circle.className = "step-circle"; circle.textContent = i; node.className = "step-node"; }
+    }
+    for (let i = 1; i <= 2; i++) {
+      document.getElementById(`sl${i}`).classList.toggle("done", i < n);
+    }
+  }
+
+  function showError(box, msg) { box.textContent = msg; box.style.display = "block"; }
+</script>
+</body>
+</html>
