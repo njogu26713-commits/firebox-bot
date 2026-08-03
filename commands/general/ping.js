@@ -8,7 +8,7 @@ module.exports = {
         const sent = await ctx.sock.sendMessage(ctx.jid, { text: "Testing speed..." });
         const end = Date.now();
         await ctx.sock.sendMessage(ctx.jid, { 
-            text: `🏓 *Pong!*\nLatency: \`${end - start}ms\``,
+            text: `Firebox 𝐏𝐨𝐧𝐠! Speed: \`${end - start}ms\``,
             edit: sent.key 
         });
     }
