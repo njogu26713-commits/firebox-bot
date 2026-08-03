@@ -237,8 +237,8 @@ const makeInteractionCommand = (name, desc, configName) => {
 module.exports = {
     // 👤 Basic DP Commands
     dp: {
-        name: "dp",
-        aliases: ["viewdp", "showdp"],
+        name: "profilephoto",
+        aliases: ["dp", "viewdp", "showdp"],
         description: "Get a user's profile picture",
         category: "dp",
         execute: async ({ sock, jid, msg, args, sender }) => {
@@ -257,7 +257,8 @@ module.exports = {
         }
     },
     dpfull: {
-        name: "dpfull",
+        name: "fullprofilephoto",
+        aliases: ["dpfull"],
         description: "Get HD version of a user's profile picture",
         category: "dp",
         execute: async ({ sock, jid, msg, args, sender }) => {
@@ -276,7 +277,8 @@ module.exports = {
         }
     },
     dpview: {
-        name: "dpview",
+        name: "viewprofilephoto",
+        aliases: ["dpview"],
         description: "View a profile picture clearly",
         category: "dp",
         execute: async ({ sock, jid, msg, args, sender }) => {
@@ -425,7 +427,8 @@ module.exports = {
         }
     },
     dpdetect: {
-        name: "dpdetect",
+        name: "detectprofilephoto",
+        aliases: ["dpdetect"],
         description: "Check if a user has changed their profile picture",
         category: "dp",
         execute: async ({ sock, jid, msg, args, sender }) => {

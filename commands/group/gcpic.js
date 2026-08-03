@@ -2,8 +2,8 @@ const { downloadMediaMessage } = require("@whiskeysockets/baileys");
 const axios = require("axios");
 
 module.exports = {
-    name: "gcpic",
-    aliases: ["gpp", "setgcpic", "setgpp"],
+    name: "groupphoto",
+    aliases: ["gcpic", "gpp", "setgcpic", "setgpp"],
     description: "Update the group profile picture",
     category: "group",
     isAdminOnly: true,

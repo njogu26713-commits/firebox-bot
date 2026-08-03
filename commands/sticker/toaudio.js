@@ -4,8 +4,8 @@ const fs = require("fs");
 const path = require("path");
 
 module.exports = {
-    name: "toaudio",
-    aliases: ["tovn"],
+    name: "extractaudio",
+    aliases: ["toaudio", "tovn"],
     description: "Convert video to audio.",
     category: "sticker",
     async execute({ sock, jid, msg }) {

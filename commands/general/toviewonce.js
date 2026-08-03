@@ -1,8 +1,8 @@
 const { downloadMediaMessage } = require("@whiskeysockets/baileys");
 
 module.exports = {
-    name: "toviewonce",
-    aliases: ["tovvo"],
+    name: "makeviewonce",
+    aliases: ["toviewonce", "tovvo"],
     description: "Convert a media message to a view-once message",
     category: "general",
     execute: async (ctx) => {

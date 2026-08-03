@@ -1,6 +1,6 @@
 module.exports = {
-    name: "gcdesc",
-    aliases: ["setdesc"],
+    name: "groupdescription",
+    aliases: ["gcdesc", "setdesc"],
     description: "Updates the group description.",
     category: "group",
     adminOnly: true,

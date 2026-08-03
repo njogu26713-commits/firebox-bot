@@ -1,6 +1,6 @@
 module.exports = {
-    name: "groupjid",
-    aliases: ["gjid"],
+    name: "groupid",
+    aliases: ["groupjid", "gjid"],
     description: "Get the JID of the current group chat",
     category: "group",
     groupOnly: true,

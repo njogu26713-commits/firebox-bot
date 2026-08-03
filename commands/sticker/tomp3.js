@@ -4,7 +4,8 @@ const fs = require("fs");
 const path = require("path");
 
 module.exports = {
-    name: "tomp3",
+    name: "convertmp3",
+    aliases: ["tomp3"],
     description: "Convert audio to high-quality MP3.",
     category: "sticker",
     async execute({ sock, jid, msg }) {

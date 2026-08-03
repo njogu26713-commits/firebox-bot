@@ -1,6 +1,6 @@
 module.exports = {
-    name: "togroupstatus",
-    aliases: ["togglestatus", "toggroup"],
+    name: "groupstatus",
+    aliases: ["togroupstatus", "togglestatus", "toggroup"],
     description: "Toggle the group chat between open (members can talk) and closed (only admins can talk)",
     category: "group",
     isAdminOnly: true,

@@ -4,7 +4,8 @@ const fs = require("fs");
 const path = require("path");
 
 module.exports = {
-    name: "togif",
+    name: "convertgif",
+    aliases: ["togif"],
     description: "Convert video to GIF.",
     category: "sticker",
     async execute({ sock, jid, msg }) {

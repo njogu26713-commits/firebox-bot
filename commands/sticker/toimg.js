@@ -4,8 +4,8 @@ const fs = require("fs");
 const path = require("path");
 
 module.exports = {
-    name: "toimg",
-    aliases: ["toimage", "toview"],
+    name: "toimage",
+    aliases: ["toimg", "toview"],
     description: "Convert sticker to image.",
     category: "sticker",
     async execute({ sock, jid, msg }) {
