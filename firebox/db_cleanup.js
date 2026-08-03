@@ -3,7 +3,8 @@
  * Drops orphan SQLite *_backup tables left behind by failed Sequelize alter syncs.
  * Run once: node db_cleanup.js
  */
-const sqlite3 = require('sqlite3').verbose();
+let sqlite3;
+try { sqlite3 = require('sqlite3').verbose(); } catch { console.warn('sqlite3 not available, skipping cleanup.'); process.exit(0); }
 const path = require('path');
 
 const dbPath = path.join(__dirname, '..', 'database', 'firebox.db');
