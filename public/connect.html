@@ -50,6 +50,14 @@
     .card + .card { margin-top: 16px; }
     .card h2 { font-size: 1rem; font-weight: 600; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
 
+    /* Side-by-side card row */
+    .cards-row { display: flex; flex-direction: row; gap: 16px; width: 100%; max-width: 940px; align-items: flex-start; }
+    .cards-row .card { flex: 1; max-width: none; margin-top: 0 !important; }
+    @media (max-width: 640px) {
+      .cards-row { flex-direction: column; max-width: 460px; }
+      .cards-row .card + .card { margin-top: 16px !important; }
+    }
+
     /* Method tabs */
     .method-tabs { display: flex; gap: 0; margin-bottom: 22px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
     .method-tab { flex: 1; padding: 9px 12px; font-size: 0.85rem; font-weight: 500; background: none; border: none; color: var(--muted); cursor: pointer; transition: background 0.2s, color 0.2s; }
@@ -148,6 +156,9 @@
     <div class="step-label">Session</div>
   </div>
 </div>
+
+<!-- Side-by-side card row -->
+<div class="cards-row">
 
 <!-- Step 1: Choose method -->
 <div class="card visible" id="card-method">
