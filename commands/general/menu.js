@@ -243,22 +243,10 @@ module.exports = {
                 });
             }
 
-            menuBody += `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰\n`;
-            menuBody += `𝑇𝑦𝑝𝑒 .𝚑𝚎𝚕𝚙 <𝚌𝚖𝚍> 𝑓𝑜𝑟 𝑑𝑒𝑡𝑎𝑖𝑙𝑠 𝑜𝑛 𝑎𝑛𝑦 𝚌𝚘𝚖𝚖𝚊𝚗𝚍`;
-
             const footerText = `${botName} • Support & Updates`;
-
-            // CTA buttons — Channel + Repo only
-            const buttons = [
-                { text: "📢 Follow on WhatsApp", url: "https://whatsapp.com/channel/0029Vb8elJp77qVJlCeiNX26" },
-                { text: "💻 GitHub Repo", url: "https://github.com/njogu26713-commits/firebox-bot" }
-            ];
 
             // Plain text + image — most compatible, fast, and 100% reliable
             let plainText = menuBody + `\n\n`;
-            buttons.forEach(btn => {
-                plainText += `🔗 *${btn.text}:* ${btn.url}\n`;
-            });
             if (footerText) plainText += `\n_${footerText}_`;
 
             if (banner) {
