@@ -12,3 +12,6 @@
 - [x] Verify the reference-inspired dashboard layout and commit the visual update to GitHub.
 - [x] Make the reference-inspired authenticated dashboard the default frontend entry point instead of the earlier landing interface.
 - [x] Verify the root, login, dashboard, and server routes resolve to the intended updated experience.
+- [x] Replace the user-managed server registry with a single read-only Server 1 entry representing the current bot session.
+- [x] Remove all user-facing add, edit, status-change, and delete server controls while retaining the pairing connection flow.
+- [x] Verify and commit the simplified single-bot dashboard.
