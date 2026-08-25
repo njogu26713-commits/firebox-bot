@@ -80,7 +80,9 @@ app.use(session({
 }));
 
 // ── Static files ──────────────────────────────────────────────────────────────
-app.use(express.static(path.join(__dirname, "public")));
+// Disable Express's automatic index.html fallback so `/` can open the new
+// authenticated Firebox dashboard instead of the legacy landing page.
+app.use(express.static(path.join(__dirname, "public"), { index: false }));
 
 // ── Bot API (/api/bot/*) ──────────────────────────────────────────────────────
 app.use("/api/bot", require("./saas/userApiRoutes"));
@@ -88,13 +90,18 @@ app.use("/api/dashboard", require("./saas/dashboardRoutes").router);
 
 // ── Pages ─────────────────────────────────────────────────────────────────────
 
+function requireDashboardPage(req, res, next) {
+    if (req.session?.dashboardUserId) return next();
+    return res.redirect("/login");
+}
+
 app.get("/", (req, res) =>
-    res.sendFile(path.join(__dirname, "public", "index.html")));
+    res.redirect(req.session?.dashboardUserId ? "/dashboard" : "/login"));
 
 app.get("/connect", (req, res) =>
     res.sendFile(path.join(__dirname, "public", "connect.html")));
 
-app.get("/dashboard", require("./saas/dashboardRoutes").requireDashboardAuth, (req, res) =>
+app.get("/dashboard", requireDashboardPage, (req, res) =>
     res.sendFile(path.join(__dirname, "public", "servers.html")));
 
 app.get("/bot-dashboard", (req, res) =>
@@ -103,7 +110,7 @@ app.get("/bot-dashboard", (req, res) =>
 app.get("/login", (req, res) =>
     res.sendFile(path.join(__dirname, "public", "login.html")));
 
-app.get("/servers", require("./saas/dashboardRoutes").requireDashboardAuth, (req, res) =>
+app.get("/servers", requireDashboardPage, (req, res) =>
     res.sendFile(path.join(__dirname, "public", "servers.html")));
 
 // Legacy redirect
