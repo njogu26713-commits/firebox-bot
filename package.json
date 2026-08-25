@@ -14,7 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@whiskeysockets/baileys": "^7.0.0-rc13",
+    "@whiskeysockets/baileys": "github:njogu26713-commits/firebox-baileys",
     "axios": "^1.19.0",
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.4.2",

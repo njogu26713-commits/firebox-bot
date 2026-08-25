@@ -99,3 +99,15 @@
 - [x] Keep hub bot keys server-side and make sync idempotent by Bot ID.
 - [x] Show synchronized bots immediately in the public panel without duplicate admin entry.
 - [x] Test registration sync, updates, secret protection, and public visibility.
+
+- [x] Diagnose the remote bot HTTP 502 and determine whether firebox-baileys or Railway startup is responsible.
+- [x] Verify the bot health endpoint, assigned port handling, and Baileys dependency compatibility.
+- [x] Apply and test the smallest required repair, or document the exact deployment correction.
+
+- [x] Repair the remote bot Railway deployment that returns HTTP 502 at its public URL.
+- [x] Verify the deployed source, startup command, assigned port, and health endpoint.
+- [x] Validate the corrected public URL before using it for Webhook Hub registration and pairing.
+
+- [ ] Add the requested command catalog to the bot’s menu and command registry, resolving duplicate names and aliases safely.
+- [x] Add explicit opt-in commands or menu links for the Firebox WhatsApp channel and group.
+- [x] Test command discovery, `.menu`, and consent-based onboarding behavior.
