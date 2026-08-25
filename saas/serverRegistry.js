@@ -59,6 +59,21 @@ module.exports = {
         if (!db) testRecords.set(record.id, record); else await db.insertOne(record);
         return publicRecord(record);
     },
+    async upsertByBotId(input) {
+        const data = validate(input);
+        const db = await store();
+        if (!db) {
+            const existing = [...testRecords.values()].find(record => record.botId === data.botId);
+            const record = existing ? { ...existing, ...data, active: true, updatedAt: new Date().toISOString() } : { id: `server_${crypto.randomUUID()}`, ...data, active: true, createdAt: new Date().toISOString() };
+            testRecords.set(record.id, record);
+            return publicRecord(record);
+        }
+        const existing = await db.findOne({ botId: data.botId }, { projection: { _id: 0 } });
+        const now = new Date().toISOString();
+        const record = { id: existing?.id || `server_${crypto.randomUUID()}`, ...data, active: true, createdAt: existing?.createdAt || now, updatedAt: now };
+        await db.replaceOne({ id: record.id }, record, { upsert: true });
+        return publicRecord(record);
+    },
     async remove(id) {
         const db = await store();
         if (!db) { const record = testRecords.get(id); if (record) record.active = false; return Boolean(record); }

@@ -22,3 +22,21 @@ FIREBOX_ADMIN_EMAIL=your-email@example.com
 ```
 
 The value must exactly match the email used to create or sign into your Firebox account. Only that account can open `/admin`, add or remove bot servers, or read the users-and-bots overview. The dashboard shows registered user IDs, email addresses, selected bot IDs, bot names, and last activity. Bot keys are never included in the report.
+
+## Automatic bot registration from the Webhook Hub
+
+To register each bot only once in the Webhook Hub and have it appear automatically in this panel, add these variables to the Webhook Hub service:
+
+```env
+FIREBOX_PANEL_URL=https://your-firebox-panel.up.railway.app
+FIREBOX_PANEL_SYNC_SECRET=one-long-random-secret
+FIREBOX_HUB_URL=https://your-webhook-hub.up.railway.app
+```
+
+Add the same sync secret to the Firebox panel service:
+
+```env
+FIREBOX_PANEL_SYNC_SECRET=one-long-random-secret
+```
+
+After both services are redeployed, every new or updated Webhook Hub registration is upserted into the panel by Bot ID. The panel’s `/admin` page no longer needs a duplicate manual server entry for synchronized bots.

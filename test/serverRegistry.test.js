@@ -17,3 +17,14 @@ test("server registry stores multiple servers and returns only public metadata",
     await registry.close();
     fs.rmSync(directory, { recursive: true, force: true });
 });
+
+test("server registry upserts synchronized bots by Bot ID", async () => {
+    process.env.NODE_ENV = "test";
+    delete require.cache[require.resolve("../saas/serverRegistry")];
+    const registry = require("../saas/serverRegistry");
+    const first = await registry.upsertByBotId({ name: "Sync Bot", hubUrl: "https://hub.example.com", botId: "bot_sync", botKey: "sync-key-1234567890", publicUrl: "https://sync.example.com" });
+    const second = await registry.upsertByBotId({ name: "Sync Bot Updated", hubUrl: "https://hub.example.com", botId: "bot_sync", botKey: "sync-key-1234567890", publicUrl: "https://sync-updated.example.com" });
+    assert.equal(first.id, second.id);
+    assert.equal((await registry.list()).filter(bot => bot.name.includes("Sync Bot")).length, 1);
+    await registry.close();
+});

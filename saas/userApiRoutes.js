@@ -7,12 +7,19 @@ const express = require("express");
 const QRCode = require("qrcode");
 const botManager = require("./botManager");
 const serverRegistry = require("./serverRegistry");
-const { isPanelProxy } = require("./panelProxyAuth");
+const { isPanelProxy, matchesSecret } = require("./panelProxyAuth");
 const { requireAdmin } = require("./adminAuth");
 const usageRegistry = require("./usageRegistry");
 
 const router = express.Router();
 router.use(express.json());
+router.post("/hub-sync", async (req, res) => {
+    if (!matchesSecret(req.get("X-Firebox-Sync-Key"), process.env.FIREBOX_PANEL_SYNC_SECRET)) return res.status(401).json({ error: "Invalid panel sync key." });
+    try {
+        const bot = await serverRegistry.upsertByBotId({ name: req.body.name, hubUrl: req.body.hubUrl, botId: req.body.botId, botKey: req.body.botKey, publicUrl: req.body.publicUrl });
+        return res.json({ synced: true, bot });
+    } catch (error) { return res.status(400).json({ error: error.message }); }
+});
 router.use((req, res, next) => {
     if (req.session.accountId || isPanelProxy(req)) return next();
     return res.status(401).json({ error: "Sign in required." });

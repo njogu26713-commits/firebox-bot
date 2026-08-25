@@ -90,3 +90,12 @@
 - [x] Diagnose why the deployed selected bot still returns `Sign in required` after the panel bridge update.
 - [x] Make the panel-to-bot handshake compatible with the deployed remote version or provide a precise redeployment fix.
 - [x] Re-test remote status and pairing requests after the handshake repair.
+
+- [x] Fix the firebox-baileys Railway Yarn 4 immutable-install failure caused by the missing or mismatched lockfile.
+- [x] Validate the library install and build with the exact Railway command.
+- [x] Push the build repair to the firebox-baileys repository.
+
+- [x] Automatically sync every Webhook Hub bot registration into the Firebox panel server registry.
+- [x] Keep hub bot keys server-side and make sync idempotent by Bot ID.
+- [x] Show synchronized bots immediately in the public panel without duplicate admin entry.
+- [x] Test registration sync, updates, secret protection, and public visibility.
