@@ -68,3 +68,7 @@
 - [x] Add create-account, sign-in, sign-out, and current-user session endpoints.
 - [x] Add matching dark account UI without changing server selection or pairing routes.
 - [x] Test account isolation, invalid credentials, persistence, and unchanged pairing behavior.
+
+- [x] Add a phone-only sidebar toggle that opens the dynamic bot list.
+- [x] Close the mobile sidebar and show the selected bot pairing page when a bot is tapped.
+- [x] Verify responsive phone layout and preserve desktop behavior and pairing APIs.
