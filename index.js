@@ -1,9 +1,9 @@
 /**
  * Firebox Bot — SaaS Server
  *
- * Anyone visits, gets a browser session, connects their WhatsApp,
- * and their personal bot is live. No login required.
- * Session cookie = identity = bot instance.
+ * The original Firebox Bot browser session remains available for bot setup.
+ * The optional server registry uses a separate password-authenticated account
+ * stored in the existing local application database directory.
  */
 
 const path = require("path");
@@ -62,16 +62,19 @@ const session = require("express-session");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+if (process.env.NODE_ENV === "production") app.set("trust proxy", 1);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(session({
     secret: process.env.SESSION_SECRET || require("crypto").randomBytes(32).toString("hex"),
     resave: false,
-    saveUninitialized: true,   // create session on first visit so we always have an ID
+    saveUninitialized: true,
     cookie: {
-        secure: false,
+        secure: process.env.NODE_ENV === "production",
         httpOnly: true,
+        sameSite: "lax",
         maxAge: 30 * 24 * 60 * 60 * 1000,   // 30 days
     },
 }));
@@ -81,6 +84,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // ── Bot API (/api/bot/*) ──────────────────────────────────────────────────────
 app.use("/api/bot", require("./saas/userApiRoutes"));
+app.use("/api/dashboard", require("./saas/dashboardRoutes").router);
 
 // ── Pages ─────────────────────────────────────────────────────────────────────
 
@@ -92,6 +96,12 @@ app.get("/connect", (req, res) =>
 
 app.get("/dashboard", (req, res) =>
     res.sendFile(path.join(__dirname, "public", "dashboard.html")));
+
+app.get("/login", (req, res) =>
+    res.sendFile(path.join(__dirname, "public", "login.html")));
+
+app.get("/servers", require("./saas/dashboardRoutes").requireDashboardAuth, (req, res) =>
+    res.sendFile(path.join(__dirname, "public", "servers.html")));
 
 // Legacy redirect
 app.get("/pair", (req, res) => res.redirect("/connect"));

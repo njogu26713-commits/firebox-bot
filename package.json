@@ -7,7 +7,8 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "pm2": "pm2 start ecosystem.config.js",
-    "logs": "pm2 logs firebox-bot"
+    "logs": "pm2 logs firebox-bot",
+    "test": "node --test test/*.test.js"
   },
   "keywords": [],
   "author": "",
