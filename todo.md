@@ -86,3 +86,7 @@
 - [x] Make logout work from desktop and mobile navigation and remove the Account link.
 - [x] Add a signed-in Settings page with account and session information.
 - [x] Test status diagnostics, logout, Settings access, and unchanged pairing behavior.
+
+- [x] Diagnose why the deployed selected bot still returns `Sign in required` after the panel bridge update.
+- [x] Make the panel-to-bot handshake compatible with the deployed remote version or provide a precise redeployment fix.
+- [x] Re-test remote status and pairing requests after the handshake repair.

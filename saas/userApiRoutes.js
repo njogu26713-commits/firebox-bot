@@ -190,6 +190,7 @@ router.get("/servers/:id/status", async (req, res) => {
     if (!server) return res.status(404).json({ error: "Server not found." });
     try {
         const { response, body } = await remoteRequest(req, server, "/api/bot/status");
+        if (body.error === "Sign in required.") { body.code = "REMOTE_PROXY_AUTH_REQUIRED"; body.error = "Remote bot rejected the panel bridge. Redeploy that bot from the latest Firebox Bot code and set FIREBOX_BOT_KEY to the same key saved for this server."; }
         if (!response.ok && !body.error) body.error = `Remote bot returned HTTP ${response.status}. Confirm its public URL and redeploy the latest Firebox Bot code.`;
         res.status(response.status).json(body);
     } catch (error) { res.status(502).json({ error: `Selected server unavailable: ${error.message}. Confirm the remote bot URL is reachable.` }); }
@@ -201,6 +202,7 @@ router.post("/servers/:id/pair-code", async (req, res) => {
     if (!server) return res.status(404).json({ error: "Server not found." });
     try {
         const { response, body } = await remoteRequest(req, server, "/api/bot/pair-code", { method: "POST", body: JSON.stringify({ phone: req.body && req.body.phone }) });
+        if (body.error === "Sign in required.") { body.code = "REMOTE_PROXY_AUTH_REQUIRED"; body.error = "Remote bot rejected the panel bridge. Redeploy that bot from the latest Firebox Bot code and set FIREBOX_BOT_KEY to the same key saved for this server."; }
         res.status(response.status).json(body);
     } catch (error) { res.status(502).json({ error: `Selected server unavailable: ${error.message}` }); }
 });
