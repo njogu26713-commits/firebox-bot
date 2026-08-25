@@ -15,3 +15,6 @@
 - [x] Replace the user-managed server registry with a single read-only Server 1 entry representing the current bot session.
 - [x] Remove all user-facing add, edit, status-change, and delete server controls while retaining the pairing connection flow.
 - [x] Verify and commit the simplified single-bot dashboard.
+- [x] Make the public link open a visitor-specific current-bot connection workspace without requiring dashboard authentication.
+- [x] Remove the legacy Bot Controls page and navigation while preserving per-browser bot-session isolation.
+- [x] Verify separate visitor sessions and commit the public connection update.

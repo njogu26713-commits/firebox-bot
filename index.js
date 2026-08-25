@@ -80,41 +80,34 @@ app.use(session({
 }));
 
 // ── Static files ──────────────────────────────────────────────────────────────
-// Disable Express's automatic index.html fallback so `/` can open the new
-// authenticated Firebox dashboard instead of the legacy landing page.
+// Disable Express's automatic index.html fallback so `/` always opens the
+// public visitor-specific Server 1 bot workspace.
 app.use(express.static(path.join(__dirname, "public"), { index: false }));
 
 // ── Bot API (/api/bot/*) ──────────────────────────────────────────────────────
 app.use("/api/bot", require("./saas/userApiRoutes"));
-app.use("/api/dashboard", require("./saas/dashboardRoutes").router);
 
 // ── Pages ─────────────────────────────────────────────────────────────────────
 
-function requireDashboardPage(req, res, next) {
-    if (req.session?.dashboardUserId) return next();
-    return res.redirect("/login");
-}
+const serverWorkspace = path.join(__dirname, "public", "servers.html");
 
-app.get("/", (req, res) =>
-    res.redirect(req.session?.dashboardUserId ? "/dashboard" : "/login"));
+// Every visitor gets the current bot workspace. express-session provides the
+// per-browser identity consumed by /api/bot, so different visitors cannot
+// share the same in-memory BotInstance.
+app.get("/", (_req, res) => res.sendFile(serverWorkspace));
 
-app.get("/connect", (req, res) =>
-    res.sendFile(path.join(__dirname, "public", "connect.html")));
+app.get("/connect", (_req, res) => res.redirect("/"));
 
-app.get("/dashboard", requireDashboardPage, (req, res) =>
-    res.sendFile(path.join(__dirname, "public", "servers.html")));
+app.get("/dashboard", (_req, res) => res.sendFile(serverWorkspace));
 
-app.get("/bot-dashboard", (req, res) =>
-    res.sendFile(path.join(__dirname, "public", "dashboard.html")));
-
-app.get("/login", (req, res) =>
-    res.sendFile(path.join(__dirname, "public", "login.html")));
-
-app.get("/servers", requireDashboardPage, (req, res) =>
-    res.sendFile(path.join(__dirname, "public", "servers.html")));
+// The old dashboard and sign-in routes are intentionally retired. Keep
+// redirects for bookmarked links so users land in the public workspace.
+app.get("/bot-dashboard", (_req, res) => res.redirect("/"));
+app.get("/login", (_req, res) => res.redirect("/"));
+app.get("/servers", (_req, res) => res.sendFile(serverWorkspace));
 
 // Legacy redirect
-app.get("/pair", (req, res) => res.redirect("/connect"));
+app.get("/pair", (_req, res) => res.redirect("/"));
 
 app.get("/health", (req, res) => res.send("🤖 Firebox Bot SaaS is Online!"));
 
