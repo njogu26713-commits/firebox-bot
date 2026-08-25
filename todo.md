@@ -117,3 +117,5 @@
 
 - [ ] Propagate `pairingMode: qr` through Webhook Hub registration so the independent Open-WA bot is not routed to `/api/bot/pair-code`.
 - [ ] Verify automatic Hub synchronization and QR routing without manual admin entry.
+
+- [x] Auto-detect Open-WA QR mode from remote status and fall back to `/api/bot/qr` for legacy code-mode records.
