@@ -1,6 +1,6 @@
 /**
  * Per-session bot API routes.
- * Mounted at /api/bot — no login required.
+ * Mounted at /api/bot — requires a signed-in account while preserving per-browser session isolation.
  * Each browser session (cookie) maps to one BotInstance.
  */
 const express = require("express");
@@ -10,6 +10,10 @@ const serverRegistry = require("./serverRegistry");
 
 const router = express.Router();
 router.use(express.json());
+router.use((req, res, next) => {
+    if (!req.session.accountId) return res.status(401).json({ error: "Sign in required." });
+    next();
+});
 
 // Use the express-session ID as the user/bot identifier
 function userId(req) {

@@ -63,3 +63,8 @@
 - [x] Remove unused sidebar and main-content empty spacing while preserving the dark reference layout.
 - [x] Show a compact `Bots are coming soon` state when the dynamic server list is empty.
 - [x] Verify populated server selection and no-server rendering after the refinement.
+
+- [x] Add MongoDB-backed user accounts with unique email addresses and securely hashed passwords.
+- [x] Add create-account, sign-in, sign-out, and current-user session endpoints.
+- [x] Add matching dark account UI without changing server selection or pairing routes.
+- [x] Test account isolation, invalid credentials, persistence, and unchanged pairing behavior.

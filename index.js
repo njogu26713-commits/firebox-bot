@@ -86,28 +86,31 @@ app.use(session({
 app.use(express.static(path.join(__dirname, "public"), { index: false }));
 
 // ── Bot API (/api/bot/*) ──────────────────────────────────────────────────────
+app.use("/api/auth", require("./saas/authApiRoutes"));
 app.use("/api/bot", require("./saas/userApiRoutes"));
 
 // ── Pages ─────────────────────────────────────────────────────────────────────
 
 const serverWorkspace = path.join(__dirname, "public", "servers.html");
 const adminWorkspace = path.join(__dirname, "public", "admin.html");
+const authWorkspace = path.join(__dirname, "public", "auth.html");
 
 // Every visitor gets the current bot workspace. express-session provides the
 // per-browser identity consumed by /api/bot, so different visitors cannot
 // share the same in-memory BotInstance.
-app.get("/", (_req, res) => res.sendFile(serverWorkspace));
-app.get("/admin", (_req, res) => res.sendFile(adminWorkspace));
+app.get("/", (req, res) => res.sendFile(req.session.accountId ? serverWorkspace : authWorkspace));
+app.get("/admin", (req, res) => res.sendFile(req.session.accountId ? adminWorkspace : authWorkspace));
+app.get("/auth", (_req, res) => res.sendFile(authWorkspace));
 
 app.get("/connect", (_req, res) => res.redirect("/"));
 
-app.get("/dashboard", (_req, res) => res.sendFile(serverWorkspace));
+app.get("/dashboard", (req, res) => res.sendFile(req.session.accountId ? serverWorkspace : authWorkspace));
 
 // The old dashboard and sign-in routes are intentionally retired. Keep
 // redirects for bookmarked links so users land in the public workspace.
 app.get("/bot-dashboard", (_req, res) => res.redirect("/"));
-app.get("/login", (_req, res) => res.redirect("/"));
-app.get("/servers", (_req, res) => res.sendFile(serverWorkspace));
+app.get("/login", (_req, res) => res.sendFile(authWorkspace));
+app.get("/servers", (req, res) => res.sendFile(req.session.accountId ? serverWorkspace : authWorkspace));
 
 // Legacy redirect
 app.get("/pair", (_req, res) => res.redirect("/"));
