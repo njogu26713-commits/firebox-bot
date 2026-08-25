@@ -114,3 +114,6 @@
 
 - [x] Add QR pairing mode to server registration and display/refresh QR codes in the user pairing workspace.
 - [x] Add authenticated QR proxying while preserving phone-code pairing for code-mode servers.
+
+- [ ] Propagate `pairingMode: qr` through Webhook Hub registration so the independent Open-WA bot is not routed to `/api/bot/pair-code`.
+- [ ] Verify automatic Hub synchronization and QR routing without manual admin entry.
