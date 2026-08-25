@@ -212,6 +212,29 @@ router.get("/servers/:id/qr", async (req, res) => {
     } catch (error) { res.status(502).json({ error: `Selected server unavailable: ${error.message}` }); }
 });
 
+router.get("/servers/:id/qr-image", async (req, res) => {
+    const server = await serverRegistry.get(req.params.id);
+    if (!server) return res.status(404).type("text").send("Server not found.");
+    try {
+        const { response, body } = await remoteRequest(req, server, "/api/bot/qr");
+        if (!response.ok || !body.qr) return res.status(response.status || 502).type("text").send(body.error || "QR code is not ready yet.");
+        const qr = String(body.qr);
+        let image;
+        if (qr.startsWith("data:image/")) {
+            const match = qr.match(/^data:image\/[^;]+;base64,(.+)$/);
+            if (!match) return res.status(502).type("text").send("Remote bot returned an invalid QR image.");
+            image = Buffer.from(match[1], "base64");
+        } else {
+            image = await QRCode.toBuffer(qr, { type: "png", width: 480, margin: 2 });
+        }
+        res.set("Content-Type", "image/png");
+        res.set("Cache-Control", "no-store, no-cache, must-revalidate");
+        return res.status(200).send(image);
+    } catch (error) {
+        return res.status(502).type("text").send(`Selected server unavailable: ${error.message}`);
+    }
+});
+
 router.post("/servers/:id/pair-code", async (req, res) => {
     const server = await serverRegistry.get(req.params.id);
     if (server) await usageRegistry.touch({ userId: req.session.accountId, email: req.session.accountUser?.email, serverId: req.params.id });

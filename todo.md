@@ -119,3 +119,5 @@
 - [ ] Verify automatic Hub synchronization and QR routing without manual admin entry.
 
 - [x] Auto-detect Open-WA QR mode from remote status and fall back to `/api/bot/qr` for legacy code-mode records.
+
+- [x] Add a binary QR-image proxy and use it from the panel to avoid broken data-URL rendering.
