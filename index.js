@@ -7,6 +7,7 @@
  */
 
 const path = require("path");
+const fireboxWebhook = require("./saas/fireboxWebhook");
 
 // ── Log noise filter ──────────────────────────────────────────────────────────
 const _origError = console.error.bind(console);
@@ -114,4 +115,5 @@ app.get("/health", (req, res) => res.send("🤖 Firebox Bot SaaS is Online!"));
 // ── Listen ────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
     console.log(`🌍 Firebox Bot SaaS listening on port ${PORT}`);
+    fireboxWebhook.start();
 });

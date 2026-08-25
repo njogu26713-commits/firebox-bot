@@ -18,3 +18,13 @@
 - [x] Make the public link open a visitor-specific current-bot connection workspace without requiring dashboard authentication.
 - [x] Remove the legacy Bot Controls page and navigation while preserving per-browser bot-session isolation.
 - [x] Verify separate visitor sessions and commit the public connection update.
+- [x] Inventory and rebrand the requested Baileys fork for Firebox without removing upstream attribution or license notices.
+- [x] Create and push a Firebox-owned `firebox-baileys` fork of the reviewed Baileys repository.
+- [x] Verify the rebranded package metadata, documentation, and runtime integrity.
+- [x] Record the new Firebox fork URL and dependency integration guidance.
+- [x] Create a separate Firebox central HTTPS receiver repository for events from multiple bot instances.
+- [x] Define authenticated webhook ingestion, bot registration, persistence, and monitoring endpoints.
+- [x] Add bot-side webhook integration guidance and verify multi-bot event isolation.
+- [x] Make hub bot entries dynamic so every Firebox deployment using its own ID and key appears as a selectable server.
+- [x] Add each bot’s public workspace URL and event/health metadata to the hub registry without exposing secrets.
+- [x] Update Firebox Bot registration guidance and verify selected-bot connection links and multi-bot isolation.
