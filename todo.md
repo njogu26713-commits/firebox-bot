@@ -121,3 +121,4 @@
 - [x] Auto-detect Open-WA QR mode from remote status and fall back to `/api/bot/qr` for legacy code-mode records.
 
 - [x] Add a binary QR-image proxy and use it from the panel to avoid broken data-URL rendering.
+- [x] Identify whether the live QR failure is caused by an old deployment, a missing bot QR payload, or a non-image proxy response, then repair it.
