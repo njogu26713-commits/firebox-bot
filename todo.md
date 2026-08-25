@@ -8,3 +8,5 @@
 - [x] Verify the committed dashboard extension is present on the remote `main` branch after authenticated push access is available.
 - [x] Browser-session write access fallback was superseded by the normal authenticated command-line GitHub workflow.
 - [x] Push commit `ec63863` through the normal authenticated command-line GitHub workflow and verify it is on `main`.
+- [x] Restyle the existing Firebox dashboard with the supplied light server-focused control-panel reference while retaining account-scoped server data and bot controls.
+- [x] Verify the reference-inspired dashboard layout and commit the visual update to GitHub.

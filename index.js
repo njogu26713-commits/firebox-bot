@@ -94,7 +94,10 @@ app.get("/", (req, res) =>
 app.get("/connect", (req, res) =>
     res.sendFile(path.join(__dirname, "public", "connect.html")));
 
-app.get("/dashboard", (req, res) =>
+app.get("/dashboard", require("./saas/dashboardRoutes").requireDashboardAuth, (req, res) =>
+    res.sendFile(path.join(__dirname, "public", "servers.html")));
+
+app.get("/bot-dashboard", (req, res) =>
     res.sendFile(path.join(__dirname, "public", "dashboard.html")));
 
 app.get("/login", (req, res) =>
