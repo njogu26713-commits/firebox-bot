@@ -28,3 +28,13 @@ test("server registry upserts synchronized bots by Bot ID", async () => {
     assert.equal((await registry.list()).filter(bot => bot.name.includes("Sync Bot")).length, 1);
     await registry.close();
 });
+
+test("server registry preserves QR pairing mode without exposing the bot key", async () => {
+    process.env.NODE_ENV = "test";
+    delete require.cache[require.resolve("../saas/serverRegistry")];
+    const registry = require("../saas/serverRegistry");
+    const bot = await registry.add({ name: "Open-WA QR Bot", hubUrl: "https://hub.example.com", botId: "qr-bot", botKey: "qr-key-1234567890", publicUrl: "https://qr.example.com", pairingMode: "qr" });
+    assert.equal(bot.pairingMode, "qr");
+    assert.equal("botKey" in bot, false);
+    await registry.close();
+});

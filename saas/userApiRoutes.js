@@ -16,7 +16,7 @@ router.use(express.json());
 router.post("/hub-sync", async (req, res) => {
     if (!matchesSecret(req.get("X-Firebox-Sync-Key"), process.env.FIREBOX_PANEL_SYNC_SECRET)) return res.status(401).json({ error: "Invalid panel sync key." });
     try {
-        const bot = await serverRegistry.upsertByBotId({ name: req.body.name, hubUrl: req.body.hubUrl, botId: req.body.botId, botKey: req.body.botKey, publicUrl: req.body.publicUrl });
+        const bot = await serverRegistry.upsertByBotId({ name: req.body.name, hubUrl: req.body.hubUrl, botId: req.body.botId, botKey: req.body.botKey, publicUrl: req.body.publicUrl, pairingMode: req.body.pairingMode });
         return res.json({ synced: true, bot });
     } catch (error) { return res.status(400).json({ error: error.message }); }
 });
@@ -201,6 +201,15 @@ router.get("/servers/:id/status", async (req, res) => {
         if (!response.ok && !body.error) body.error = `Remote bot returned HTTP ${response.status}. Confirm its public URL and redeploy the latest Firebox Bot code.`;
         res.status(response.status).json(body);
     } catch (error) { res.status(502).json({ error: `Selected server unavailable: ${error.message}. Confirm the remote bot URL is reachable.` }); }
+});
+
+router.get("/servers/:id/qr", async (req, res) => {
+    const server = await serverRegistry.get(req.params.id);
+    if (!server) return res.status(404).json({ error: "Server not found." });
+    try {
+        const { response, body } = await remoteRequest(req, server, "/api/bot/qr");
+        res.status(response.status).json(body);
+    } catch (error) { res.status(502).json({ error: `Selected server unavailable: ${error.message}` }); }
 });
 
 router.post("/servers/:id/pair-code", async (req, res) => {

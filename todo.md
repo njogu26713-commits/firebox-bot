@@ -111,3 +111,6 @@
 - [ ] Add the requested command catalog to the bot’s menu and command registry, resolving duplicate names and aliases safely.
 - [x] Add explicit opt-in commands or menu links for the Firebox WhatsApp channel and group.
 - [x] Test command discovery, `.menu`, and consent-based onboarding behavior.
+
+- [x] Add QR pairing mode to server registration and display/refresh QR codes in the user pairing workspace.
+- [x] Add authenticated QR proxying while preserving phone-code pairing for code-mode servers.

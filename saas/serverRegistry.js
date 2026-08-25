@@ -9,10 +9,10 @@ let collection;
 const testRecords = new Map();
 
 function publicRecord(record) {
-    return { id: record.id, name: record.name, publicUrl: record.publicUrl, active: record.active, createdAt: record.createdAt };
+    return { id: record.id, name: record.name, publicUrl: record.publicUrl, pairingMode: record.pairingMode || 'code', active: record.active, createdAt: record.createdAt };
 }
 function adminRecord(record) {
-    return { id: record.id, name: record.name, botId: record.botId, hubUrl: record.hubUrl, publicUrl: record.publicUrl, active: record.active, createdAt: record.createdAt };
+    return { id: record.id, name: record.name, botId: record.botId, hubUrl: record.hubUrl, publicUrl: record.publicUrl, pairingMode: record.pairingMode || 'code', active: record.active, createdAt: record.createdAt };
 }
 async function store() {
     if (process.env.NODE_ENV === "test") return null;
@@ -33,8 +33,9 @@ function validate(input) {
     const hubUrl = String(input.hubUrl || "").trim().replace(/\/$/, "");
     const botId = String(input.botId || "").trim();
     const botKey = String(input.botKey || "").trim();
+    const pairingMode = input.pairingMode === 'qr' ? 'qr' : 'code';
     if (!name || !/^https?:\/\//i.test(publicUrl) || !/^https?:\/\//i.test(hubUrl) || !botId || !botKey) throw new Error("Name, public URL, hub URL, bot ID, and bot key are required.");
-    return { name, publicUrl, hubUrl, botId, botKey };
+    return { name, publicUrl, hubUrl, botId, botKey, pairingMode };
 }
 module.exports = {
     async listAdmin() {
