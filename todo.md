@@ -33,3 +33,8 @@
 - [x] Make the public workspace fetch the current server list and let each visitor select a server before pairing.
 - [x] Proxy selected-server pairing requests over HTTPS without exposing bot keys to browsers or storing WhatsApp session credentials in the panel.
 - [x] Verify independent visitor sessions and selected-server routing for Server 1, Server 2, and later deployments.
+
+- [x] Split the Firebox Bot UI into `/admin` for server management and `/` for public pairing.
+- [x] Remove the add-server control from the public visitor page while leaving server selection available.
+- [x] Keep admin server creation unauthenticated for now and document the security limitation.
+- [x] Test both page routes and selected-server pairing behavior after the split.

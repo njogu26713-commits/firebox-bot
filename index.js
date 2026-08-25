@@ -91,11 +91,13 @@ app.use("/api/bot", require("./saas/userApiRoutes"));
 // ── Pages ─────────────────────────────────────────────────────────────────────
 
 const serverWorkspace = path.join(__dirname, "public", "servers.html");
+const adminWorkspace = path.join(__dirname, "public", "admin.html");
 
 // Every visitor gets the current bot workspace. express-session provides the
 // per-browser identity consumed by /api/bot, so different visitors cannot
 // share the same in-memory BotInstance.
 app.get("/", (_req, res) => res.sendFile(serverWorkspace));
+app.get("/admin", (_req, res) => res.sendFile(adminWorkspace));
 
 app.get("/connect", (_req, res) => res.redirect("/"));
 

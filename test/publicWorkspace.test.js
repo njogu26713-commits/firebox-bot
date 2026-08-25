@@ -8,14 +8,15 @@ const workspaceSource = fs.readFileSync(path.join(__dirname, "../public/servers.
 
 test("the public entry point serves the visitor-specific dynamic server workspace", () => {
     assert.match(indexSource, /app\.get\("\/", \(_req, res\) => res\.sendFile\(serverWorkspace\)\)/);
+    assert.match(indexSource, /app\.get\("\/admin", \(_req, res\) => res\.sendFile\(adminWorkspace\)\)/);
     assert.match(indexSource, /app\.get\("\/bot-dashboard", \(_req, res\) => res\.redirect\("\/"\)\)/);
     assert.match(indexSource, /app\.get\("\/connect", \(_req, res\) => res\.redirect\("\/"\)\)/);
     assert.match(workspaceSource, /id="server-list"/);
-    assert.match(workspaceSource, /id="add-server"/);
     assert.match(workspaceSource, /\/api\/bot\/servers/);
     assert.doesNotMatch(workspaceSource, /dashboard\/auth\/me/);
     assert.doesNotMatch(workspaceSource, /id="logout"/);
-    assert.match(workspaceSource, /id="server-form"/);
+    assert.doesNotMatch(workspaceSource, /id="server-form"/);
+    assert.doesNotMatch(workspaceSource, /id="add-server"/);
 });
 
 test("the bot API remains session-scoped for each visitor", () => {
