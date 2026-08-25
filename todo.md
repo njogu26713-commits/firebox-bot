@@ -58,3 +58,8 @@
 - [x] Restyle the public workspace to match the supplied dark Firebox reference design.
 - [x] Preserve dynamic server selection, remote status polling, pairing-code requests, and per-browser session isolation.
 - [x] Verify responsive layout and existing functional tests after the visual-only change.
+
+- [x] Remove hard-coded user identity, email, and default Server 1 labels from the public UI.
+- [x] Remove unused sidebar and main-content empty spacing while preserving the dark reference layout.
+- [x] Show a compact `Bots are coming soon` state when the dynamic server list is empty.
+- [x] Verify populated server selection and no-server rendering after the refinement.
