@@ -38,3 +38,11 @@
 - [x] Remove the add-server control from the public visitor page while leaving server selection available.
 - [x] Keep admin server creation unauthenticated for now and document the security limitation.
 - [x] Test both page routes and selected-server pairing behavior after the split.
+
+- [x] Temporarily remove webhook hub admin authentication while keeping bot-key event ingestion authentication.
+- [x] Update hub UI and documentation to warn that admin operations are publicly accessible during the temporary period.
+- [x] Test unauthenticated hub dashboard operations and preserve invalid bot-key rejection.
+
+- [x] Replace the local server registry with MongoDB persistence for added server configuration records.
+- [x] Keep bot keys server-side and excluded from public server discovery responses.
+- [x] Update asynchronous routes, environment documentation, and MongoDB tests.

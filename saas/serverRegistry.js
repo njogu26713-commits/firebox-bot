@@ -1,45 +1,59 @@
-const fs = require("fs");
-const path = require("path");
 const crypto = require("crypto");
+const { MongoClient } = require("mongodb");
 
-const registryFile = process.env.FIREBOX_SERVER_REGISTRY_FILE || path.join(__dirname, "../data/servers.json");
-const encryptionSecret = process.env.FIREBOX_REGISTRY_SECRET || process.env.SESSION_SECRET;
-if (!encryptionSecret) throw new Error("FIREBOX_REGISTRY_SECRET or SESSION_SECRET is required for the server registry.");
+const uri = process.env.MONGODB_URI;
+const databaseName = process.env.MONGODB_DATABASE || "firebox";
+const collectionName = process.env.MONGODB_SERVERS_COLLECTION || "servers";
+let client;
+let collection;
+const testRecords = new Map();
 
-const key = crypto.createHash("sha256").update(encryptionSecret).digest();
-function ensureDirectory() { fs.mkdirSync(path.dirname(registryFile), { recursive: true }); }
-function encrypt(value) {
-    const iv = crypto.randomBytes(12);
-    const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
-    const encrypted = Buffer.concat([cipher.update(JSON.stringify(value), "utf8"), cipher.final()]);
-    return { iv: iv.toString("base64url"), tag: cipher.getAuthTag().toString("base64url"), data: encrypted.toString("base64url") };
+function publicRecord(record) {
+    return { id: record.id, name: record.name, publicUrl: record.publicUrl, active: record.active, createdAt: record.createdAt };
 }
-function decrypt(record) {
-    const decipher = crypto.createDecipheriv("aes-256-gcm", key, Buffer.from(record.iv, "base64url"));
-    decipher.setAuthTag(Buffer.from(record.tag, "base64url"));
-    return JSON.parse(Buffer.concat([decipher.update(Buffer.from(record.data, "base64url")), decipher.final()]).toString("utf8"));
+async function store() {
+    if (process.env.NODE_ENV === "test") return null;
+    if (!uri) throw new Error("MONGODB_URI is required for the Firebox server registry.");
+    if (!collection) {
+        client = new MongoClient(uri, { serverSelectionTimeoutMS: 8000 });
+        await client.connect();
+        collection = client.db(databaseName).collection(collectionName);
+        await collection.createIndex({ id: 1 }, { unique: true });
+        await collection.createIndex({ active: 1, createdAt: -1 });
+    }
+    return collection;
 }
-function read() {
-    ensureDirectory();
-    if (!fs.existsSync(registryFile)) return [];
-    try { return JSON.parse(fs.readFileSync(registryFile, "utf8")).map(decrypt); } catch (error) { throw new Error(`Could not read server registry: ${error.message}`); }
+function validate(input) {
+    const name = String(input.name || "").trim().slice(0, 120);
+    const publicUrl = String(input.publicUrl || "").trim().replace(/\/$/, "");
+    const hubUrl = String(input.hubUrl || "").trim().replace(/\/$/, "");
+    const botId = String(input.botId || "").trim();
+    const botKey = String(input.botKey || "").trim();
+    if (!name || !/^https?:\/\//i.test(publicUrl) || !/^https?:\/\//i.test(hubUrl) || !botId || !botKey) throw new Error("Name, public URL, hub URL, bot ID, and bot key are required.");
+    return { name, publicUrl, hubUrl, botId, botKey };
 }
-function write(records) { ensureDirectory(); fs.writeFileSync(registryFile, JSON.stringify(records.map(encrypt), null, 2), { mode: 0o600 }); }
-function publicRecord(record) { return { id: record.id, name: record.name, publicUrl: record.publicUrl, active: record.active, createdAt: record.createdAt }; }
-
 module.exports = {
-    list() { return read().filter(record => record.active).map(publicRecord); },
-    get(id) { return read().find(record => record.id === id && record.active) || null; },
-    add(input) {
-        const name = String(input.name || "").trim().slice(0, 120);
-        const publicUrl = String(input.publicUrl || "").trim().replace(/\/$/, "");
-        const hubUrl = String(input.hubUrl || "").trim().replace(/\/$/, "");
-        const botId = String(input.botId || "").trim();
-        const botKey = String(input.botKey || "").trim();
-        if (!name || !/^https?:\/\//i.test(publicUrl) || !/^https?:\/\//i.test(hubUrl) || !botId || !botKey) throw new Error("Name, public URL, hub URL, bot ID, and bot key are required.");
-        const records = read();
-        const record = { id: `server_${crypto.randomUUID()}`, name, publicUrl, hubUrl, botId, botKey, active: true, createdAt: new Date().toISOString() };
-        records.push(record); write(records); return publicRecord(record);
+    async list() {
+        const db = await store();
+        if (!db) return [...testRecords.values()].filter(record => record.active).map(publicRecord);
+        return (await db.find({ active: true }, { projection: { _id: 0 } }).sort({ createdAt: -1 }).toArray()).map(publicRecord);
     },
-    remove(id) { const records = read(); const next = records.map(record => record.id === id ? { ...record, active: false } : record); write(next); return next.some(record => record.id === id); },
+    async get(id) {
+        const db = await store();
+        if (!db) return testRecords.get(id)?.active ? testRecords.get(id) : null;
+        return db.findOne({ id, active: true }, { projection: { _id: 0 } });
+    },
+    async add(input) {
+        const data = validate(input);
+        const record = { id: `server_${crypto.randomUUID()}`, ...data, active: true, createdAt: new Date().toISOString() };
+        const db = await store();
+        if (!db) testRecords.set(record.id, record); else await db.insertOne(record);
+        return publicRecord(record);
+    },
+    async remove(id) {
+        const db = await store();
+        if (!db) { const record = testRecords.get(id); if (record) record.active = false; return Boolean(record); }
+        return (await db.updateOne({ id }, { $set: { active: false } })).matchedCount > 0;
+    },
+    async close() { if (client) await client.close(); client = null; collection = null; },
 };

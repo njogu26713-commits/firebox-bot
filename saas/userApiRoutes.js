@@ -158,27 +158,27 @@ async function remoteRequest(req, server, route, options = {}) {
 }
 
 // Public server discovery: credentials are never returned.
-router.get("/servers", (_req, res) => res.json({ servers: serverRegistry.list() }));
+router.get("/servers", async (_req, res) => { try { res.json({ servers: await serverRegistry.list() }); } catch (error) { res.status(503).json({ error: error.message }); } });
 
 // Intentionally unauthenticated for now; secure this route before public production use.
-router.post("/servers", (req, res) => {
+router.post("/servers", async (req, res) => {
     try {
-        res.status(201).json({ server: serverRegistry.add(req.body || {}) });
+        res.status(201).json({ server: await serverRegistry.add(req.body || {}) });
     } catch (error) { res.status(400).json({ error: error.message }); }
 });
 
-router.delete("/servers/:id", (req, res) => {
-    res.json({ ok: serverRegistry.remove(req.params.id) });
+router.delete("/servers/:id", async (req, res) => {
+    res.json({ ok: await serverRegistry.remove(req.params.id) });
 });
 
-router.post("/servers/:id/select", (req, res) => {
-    if (!serverRegistry.get(req.params.id)) return res.status(404).json({ error: "Server not found." });
+router.post("/servers/:id/select", async (req, res) => {
+    if (!await serverRegistry.get(req.params.id)) return res.status(404).json({ error: "Server not found." });
     req.session.selectedServerId = req.params.id;
-    res.json({ ok: true, server: serverRegistry.get(req.params.id) && { id: serverRegistry.get(req.params.id).id } });
+    res.json({ ok: true, server: { id: req.params.id } });
 });
 
 router.get("/servers/:id/status", async (req, res) => {
-    const server = serverRegistry.get(req.params.id);
+    const server = await serverRegistry.get(req.params.id);
     if (!server) return res.status(404).json({ error: "Server not found." });
     try {
         const { response, body } = await remoteRequest(req, server, "/api/bot/status");
@@ -187,7 +187,7 @@ router.get("/servers/:id/status", async (req, res) => {
 });
 
 router.post("/servers/:id/pair-code", async (req, res) => {
-    const server = serverRegistry.get(req.params.id);
+    const server = await serverRegistry.get(req.params.id);
     if (!server) return res.status(404).json({ error: "Server not found." });
     try {
         const { response, body } = await remoteRequest(req, server, "/api/bot/pair-code", { method: "POST", body: JSON.stringify({ phone: req.body && req.body.phone }) });
