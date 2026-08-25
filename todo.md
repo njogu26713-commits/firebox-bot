@@ -72,3 +72,7 @@
 - [x] Add a phone-only sidebar toggle that opens the dynamic bot list.
 - [x] Close the mobile sidebar and show the selected bot pairing page when a bot is tapped.
 - [x] Verify responsive phone layout and preserve desktop behavior and pairing APIs.
+
+- [x] Fix remote selected-bot requests that return `Sign in required` after the user signs into the main panel.
+- [x] Add a secure panel-to-bot authentication bridge without exposing bot keys to browsers.
+- [x] Test status and pairing requests through the selected remote bot deployment.

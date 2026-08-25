@@ -7,12 +7,13 @@ const express = require("express");
 const QRCode = require("qrcode");
 const botManager = require("./botManager");
 const serverRegistry = require("./serverRegistry");
+const { isPanelProxy } = require("./panelProxyAuth");
 
 const router = express.Router();
 router.use(express.json());
 router.use((req, res, next) => {
-    if (!req.session.accountId) return res.status(401).json({ error: "Sign in required." });
-    next();
+    if (req.session.accountId || isPanelProxy(req)) return next();
+    return res.status(401).json({ error: "Sign in required." });
 });
 
 // Use the express-session ID as the user/bot identifier
@@ -151,7 +152,7 @@ function selectedServer(req) {
 function remoteCookieKey(serverId) { return `remoteCookie_${serverId}`; }
 
 async function remoteRequest(req, server, route, options = {}) {
-    const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
+    const headers = { "Content-Type": "application/json", "X-Firebox-Panel-Proxy": "1", "X-Firebox-Panel-Key": server.botKey, ...(options.headers || {}) };
     const cookie = req.session[remoteCookieKey(server.id)];
     if (cookie) headers.Cookie = cookie;
     const response = await fetch(`${server.publicUrl}${route}`, { ...options, headers, redirect: "manual" });
