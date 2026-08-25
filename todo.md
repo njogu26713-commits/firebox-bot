@@ -46,3 +46,11 @@
 - [x] Replace the local server registry with MongoDB persistence for added server configuration records.
 - [x] Keep bot keys server-side and excluded from public server discovery responses.
 - [x] Update asynchronous routes, environment documentation, and MongoDB tests.
+
+- [x] Fix the webhook hub Register bot action that is currently not working.
+- [x] Add a regression test for successful bot registration and useful error responses.
+
+- [ ] Diagnose the deployed `/admin` add-server error `bad auth: Authentication failed.`
+- [ ] Align the deployed panel and bot authentication contract and improve the error message.
+- [ ] Verify adding a hub-generated bot identity succeeds without admin login.
+- [x] Accept Railway’s `MONGO_URL` private reference variable and `MONGO_PUBLIC_URL` fallback for the panel registry.

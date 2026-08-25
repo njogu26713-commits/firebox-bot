@@ -1,7 +1,7 @@
 const crypto = require("crypto");
 const { MongoClient } = require("mongodb");
 
-const uri = process.env.MONGODB_URI;
+function connectionUri() { return process.env.MONGODB_URI || process.env.MONGO_URL || process.env.MONGO_PUBLIC_URL; }
 const databaseName = process.env.MONGODB_DATABASE || "firebox";
 const collectionName = process.env.MONGODB_SERVERS_COLLECTION || "servers";
 let client;
@@ -13,7 +13,8 @@ function publicRecord(record) {
 }
 async function store() {
     if (process.env.NODE_ENV === "test") return null;
-    if (!uri) throw new Error("MONGODB_URI is required for the Firebox server registry.");
+    const uri = connectionUri();
+    if (!uri) throw new Error("Railway MongoDB is not connected. Add a reference variable named MONGO_URL or set MONGODB_URI.");
     if (!collection) {
         client = new MongoClient(uri, { serverSelectionTimeoutMS: 8000 });
         await client.connect();
