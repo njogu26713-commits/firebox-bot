@@ -12,3 +12,13 @@ MONGODB_SERVERS_COLLECTION=servers
 After saving the variables, redeploy the panel service. The `/admin` server registry will then save server name, hub URL, bot ID, bot key, public URL, active state, and creation time in the Railway MongoDB service.
 
 The webhook hub URL is not the MongoDB URL. Each actual bot deployment still uses `FIREBOX_HUB_URL`, `FIREBOX_BOT_ID`, `FIREBOX_BOT_KEY`, and `FIREBOX_PUBLIC_URL` for event delivery and pairing.
+
+## Administrator access
+
+Add this variable to the Firebox Bot panel service in Railway:
+
+```env
+FIREBOX_ADMIN_EMAIL=your-email@example.com
+```
+
+The value must exactly match the email used to create or sign into your Firebox account. Only that account can open `/admin`, add or remove bot servers, or read the users-and-bots overview. The dashboard shows registered user IDs, email addresses, selected bot IDs, bot names, and last activity. Bot keys are never included in the report.

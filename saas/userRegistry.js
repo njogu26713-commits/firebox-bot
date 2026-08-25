@@ -42,6 +42,11 @@ module.exports = {
         if (!db) testUsers.set(user.id, user); else await db.insertOne(user);
         return publicUser(user);
     },
+    async list() {
+        const db = await store();
+        if (!db) return [...testUsers.values()].map(publicUser);
+        return (await db.find({}, { projection: { _id: 0, id: 1, name: 1, email: 1, createdAt: 1 } }).sort({ createdAt: -1 }).toArray()).map(publicUser);
+    },
     async findByEmail(email) {
         const normalized = String(email || "").trim().toLowerCase();
         const db = await store();

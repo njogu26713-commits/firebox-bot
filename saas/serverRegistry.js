@@ -11,6 +11,9 @@ const testRecords = new Map();
 function publicRecord(record) {
     return { id: record.id, name: record.name, publicUrl: record.publicUrl, active: record.active, createdAt: record.createdAt };
 }
+function adminRecord(record) {
+    return { id: record.id, name: record.name, botId: record.botId, hubUrl: record.hubUrl, publicUrl: record.publicUrl, active: record.active, createdAt: record.createdAt };
+}
 async function store() {
     if (process.env.NODE_ENV === "test") return null;
     const uri = connectionUri();
@@ -34,6 +37,11 @@ function validate(input) {
     return { name, publicUrl, hubUrl, botId, botKey };
 }
 module.exports = {
+    async listAdmin() {
+        const db = await store();
+        if (!db) return [...testRecords.values()].filter(record => record.active).map(adminRecord);
+        return (await db.find({ active: true }, { projection: { _id: 0 } }).sort({ createdAt: -1 }).toArray()).map(adminRecord);
+    },
     async list() {
         const db = await store();
         if (!db) return [...testRecords.values()].filter(record => record.active).map(publicRecord);

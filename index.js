@@ -8,6 +8,7 @@
 
 const path = require("path");
 const fireboxWebhook = require("./saas/fireboxWebhook");
+const { isAdminAccount } = require("./saas/adminAuth");
 
 // ── Log noise filter ──────────────────────────────────────────────────────────
 const _origError = console.error.bind(console);
@@ -87,6 +88,7 @@ app.use(express.static(path.join(__dirname, "public"), { index: false }));
 
 // ── Bot API (/api/bot/*) ──────────────────────────────────────────────────────
 app.use("/api/auth", require("./saas/authApiRoutes"));
+app.use("/api/admin", require("./saas/adminApiRoutes"));
 app.use("/api/bot", require("./saas/userApiRoutes"));
 
 // ── Pages ─────────────────────────────────────────────────────────────────────
@@ -99,7 +101,7 @@ const authWorkspace = path.join(__dirname, "public", "auth.html");
 // per-browser identity consumed by /api/bot, so different visitors cannot
 // share the same in-memory BotInstance.
 app.get("/", (req, res) => res.sendFile(req.session.accountId ? serverWorkspace : authWorkspace));
-app.get("/admin", (req, res) => res.sendFile(req.session.accountId ? adminWorkspace : authWorkspace));
+app.get("/admin", (req, res) => { if (!req.session.accountId) return res.sendFile(authWorkspace); if (!isAdminAccount(req)) return res.status(403).send("Administrator access required."); return res.sendFile(adminWorkspace); });
 app.get("/auth", (_req, res) => res.sendFile(authWorkspace));
 
 app.get("/connect", (_req, res) => res.redirect("/"));

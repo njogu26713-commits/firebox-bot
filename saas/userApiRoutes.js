@@ -8,6 +8,8 @@ const QRCode = require("qrcode");
 const botManager = require("./botManager");
 const serverRegistry = require("./serverRegistry");
 const { isPanelProxy } = require("./panelProxyAuth");
+const { requireAdmin } = require("./adminAuth");
+const usageRegistry = require("./usageRegistry");
 
 const router = express.Router();
 router.use(express.json());
@@ -166,19 +168,20 @@ async function remoteRequest(req, server, route, options = {}) {
 router.get("/servers", async (_req, res) => { try { res.json({ servers: await serverRegistry.list() }); } catch (error) { res.status(503).json({ error: error.message }); } });
 
 // Intentionally unauthenticated for now; secure this route before public production use.
-router.post("/servers", async (req, res) => {
+router.post("/servers", requireAdmin, async (req, res) => {
     try {
         res.status(201).json({ server: await serverRegistry.add(req.body || {}) });
     } catch (error) { res.status(400).json({ error: error.message }); }
 });
 
-router.delete("/servers/:id", async (req, res) => {
+router.delete("/servers/:id", requireAdmin, async (req, res) => {
     res.json({ ok: await serverRegistry.remove(req.params.id) });
 });
 
 router.post("/servers/:id/select", async (req, res) => {
     if (!await serverRegistry.get(req.params.id)) return res.status(404).json({ error: "Server not found." });
     req.session.selectedServerId = req.params.id;
+    await usageRegistry.touch({ userId: req.session.accountId, email: req.session.accountUser?.email, serverId: req.params.id });
     res.json({ ok: true, server: { id: req.params.id } });
 });
 
@@ -193,6 +196,7 @@ router.get("/servers/:id/status", async (req, res) => {
 
 router.post("/servers/:id/pair-code", async (req, res) => {
     const server = await serverRegistry.get(req.params.id);
+    if (server) await usageRegistry.touch({ userId: req.session.accountId, email: req.session.accountUser?.email, serverId: req.params.id });
     if (!server) return res.status(404).json({ error: "Server not found." });
     try {
         const { response, body } = await remoteRequest(req, server, "/api/bot/pair-code", { method: "POST", body: JSON.stringify({ phone: req.body && req.body.phone }) });
