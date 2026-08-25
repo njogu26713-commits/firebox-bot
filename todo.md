@@ -28,3 +28,8 @@
 - [x] Make hub bot entries dynamic so every Firebox deployment using its own ID and key appears as a selectable server.
 - [x] Add each bot’s public workspace URL and event/health metadata to the hub registry without exposing secrets.
 - [x] Update Firebox Bot registration guidance and verify selected-bot connection links and multi-bot isolation.
+
+- [x] Add an administrator bot panel for adding remote Firebox servers with hub URL, bot ID, bot key, public URL, and display name.
+- [x] Make the public workspace fetch the current server list and let each visitor select a server before pairing.
+- [x] Proxy selected-server pairing requests over HTTPS without exposing bot keys to browsers or storing WhatsApp session credentials in the panel.
+- [x] Verify independent visitor sessions and selected-server routing for Server 1, Server 2, and later deployments.

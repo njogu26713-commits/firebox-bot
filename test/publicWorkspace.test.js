@@ -6,14 +6,16 @@ const test = require("node:test");
 const indexSource = fs.readFileSync(path.join(__dirname, "../index.js"), "utf8");
 const workspaceSource = fs.readFileSync(path.join(__dirname, "../public/servers.html"), "utf8");
 
-test("the public entry point serves the visitor-specific Server 1 workspace", () => {
+test("the public entry point serves the visitor-specific dynamic server workspace", () => {
     assert.match(indexSource, /app\.get\("\/", \(_req, res\) => res\.sendFile\(serverWorkspace\)\)/);
     assert.match(indexSource, /app\.get\("\/bot-dashboard", \(_req, res\) => res\.redirect\("\/"\)\)/);
     assert.match(indexSource, /app\.get\("\/connect", \(_req, res\) => res\.redirect\("\/"\)\)/);
-    assert.match(workspaceSource, /<span>Server 1<\/span>/);
+    assert.match(workspaceSource, /id="server-list"/);
+    assert.match(workspaceSource, /id="add-server"/);
+    assert.match(workspaceSource, /\/api\/bot\/servers/);
     assert.doesNotMatch(workspaceSource, /dashboard\/auth\/me/);
     assert.doesNotMatch(workspaceSource, /id="logout"/);
-    assert.doesNotMatch(workspaceSource, /Add server|Edit server|Remove/);
+    assert.match(workspaceSource, /id="server-form"/);
 });
 
 test("the bot API remains session-scoped for each visitor", () => {

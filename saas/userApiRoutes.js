@@ -6,6 +6,7 @@
 const express = require("express");
 const QRCode = require("qrcode");
 const botManager = require("./botManager");
+const serverRegistry = require("./serverRegistry");
 
 const router = express.Router();
 router.use(express.json());
@@ -136,6 +137,66 @@ router.post("/settings", async (req, res) => {
     } catch (e) {
         res.status(500).json({ error: e.message });
     }
+});
+
+function selectedServer(req) {
+    const id = req.session.selectedServerId;
+    return id ? serverRegistry.get(id) : null;
+}
+
+function remoteCookieKey(serverId) { return `remoteCookie_${serverId}`; }
+
+async function remoteRequest(req, server, route, options = {}) {
+    const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
+    const cookie = req.session[remoteCookieKey(server.id)];
+    if (cookie) headers.Cookie = cookie;
+    const response = await fetch(`${server.publicUrl}${route}`, { ...options, headers, redirect: "manual" });
+    const setCookies = typeof response.headers.getSetCookie === "function" ? response.headers.getSetCookie() : [];
+    if (setCookies.length) req.session[remoteCookieKey(server.id)] = setCookies.map(value => value.split(";", 1)[0]).join("; ");
+    const body = await response.json().catch(() => ({}));
+    return { response, body };
+}
+
+// Public server discovery: credentials are never returned.
+router.get("/servers", (_req, res) => res.json({ servers: serverRegistry.list() }));
+
+// Administrator-only in the current panel deployment. Protect this route with the configured panel token.
+router.post("/servers", (req, res) => {
+    try {
+        const token = process.env.FIREBOX_PANEL_ADMIN_TOKEN || process.env.ADMIN_TOKEN;
+        if (!token || req.get("X-Firebox-Panel-Admin") !== token) return res.status(401).json({ error: "Panel administrator authentication required." });
+        res.status(201).json({ server: serverRegistry.add(req.body || {}) });
+    } catch (error) { res.status(400).json({ error: error.message }); }
+});
+
+router.delete("/servers/:id", (req, res) => {
+    const token = process.env.FIREBOX_PANEL_ADMIN_TOKEN || process.env.ADMIN_TOKEN;
+    if (!token || req.get("X-Firebox-Panel-Admin") !== token) return res.status(401).json({ error: "Panel administrator authentication required." });
+    res.json({ ok: serverRegistry.remove(req.params.id) });
+});
+
+router.post("/servers/:id/select", (req, res) => {
+    if (!serverRegistry.get(req.params.id)) return res.status(404).json({ error: "Server not found." });
+    req.session.selectedServerId = req.params.id;
+    res.json({ ok: true, server: serverRegistry.get(req.params.id) && { id: serverRegistry.get(req.params.id).id } });
+});
+
+router.get("/servers/:id/status", async (req, res) => {
+    const server = serverRegistry.get(req.params.id);
+    if (!server) return res.status(404).json({ error: "Server not found." });
+    try {
+        const { response, body } = await remoteRequest(req, server, "/api/bot/status");
+        res.status(response.status).json(body);
+    } catch (error) { res.status(502).json({ error: `Selected server unavailable: ${error.message}` }); }
+});
+
+router.post("/servers/:id/pair-code", async (req, res) => {
+    const server = serverRegistry.get(req.params.id);
+    if (!server) return res.status(404).json({ error: "Server not found." });
+    try {
+        const { response, body } = await remoteRequest(req, server, "/api/bot/pair-code", { method: "POST", body: JSON.stringify({ phone: req.body && req.body.phone }) });
+        res.status(response.status).json(body);
+    } catch (error) { res.status(502).json({ error: `Selected server unavailable: ${error.message}` }); }
 });
 
 module.exports = router;
