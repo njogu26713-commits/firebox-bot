@@ -54,3 +54,7 @@
 - [ ] Align the deployed panel and bot authentication contract and improve the error message.
 - [ ] Verify adding a hub-generated bot identity succeeds without admin login.
 - [x] Accept Railway’s `MONGO_URL` private reference variable and `MONGO_PUBLIC_URL` fallback for the panel registry.
+
+- [x] Restyle the public workspace to match the supplied dark Firebox reference design.
+- [x] Preserve dynamic server selection, remote status polling, pairing-code requests, and per-browser session isolation.
+- [x] Verify responsive layout and existing functional tests after the visual-only change.
