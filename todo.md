@@ -81,3 +81,8 @@
 - [x] Track the signed-in account and selected bot ID for server usage reporting without storing secrets in responses.
 - [x] Build an admin dashboard showing registered users, registered bots, and each user’s selected bot ID.
 - [x] Test admin/non-admin access, privacy, usage tracking, and unchanged pairing behavior.
+
+- [x] Fix the selected bot status path so the UI shows the real remote error instead of a generic Unavailable state.
+- [x] Make logout work from desktop and mobile navigation and remove the Account link.
+- [x] Add a signed-in Settings page with account and session information.
+- [x] Test status diagnostics, logout, Settings access, and unchanged pairing behavior.

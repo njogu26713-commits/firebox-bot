@@ -96,6 +96,7 @@ app.use("/api/bot", require("./saas/userApiRoutes"));
 const serverWorkspace = path.join(__dirname, "public", "servers.html");
 const adminWorkspace = path.join(__dirname, "public", "admin.html");
 const authWorkspace = path.join(__dirname, "public", "auth.html");
+const settingsWorkspace = path.join(__dirname, "public", "settings.html");
 
 // Every visitor gets the current bot workspace. express-session provides the
 // per-browser identity consumed by /api/bot, so different visitors cannot
@@ -103,6 +104,7 @@ const authWorkspace = path.join(__dirname, "public", "auth.html");
 app.get("/", (req, res) => res.sendFile(req.session.accountId ? serverWorkspace : authWorkspace));
 app.get("/admin", (req, res) => { if (!req.session.accountId) return res.sendFile(authWorkspace); if (!isAdminAccount(req)) return res.status(403).send("Administrator access required."); return res.sendFile(adminWorkspace); });
 app.get("/auth", (_req, res) => res.sendFile(authWorkspace));
+app.get("/settings", (req, res) => res.sendFile(req.session.accountId ? settingsWorkspace : authWorkspace));
 
 app.get("/connect", (_req, res) => res.redirect("/"));
 

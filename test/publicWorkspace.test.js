@@ -13,10 +13,13 @@ test("the public entry point serves the visitor-specific dynamic server workspac
     assert.match(indexSource, /app\.get\("\/bot-dashboard", \(_req, res\) => res\.redirect\("\/"\)\)/);
     assert.match(indexSource, /app\.get\("\/connect", \(_req, res\) => res\.redirect\("\/"\)\)/);
     assert.match(indexSource, /app\.get\("\/auth", \(_req, res\) => res\.sendFile\(authWorkspace\)\)/);
+    assert.match(indexSource, /app\.get\("\/settings", \(req, res\) => res\.sendFile\(req\.session\.accountId \? settingsWorkspace : authWorkspace\)\)/);
     assert.match(workspaceSource, /id="server-list"/);
     assert.match(workspaceSource, /\/api\/bot\/servers/);
     assert.doesNotMatch(workspaceSource, /dashboard\/auth\/me/);
     assert.match(workspaceSource, /id="logout"/);
+    assert.match(workspaceSource, /href="\/settings"/);
+    assert.doesNotMatch(workspaceSource, />Account</);
     assert.doesNotMatch(workspaceSource, /id="server-form"/);
     assert.doesNotMatch(workspaceSource, /id="add-server"/);
 });

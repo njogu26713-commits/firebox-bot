@@ -190,8 +190,9 @@ router.get("/servers/:id/status", async (req, res) => {
     if (!server) return res.status(404).json({ error: "Server not found." });
     try {
         const { response, body } = await remoteRequest(req, server, "/api/bot/status");
+        if (!response.ok && !body.error) body.error = `Remote bot returned HTTP ${response.status}. Confirm its public URL and redeploy the latest Firebox Bot code.`;
         res.status(response.status).json(body);
-    } catch (error) { res.status(502).json({ error: `Selected server unavailable: ${error.message}` }); }
+    } catch (error) { res.status(502).json({ error: `Selected server unavailable: ${error.message}. Confirm the remote bot URL is reachable.` }); }
 });
 
 router.post("/servers/:id/pair-code", async (req, res) => {
