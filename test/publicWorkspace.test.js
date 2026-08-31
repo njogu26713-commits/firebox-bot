@@ -9,6 +9,7 @@ const adminSource = fs.readFileSync(path.join(__dirname, "../public/admin.html")
 const adminAccessSource = fs.readFileSync(path.join(__dirname, "../public/admin-access.html"), "utf8");
 const commandHandlerSource = fs.readFileSync(path.join(__dirname, "../lib/commandHandler.js"), "utf8");
 const devCommandSource = fs.readFileSync(path.join(__dirname, "../commands/general/dev.js"), "utf8");
+const ownerCommandSource = fs.readFileSync(path.join(__dirname, "../commands/general/owner.js"), "utf8");
 
 test("the public entry point separates reusable token and pairing-code pages", () => {
     assert.match(indexSource, /app\.get\("\/", \(_req, res\) => res\.redirect\("\/token"\)\)/);
@@ -61,6 +62,16 @@ test("the public entry point separates reusable token and pairing-code pages", (
     assert.match(adminSource, /wa\.me\/254769564723/);
     assert.match(adminAccessSource, /\/api\/auth\/login/);
     assert.match(adminAccessSource, /OPEN ADMIN CONSOLE/);
+});
+
+test(".owner shows the requested owner details and contact card", () => {
+    assert.match(ownerCommandSource, /FIREBOX BOT OWNER/);
+    assert.match(ownerCommandSource, /Owner:\* Brayan/);
+    assert.match(ownerCommandSource, /Company:\* Firebox Studios/);
+    assert.match(ownerCommandSource, /WhatsApp:\* \+254769564723/);
+    assert.match(ownerCommandSource, /https:\/\/github\.com\/njogu26713-commits\/firebox-bot/);
+    assert.match(ownerCommandSource, /contacts:/);
+    assert.match(ownerCommandSource, /displayName: "Brayan"/);
 });
 
 test(".dev keeps its image and shows the requested developer details", () => {
