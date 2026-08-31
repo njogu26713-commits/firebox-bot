@@ -10,6 +10,7 @@ const serverRegistry = require("./serverRegistry");
 const { isPanelProxy, matchesSecret } = require("./panelProxyAuth");
 const { requireAdmin } = require("./adminAuth");
 const usageRegistry = require("./usageRegistry");
+const tokenRegistry = require("./tokenRegistry");
 
 const router = express.Router();
 router.use(express.json());
@@ -20,6 +21,26 @@ router.post("/hub-sync", async (req, res) => {
         return res.json({ synced: true, bot });
     } catch (error) { return res.status(400).json({ error: error.message }); }
 });
+// Public Firebox pairing endpoints intentionally do not require an account.
+router.post("/token", (req, res) => {
+    try {
+        const token = tokenRegistry.create(req.body?.phone);
+        res.status(201).json({ ok: true, token });
+    } catch (error) { res.status(400).json({ error: error.message }); }
+});
+
+router.post("/token/pair-code", async (req, res) => {
+    try {
+        const resolved = tokenRegistry.resolve(req.body?.token);
+        const inst = botManager.get(userId(req));
+        if (inst.status === "online") return res.status(409).json({ error: "Already connected. Disconnect first." });
+        if (inst.status === "offline" && !inst.isReconnecting) inst.start().catch(() => {});
+        const code = await inst.triggerPairingRestart(resolved.phone);
+        tokenRegistry.markUsed(resolved);
+        res.json({ ok: true, code });
+    } catch (error) { res.status(400).json({ error: error.message || "Failed to generate pairing code." }); }
+});
+
 router.use((req, res, next) => {
     if (req.session.accountId || isPanelProxy(req)) return next();
     return res.status(401).json({ error: "Sign in required." });

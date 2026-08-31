@@ -129,4 +129,9 @@
 - [ ] Preserve compatible existing status, pairing, QR, and account behavior
 - [x] Verify desktop/mobile UI and run the regression test suite
 
-- [ ] Commit and push the validated Firebox-only UI redesign to the configured GitHub repository
+- [x] Commit and push the validated Firebox-only UI redesign to the configured GitHub repository
+
+- [x] Remove login and account-creation requirements from the public Firebox pairing route
+- [x] Implement secure token creation and token-to-pairing-code endpoints used by the redesigned UI
+- [x] Add regression coverage for public access and token pairing behavior
+- [x] Re-run tests and push the repaired flow to GitHub

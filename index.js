@@ -101,20 +101,20 @@ const settingsWorkspace = path.join(__dirname, "public", "settings.html");
 // Every visitor gets the current bot workspace. express-session provides the
 // per-browser identity consumed by /api/bot, so different visitors cannot
 // share the same in-memory BotInstance.
-app.get("/", (req, res) => res.sendFile(req.session.accountId ? serverWorkspace : authWorkspace));
+app.get("/", (_req, res) => res.sendFile(serverWorkspace));
 app.get("/admin", (req, res) => { if (!req.session.accountId) return res.sendFile(authWorkspace); if (!isAdminAccount(req)) return res.status(403).send("Administrator access required."); return res.sendFile(adminWorkspace); });
-app.get("/auth", (_req, res) => res.sendFile(authWorkspace));
-app.get("/settings", (req, res) => res.sendFile(req.session.accountId ? settingsWorkspace : authWorkspace));
+app.get("/auth", (_req, res) => res.redirect("/"));
+app.get("/settings", (_req, res) => res.redirect("/"));
 
 app.get("/connect", (_req, res) => res.redirect("/"));
 
-app.get("/dashboard", (req, res) => res.sendFile(req.session.accountId ? serverWorkspace : authWorkspace));
+app.get("/dashboard", (_req, res) => res.sendFile(serverWorkspace));
 
 // The old dashboard and sign-in routes are intentionally retired. Keep
 // redirects for bookmarked links so users land in the public workspace.
 app.get("/bot-dashboard", (_req, res) => res.redirect("/"));
-app.get("/login", (_req, res) => res.sendFile(authWorkspace));
-app.get("/servers", (req, res) => res.sendFile(req.session.accountId ? serverWorkspace : authWorkspace));
+app.get("/login", (_req, res) => res.redirect("/"));
+app.get("/servers", (_req, res) => res.sendFile(serverWorkspace));
 
 // Legacy redirect
 app.get("/pair", (_req, res) => res.redirect("/"));

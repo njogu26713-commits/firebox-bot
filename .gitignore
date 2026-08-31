@@ -33,6 +33,7 @@ desktop.ini
 
 # Temporary / Downloaded Files
 database/message_cache.json
+database/firebox_tokens.json
 database/*.db
 database/storage.json
 *.db
