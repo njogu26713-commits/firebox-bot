@@ -21,6 +21,12 @@ test("the public entry point separates reusable token and pairing-code pages", (
     const codeSource = fs.readFileSync(path.join(__dirname, "../public/code.html"), "utf8");
     assert.match(tokenSource, /FIREBOX/);
     assert.match(tokenSource, /\/api\/bot\/token/);
+    assert.match(tokenSource, /VALIDATING NUMBER/);
+    assert.match(tokenSource, /ENCRYPTING REGISTRATION/);
+    assert.match(tokenSource, /SECURING FIREBOX IDENTITY/);
+    assert.match(tokenSource, /SYNCING PAIRING SERVICE/);
+    assert.match(tokenSource, /GENERATING YOUR TOKEN/);
+    assert.match(tokenSource, /async function typewrite/);
     assert.match(codeSource, /FIREBOX/);
     assert.match(codeSource, /\/api\/bot\/token\/pair-code/);
     assert.doesNotMatch(tokenSource, /Continue to pairing|Create account|Sign in/);

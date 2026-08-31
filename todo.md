@@ -154,3 +154,14 @@
 - [x] Restore forwarded-from-channel metadata on `.menu` command messages
 - [x] Add regression coverage for the `.menu` forwarded-channel behavior
 - [x] Test and push the forwarded-channel repair
+
+- [ ] Integrate Groq AI replies when `aichat` is enabled
+- [ ] Preserve commands, owner controls, and disabled-AI behavior
+- [ ] Add Groq configuration guidance and secure secret handling
+- [ ] Add tests for AI on/off behavior and push the feature
+
+- [x] Add staged token-generation animation: storing number, typewriter generation, animated reveal
+- [x] Handle animation cancellation, API errors, and reduced-motion preferences
+- [x] Verify and push the token-page animation update
+
+- [x] Expand token-generation animation beyond the example messages into a full staged cyberpunk status sequence
