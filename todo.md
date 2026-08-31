@@ -122,3 +122,11 @@
 
 - [x] Add a binary QR-image proxy and use it from the panel to avoid broken data-URL rendering.
 - [x] Identify whether the live QR failure is caused by an old deployment, a missing bot QR payload, or a non-image proxy response, then repair it.
+
+- [x] Replace the multi-bot/server chooser with a single Firebox Bot identity and workspace
+- [x] Implement the two-stage Firebox token registration and pairing-code UI from the supplied brief
+- [x] Remove alternate bot names, links, and non-Firebox bot choices from user-facing pages
+- [ ] Preserve compatible existing status, pairing, QR, and account behavior
+- [x] Verify desktop/mobile UI and run the regression test suite
+
+- [ ] Commit and push the validated Firebox-only UI redesign to the configured GitHub repository

@@ -14,8 +14,11 @@ test("the public entry point serves the visitor-specific dynamic server workspac
     assert.match(indexSource, /app\.get\("\/connect", \(_req, res\) => res\.redirect\("\/"\)\)/);
     assert.match(indexSource, /app\.get\("\/auth", \(_req, res\) => res\.sendFile\(authWorkspace\)\)/);
     assert.match(indexSource, /app\.get\("\/settings", \(req, res\) => res\.sendFile\(req\.session\.accountId \? settingsWorkspace : authWorkspace\)\)/);
-    assert.match(workspaceSource, /id="server-list"/);
-    assert.match(workspaceSource, /\/api\/bot\/servers/);
+    assert.match(workspaceSource, /FIREBOX BOT/);
+    assert.match(workspaceSource, /id="register-stage"/);
+    assert.match(workspaceSource, /id="token-stage"/);
+    assert.match(workspaceSource, /id="pair-stage"/);
+    assert.match(workspaceSource, /\/api\/bot\/token/);
     assert.doesNotMatch(workspaceSource, /dashboard\/auth\/me/);
     assert.match(workspaceSource, /id="logout"/);
     assert.match(workspaceSource, /href="\/settings"/);
