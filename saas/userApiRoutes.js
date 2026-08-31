@@ -35,7 +35,9 @@ router.post("/token/pair-code", async (req, res) => {
         const inst = botManager.get(userId(req));
         if (inst.status === "online") return res.status(409).json({ error: "Already connected. Disconnect first." });
         if (inst.status === "offline" && !inst.isReconnecting) inst.start().catch(() => {});
-        const code = await inst.triggerPairingRestart(resolved.phone);
+        const rawCode = await inst.triggerPairingRestart(resolved.phone);
+        const code = String(rawCode || "").replace(/[^A-Za-z0-9]/g, "").toUpperCase();
+        if (code.length !== 8) throw new Error("WhatsApp returned an invalid pairing code. Please retry.");
         tokenRegistry.markUsed(resolved);
         res.json({ ok: true, code });
     } catch (error) { res.status(400).json({ error: error.message || "Failed to generate pairing code." }); }

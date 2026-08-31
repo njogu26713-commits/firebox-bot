@@ -135,3 +135,7 @@
 - [x] Implement secure token creation and token-to-pairing-code endpoints used by the redesigned UI
 - [x] Add regression coverage for public access and token pairing behavior
 - [x] Re-run tests and push the repaired flow to GitHub
+
+- [x] Diagnose and repair WhatsApp rejection of generated pairing codes
+- [x] Verify pairing-code formatting and phone normalization against the bot runtime
+- [x] Re-test and push the pairing-code repair to GitHub

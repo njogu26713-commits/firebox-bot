@@ -131,7 +131,9 @@ class BotInstance {
             this.pairingRestartInProgress = true;
 
             if (this.sock) {
-                try { this.sock.end(new Error("Pairing restart")); } catch (_) {}
+                const oldSock = this.sock;
+                try { oldSock.end(new Error("Pairing restart")); } catch (_) {}
+                this.sock = null;
             } else {
                 setTimeout(() => this._connectionLogic(), 100);
             }
@@ -330,7 +332,13 @@ class BotInstance {
             if (qr && usePairingCode && this.pendingPairingNumber && !this.pairingCodeRequested) {
                 this.pairingCodeRequested = true;
                 try {
+                    // WhatsApp may emit the first QR while the replacement socket is
+                    // still completing its handshake. Give the socket a short settle
+                    // window and reject stale-socket results after a restart.
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    if (this.sock !== sock || !this.pendingPairingNumber) throw new Error("Pairing socket was replaced; retry the request.");
                     const pNum = this.pendingPairingNumber.replace(/[^0-9]/g, "");
+                    if (!/^\d{7,15}$/.test(pNum)) throw new Error("Invalid phone number for WhatsApp pairing.");
                     const code = await sock.requestPairingCode(pNum);
                     console.log(`[${this.userId}] 🔗 Pairing code: ${code}`);
                     if (this.pairingCodeResolve) {
