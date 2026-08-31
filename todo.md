@@ -191,3 +191,6 @@
 - [x] Add rotating typewriter copy that types, pauses, clears, and cycles through additional Firebox messages
 - [x] Add reduced-motion fallback and verify the intro animation
 - [x] Push the rotating intro update
+
+- [x] Replace `MPESA STK PUSH DISABLED` with `PAYMENT PLANS COMING SOON` on `/token` and `/code`
+- [x] Verify and push the payment-status copy update
