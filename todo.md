@@ -209,3 +209,9 @@
 - [x] Stop `/admin` from redirecting to the removed login page
 - [x] Provide a valid protected administrator access path
 - [x] Test `/admin` and legacy authentication routes, then push the repair
+
+- [x] Remove legacy registered-bot, bot-usage, and add-server controls from `/admin`
+- [x] Keep only Firebox user/token administration and recovery actions
+- [x] Test and push the simplified Firebox-only admin dashboard
+
+- [x] Apply the Firebox cyberpunk visual system to the simplified `/admin` dashboard
