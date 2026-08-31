@@ -139,3 +139,14 @@
 - [x] Diagnose and repair WhatsApp rejection of generated pairing codes
 - [x] Verify pairing-code formatting and phone normalization against the bot runtime
 - [x] Re-test and push the pairing-code repair to GitHub
+
+- [x] Make Firebox tokens reusable for repeated pairing-code generation
+- [x] Add regression coverage proving a token remains active after use
+- [x] Push the reusable-token correction to GitHub
+
+- [x] Split Firebox pairing into separate public `/token` and `/code` pages
+- [x] Remove the in-page Continue button connecting the two stages
+- [x] Apply a simple cyberpunk visual style to both pages
+- [x] Ensure Firebox tokens are reusable for repeated pairing-code generation
+- [x] Verify route separation, reusable tokens, and responsive cyberpunk UI
+- [ ] Push the split-page cyberpunk redesign to GitHub

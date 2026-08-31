@@ -6,21 +6,25 @@ const test = require("node:test");
 const indexSource = fs.readFileSync(path.join(__dirname, "../index.js"), "utf8");
 const workspaceSource = fs.readFileSync(path.join(__dirname, "../public/servers.html"), "utf8");
 
-test("the public entry point serves Firebox pairing without account creation", () => {
-    assert.match(indexSource, /app\.get\("\/", \(_req, res\) => res\.sendFile\(serverWorkspace\)\)/);
+test("the public entry point separates reusable token and pairing-code pages", () => {
+    assert.match(indexSource, /app\.get\("\/", \(_req, res\) => res\.redirect\("\/token"\)\)/);
+    assert.match(indexSource, /app\.get\("\/token", \(_req, res\) => res\.sendFile\(tokenWorkspace\)\)/);
+    assert.match(indexSource, /app\.get\("\/code", \(_req, res\) => res\.sendFile\(codeWorkspace\)\)/);
     assert.match(indexSource, /app\.use\("\/api\/auth", require\("\.\/saas\/authApiRoutes"\)\)/);
     assert.match(indexSource, /app\.get\("\/admin", \(req, res\) => \{ if \(!req\.session\.accountId\) return res\.sendFile\(authWorkspace\); if \(!isAdminAccount\(req\)\) return res\.status\(403\)/);
-    assert.match(indexSource, /app\.get\("\/bot-dashboard", \(_req, res\) => res\.redirect\("\/"\)\)/);
-    assert.match(indexSource, /app\.get\("\/connect", \(_req, res\) => res\.redirect\("\/"\)\)/);
+    assert.match(indexSource, /app\.get\("\/bot-dashboard", \(_req, res\) => res\.redirect\("\/token"\)\)/);
+    assert.match(indexSource, /app\.get\("\/connect", \(_req, res\) => res\.redirect\("\/token"\)\)/);
     assert.match(indexSource, /app\.get\("\/auth", \(_req, res\) => res\.redirect\("\/"\)\)/);
-    assert.match(indexSource, /app\.get\("\/settings", \(_req, res\) => res\.redirect\("\/"\)\)/);
-    assert.match(indexSource, /app\.get\("\/login", \(_req, res\) => res\.redirect\("\/"\)\)/);
-    assert.match(workspaceSource, /FIREBOX BOT/);
-    assert.match(workspaceSource, /id="register-stage"/);
-    assert.match(workspaceSource, /id="token-stage"/);
-    assert.match(workspaceSource, /id="pair-stage"/);
-    assert.match(workspaceSource, /\/api\/bot\/token/);
-    assert.doesNotMatch(workspaceSource, /Create account|Sign in to choose/);
+    assert.match(indexSource, /app\.get\("\/settings", \(_req, res\) => res\.redirect\("\/token"\)\)/);
+    assert.match(indexSource, /app\.get\("\/login", \(_req, res\) => res\.redirect\("\/token"\)\)/);
+    const tokenSource = fs.readFileSync(path.join(__dirname, "../public/token.html"), "utf8");
+    const codeSource = fs.readFileSync(path.join(__dirname, "../public/code.html"), "utf8");
+    assert.match(tokenSource, /FIREBOX/);
+    assert.match(tokenSource, /\/api\/bot\/token/);
+    assert.match(codeSource, /FIREBOX/);
+    assert.match(codeSource, /\/api\/bot\/token\/pair-code/);
+    assert.doesNotMatch(tokenSource, /Continue to pairing|Create account|Sign in/);
+    assert.doesNotMatch(codeSource, /Continue to pairing|Create account|Sign in/);
     assert.doesNotMatch(workspaceSource, /dashboard\/auth\/me/);
     assert.match(workspaceSource, /id="logout"/);
     assert.match(workspaceSource, /href="\/settings"/);

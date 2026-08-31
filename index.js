@@ -94,6 +94,8 @@ app.use("/api/bot", require("./saas/userApiRoutes"));
 // ── Pages ─────────────────────────────────────────────────────────────────────
 
 const serverWorkspace = path.join(__dirname, "public", "servers.html");
+const tokenWorkspace = path.join(__dirname, "public", "token.html");
+const codeWorkspace = path.join(__dirname, "public", "code.html");
 const adminWorkspace = path.join(__dirname, "public", "admin.html");
 const authWorkspace = path.join(__dirname, "public", "auth.html");
 const settingsWorkspace = path.join(__dirname, "public", "settings.html");
@@ -101,23 +103,25 @@ const settingsWorkspace = path.join(__dirname, "public", "settings.html");
 // Every visitor gets the current bot workspace. express-session provides the
 // per-browser identity consumed by /api/bot, so different visitors cannot
 // share the same in-memory BotInstance.
-app.get("/", (_req, res) => res.sendFile(serverWorkspace));
+app.get("/", (_req, res) => res.redirect("/token"));
+app.get("/token", (_req, res) => res.sendFile(tokenWorkspace));
+app.get("/code", (_req, res) => res.sendFile(codeWorkspace));
 app.get("/admin", (req, res) => { if (!req.session.accountId) return res.sendFile(authWorkspace); if (!isAdminAccount(req)) return res.status(403).send("Administrator access required."); return res.sendFile(adminWorkspace); });
 app.get("/auth", (_req, res) => res.redirect("/"));
-app.get("/settings", (_req, res) => res.redirect("/"));
+app.get("/settings", (_req, res) => res.redirect("/token"));
 
-app.get("/connect", (_req, res) => res.redirect("/"));
+app.get("/connect", (_req, res) => res.redirect("/token"));
 
-app.get("/dashboard", (_req, res) => res.sendFile(serverWorkspace));
+app.get("/dashboard", (_req, res) => res.redirect("/token"));
 
 // The old dashboard and sign-in routes are intentionally retired. Keep
 // redirects for bookmarked links so users land in the public workspace.
-app.get("/bot-dashboard", (_req, res) => res.redirect("/"));
-app.get("/login", (_req, res) => res.redirect("/"));
-app.get("/servers", (_req, res) => res.sendFile(serverWorkspace));
+app.get("/bot-dashboard", (_req, res) => res.redirect("/token"));
+app.get("/login", (_req, res) => res.redirect("/token"));
+app.get("/servers", (_req, res) => res.redirect("/token"));
 
 // Legacy redirect
-app.get("/pair", (_req, res) => res.redirect("/"));
+app.get("/pair", (_req, res) => res.redirect("/code"));
 
 app.get("/health", (req, res) => res.send("🤖 Firebox Bot SaaS is Online!"));
 
