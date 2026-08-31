@@ -31,6 +31,7 @@ test("the public entry point separates reusable token and pairing-code pages", (
     assert.match(tokenSource, /Generate once\. Store it safely\./);
     assert.match(tokenSource, /Your Firebox token stays yours\./);
     assert.match(tokenSource, /window\.matchMedia\("\(prefers-reduced-motion: reduce\)"\)/);
+    assert.doesNotMatch(tokenSource, /textContent=copyLines\[0\];return/);
     assert.match(codeSource, /FIREBOX/);
     assert.match(codeSource, /\/api\/bot\/token\/pair-code/);
     for (const source of [tokenSource, codeSource]) {

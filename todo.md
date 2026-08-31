@@ -194,3 +194,7 @@
 
 - [x] Replace `MPESA STK PUSH DISABLED` with `PAYMENT PLANS COMING SOON` on `/token` and `/code`
 - [x] Verify and push the payment-status copy update
+
+- [x] Fix the typewriter intro on phone screens
+- [x] Preserve a readable reduced-motion fallback without breaking mobile rendering
+- [x] Verify and push the mobile typewriter fix
