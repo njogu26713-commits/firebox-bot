@@ -184,3 +184,6 @@
 - [x] Show 7-day KSh 29, 14-day KSh 49, and 30-day KSh 99 plans in the UI
 - [x] Make the UI read the disabled-payment state without attempting STK Push
 - [x] Test and push the disabled payment scaffolding
+
+- [x] Add a compact Firebox icon beside the top-left header brand on `/token` and `/code`
+- [x] Verify header alignment and push the icon update
