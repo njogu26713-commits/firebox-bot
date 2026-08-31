@@ -169,3 +169,7 @@
 - [x] Reduce excess side and bottom whitespace on `/token` and `/code`
 - [x] Increase the main container and card height while preserving responsive behavior
 - [x] Verify and push the spacing adjustment
+
+- [x] Make each of the six token-generation stages last exactly 3 seconds
+- [x] Ensure the real token is revealed only after the complete 18-second sequence
+- [x] Verify and push the exact timing update
