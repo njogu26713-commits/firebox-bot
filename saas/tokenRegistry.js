@@ -16,17 +16,19 @@ function writeRecords(records) {
     fs.renameSync(temp, storePath);
 }
 function hashToken(token) { return crypto.createHash("sha256").update(token).digest("hex"); }
-function encryptPhone(phone) {
+function encryptText(value) {
     const iv = crypto.randomBytes(12);
     const cipher = crypto.createCipheriv("aes-256-gcm", encryptionKey, iv);
-    const encrypted = Buffer.concat([cipher.update(phone, "utf8"), cipher.final()]);
+    const encrypted = Buffer.concat([cipher.update(value, "utf8"), cipher.final()]);
     return { iv: iv.toString("base64url"), data: encrypted.toString("base64url"), tag: cipher.getAuthTag().toString("base64url") };
 }
-function decryptPhone(record) {
-    const decipher = crypto.createDecipheriv("aes-256-gcm", encryptionKey, Buffer.from(record.phone.iv, "base64url"));
-    decipher.setAuthTag(Buffer.from(record.phone.tag, "base64url"));
-    return Buffer.concat([decipher.update(Buffer.from(record.phone.data, "base64url")), decipher.final()]).toString("utf8");
+function decryptText(payload) {
+    const decipher = crypto.createDecipheriv("aes-256-gcm", encryptionKey, Buffer.from(payload.iv, "base64url"));
+    decipher.setAuthTag(Buffer.from(payload.tag, "base64url"));
+    return Buffer.concat([decipher.update(Buffer.from(payload.data, "base64url")), decipher.final()]).toString("utf8");
 }
+function encryptPhone(phone) { return encryptText(phone); }
+function decryptPhone(record) { return decryptText(record.phone); }
 function makeToken() {
     const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     const part = () => Array.from({ length: 4 }, () => alphabet[crypto.randomInt(alphabet.length)]).join("");
@@ -44,7 +46,7 @@ module.exports = {
         const records = readRecords();
         let token;
         do { token = makeToken(); } while (records.some(record => record.tokenHash === hashToken(token)));
-        records.push({ tokenHash: hashToken(token), phone: encryptPhone(normalized), status: "active", createdAt: new Date().toISOString(), lastUsedAt: null, expiresAt: null, pairingAttempts: 0 });
+        records.push({ tokenHash: hashToken(token), tokenCiphertext: encryptText(token), phone: encryptPhone(normalized), status: "active", createdAt: new Date().toISOString(), lastUsedAt: null, expiresAt: null, pairingAttempts: 0 });
         writeRecords(records);
         return token;
     },
@@ -61,5 +63,16 @@ module.exports = {
         resolved.record.lastUsedAt = new Date().toISOString();
         resolved.record.pairingAttempts = Number(resolved.record.pairingAttempts || 0) + 1;
         writeRecords(resolved.records);
+    },
+    listAdmin() {
+        return readRecords().map(record => ({
+            token: record.tokenCiphertext ? decryptText(record.tokenCiphertext) : null,
+            phone: decryptPhone(record),
+            status: record.status,
+            createdAt: record.createdAt,
+            lastUsedAt: record.lastUsedAt,
+            expiresAt: record.expiresAt,
+            pairingAttempts: Number(record.pairingAttempts || 0),
+        }));
     },
 };

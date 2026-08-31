@@ -16,6 +16,9 @@ test("token registry creates opaque tokens and resolves the protected phone inte
     assert.ok(!JSON.stringify({ token }).includes(resolved.phone));
     registry.markUsed(resolved);
     assert.equal(registry.resolve(token).record.pairingAttempts, 1);
+    const adminRecords = registry.listAdmin();
+    assert.equal(adminRecords[0].token, token);
+    assert.equal(adminRecords[0].phone, "254769564723");
 });
 
 test.after(() => { try { fs.unlinkSync(storePath); } catch {} });

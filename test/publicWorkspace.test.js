@@ -5,6 +5,7 @@ const test = require("node:test");
 
 const indexSource = fs.readFileSync(path.join(__dirname, "../index.js"), "utf8");
 const workspaceSource = fs.readFileSync(path.join(__dirname, "../public/servers.html"), "utf8");
+const adminSource = fs.readFileSync(path.join(__dirname, "../public/admin.html"), "utf8");
 
 test("the public entry point separates reusable token and pairing-code pages", () => {
     assert.match(indexSource, /app\.get\("\/", \(_req, res\) => res\.redirect\("\/token"\)\)/);
@@ -34,6 +35,8 @@ test("the public entry point separates reusable token and pairing-code pages", (
     assert.doesNotMatch(tokenSource, /textContent=copyLines\[0\];return/);
     assert.match(codeSource, /FIREBOX/);
     assert.match(codeSource, /\/api\/bot\/token\/pair-code/);
+    assert.match(codeSource, /FORGOT TOKEN\? CHAT ADMIN/);
+    assert.match(codeSource, /wa\.me\/254769564723/);
     for (const source of [tokenSource, codeSource]) {
         assert.match(source, /KSh 29/);
         assert.match(source, /KSh 49/);
@@ -48,6 +51,10 @@ test("the public entry point separates reusable token and pairing-code pages", (
     assert.doesNotMatch(workspaceSource, />Account</);
     assert.doesNotMatch(workspaceSource, /id="server-form"/);
     assert.doesNotMatch(workspaceSource, /id="add-server"/);
+    assert.match(adminSource, /\/api\/admin\/overview/);
+    assert.match(adminSource, /id="tokens"/);
+    assert.match(adminSource, /data-copy-token/);
+    assert.match(adminSource, /wa\.me\/254769564723/);
 });
 
 test("the bot API remains session-scoped for each visitor", () => {

@@ -198,3 +198,10 @@
 - [x] Fix the typewriter intro on phone screens
 - [x] Preserve a readable reduced-motion fallback without breaking mobile rendering
 - [x] Verify and push the mobile typewriter fix
+
+- [x] Create a protected `/admin` page using the existing administrator authorization
+- [x] List registered users with phone numbers masked by default and tokens hidden by default
+- [x] Add an authenticated token copy action and safe admin-only recovery behavior
+- [x] Add a Forgot token WhatsApp contact link for +254769564723
+- [x] Add tests for authorization, masking, token access, and contact-link behavior
+- [x] Verify and push the admin feature
