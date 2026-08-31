@@ -27,6 +27,10 @@ test("the public entry point separates reusable token and pairing-code pages", (
     assert.match(tokenSource, /SYNCING PAIRING SERVICE/);
     assert.match(tokenSource, /GENERATING YOUR TOKEN/);
     assert.match(tokenSource, /async function typewrite/);
+    assert.match(tokenSource, /id="rotating-copy"/);
+    assert.match(tokenSource, /Generate once\. Store it safely\./);
+    assert.match(tokenSource, /Your Firebox token stays yours\./);
+    assert.match(tokenSource, /window\.matchMedia\("\(prefers-reduced-motion: reduce\)"\)/);
     assert.match(codeSource, /FIREBOX/);
     assert.match(codeSource, /\/api\/bot\/token\/pair-code/);
     for (const source of [tokenSource, codeSource]) {

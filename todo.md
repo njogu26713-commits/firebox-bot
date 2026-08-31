@@ -187,3 +187,7 @@
 
 - [x] Add a compact Firebox icon beside the top-left header brand on `/token` and `/code`
 - [x] Verify header alignment and push the icon update
+
+- [x] Add rotating typewriter copy that types, pauses, clears, and cycles through additional Firebox messages
+- [x] Add reduced-motion fallback and verify the intro animation
+- [x] Push the rotating intro update
