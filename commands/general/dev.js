@@ -7,12 +7,11 @@ module.exports = {
     description: "Short info about the developer.",
     category: "general",
     execute: async ({ sock, jid, msg }) => {
-        const text = `👨‍💻 *DEVELOPER PROFILE*\n\n` +
-                     `✨ *Name:* Firebox Studios\n` +
-                     `🌐 *WhatsApp:* https://wa.me/254769564723\n` +
-                     `👨‍💻 *Bio:* Building powerful WhatsApp bots and automation tools for everyone!\n\n` +
-                     `📂 *GitHub:* https://github.com/njogu26713-commits/firebox-bot\n\n` +
-                     `_\"Built with passion by Firebox Studios.\"_`;
+        const text = `👨‍💻 *DEVELOPERS*\n\n` +
+                     `🏢 *Company:* Firebox Studios, NjoguCommits\n` +
+                     `📱 *WhatsApp:* 254769564723\n` +
+                     `📂 *GitHub:* https://github.com/njogu26713-commits/firebox-bot\n` +
+                     `🧩 *Version:* v3.1`;
 
         const { getSettings } = require("../../lib/settings");
         const settings = getSettings();

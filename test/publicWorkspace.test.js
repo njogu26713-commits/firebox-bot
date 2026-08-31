@@ -8,6 +8,7 @@ const workspaceSource = fs.readFileSync(path.join(__dirname, "../public/servers.
 const adminSource = fs.readFileSync(path.join(__dirname, "../public/admin.html"), "utf8");
 const adminAccessSource = fs.readFileSync(path.join(__dirname, "../public/admin-access.html"), "utf8");
 const commandHandlerSource = fs.readFileSync(path.join(__dirname, "../lib/commandHandler.js"), "utf8");
+const devCommandSource = fs.readFileSync(path.join(__dirname, "../commands/general/dev.js"), "utf8");
 
 test("the public entry point separates reusable token and pairing-code pages", () => {
     assert.match(indexSource, /app\.get\("\/", \(_req, res\) => res\.redirect\("\/token"\)\)/);
@@ -60,6 +61,15 @@ test("the public entry point separates reusable token and pairing-code pages", (
     assert.match(adminSource, /wa\.me\/254769564723/);
     assert.match(adminAccessSource, /\/api\/auth\/login/);
     assert.match(adminAccessSource, /OPEN ADMIN CONSOLE/);
+});
+
+test(".dev keeps its image and shows the requested developer details", () => {
+    assert.match(devCommandSource, /DEVELOPERS/);
+    assert.match(devCommandSource, /Firebox Studios, NjoguCommits/);
+    assert.match(devCommandSource, /254769564723/);
+    assert.match(devCommandSource, /github\.com\/njogu26713-commits\/firebox-bot/);
+    assert.match(devCommandSource, /Version:\* v3\.1/);
+    assert.match(devCommandSource, /sock\.sendMessage\(jid, \{ image: banner, caption: text \}/);
 });
 
 test("chatbot AI replies are private-message only and command-safe", () => {

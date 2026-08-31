@@ -221,3 +221,6 @@
 - [x] Preserve command and owner-handler precedence
 - [x] Add tests for enabled, disabled, group, command, and Groq failure cases
 - [ ] Configure the Groq key requirement and push the feature
+
+- [x] Update `.dev` output with the supplied Firebox Studios developer details without removing its image
+- [x] Verify the text and image reference, then push the command update
