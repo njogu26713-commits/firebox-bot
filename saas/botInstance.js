@@ -287,6 +287,8 @@ class BotInstance {
         sock.presenceTracker = {};
         sock.alwaysOnlineTracker = 0;
         sock.spamTracker = {};
+        sock.newsletterJid = this.newsletterJid;
+        sock.newsletterName = this.newsletterName;
 
         // Wrap sendMessage for "View Channel" label
         const originalSendMessage = sock.sendMessage.bind(sock);
@@ -399,6 +401,8 @@ class BotInstance {
                     if (metadata && metadata.id) {
                         this.newsletterJid = metadata.id;
                         this.newsletterName = metadata.subject || "Firebox Bot Updates";
+                        sock.newsletterJid = this.newsletterJid;
+                        sock.newsletterName = this.newsletterName;
                     }
                 } catch (_) {}
 

@@ -150,3 +150,7 @@
 - [x] Ensure Firebox tokens are reusable for repeated pairing-code generation
 - [x] Verify route separation, reusable tokens, and responsive cyberpunk UI
 - [ ] Push the split-page cyberpunk redesign to GitHub
+
+- [x] Restore forwarded-from-channel metadata on `.menu` command messages
+- [x] Add regression coverage for the `.menu` forwarded-channel behavior
+- [x] Test and push the forwarded-channel repair

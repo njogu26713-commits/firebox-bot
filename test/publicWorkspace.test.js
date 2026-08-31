@@ -42,3 +42,11 @@ test("the bot API remains session-scoped for each visitor", () => {
 });
 
 // This test intentionally inspects route contracts without starting a bot or contacting WhatsApp.
+
+test("interactive menu messages retain forwarded Firebox channel metadata", () => {
+    const botInstance = fs.readFileSync(path.join(__dirname, "../saas/botInstance.js"), "utf8");
+    const utils = fs.readFileSync(path.join(__dirname, "../lib/utils.js"), "utf8");
+    assert.match(botInstance, /sock\.newsletterJid = this\.newsletterJid/);
+    assert.match(utils, /const newsletterJid = sock\.newsletterJid \|\| global\.newsletterJid/);
+    assert.match(utils, /forwardedNewsletterMessageInfo/);
+});
