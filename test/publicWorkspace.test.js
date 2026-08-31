@@ -7,6 +7,7 @@ const indexSource = fs.readFileSync(path.join(__dirname, "../index.js"), "utf8")
 const workspaceSource = fs.readFileSync(path.join(__dirname, "../public/servers.html"), "utf8");
 const adminSource = fs.readFileSync(path.join(__dirname, "../public/admin.html"), "utf8");
 const adminAccessSource = fs.readFileSync(path.join(__dirname, "../public/admin-access.html"), "utf8");
+const commandHandlerSource = fs.readFileSync(path.join(__dirname, "../lib/commandHandler.js"), "utf8");
 
 test("the public entry point separates reusable token and pairing-code pages", () => {
     assert.match(indexSource, /app\.get\("\/", \(_req, res\) => res\.redirect\("\/token"\)\)/);
@@ -59,6 +60,16 @@ test("the public entry point separates reusable token and pairing-code pages", (
     assert.match(adminSource, /wa\.me\/254769564723/);
     assert.match(adminAccessSource, /\/api\/auth\/login/);
     assert.match(adminAccessSource, /OPEN ADMIN CONSOLE/);
+});
+
+test("chatbot AI replies are private-message only and command-safe", () => {
+    assert.match(commandHandlerSource, /settings\?\.chatbotAI/);
+    assert.match(commandHandlerSource, /jid\.endsWith\("@s\.whatsapp\.net"\)/);
+    assert.match(commandHandlerSource, /!msg\.key\.fromMe/);
+    assert.match(commandHandlerSource, /!prefix/);
+    assert.match(commandHandlerSource, /!listResponse/);
+    assert.match(commandHandlerSource, /askGroq\(/);
+    assert.match(commandHandlerSource, /checkAILimit\(/);
 });
 
 test("the bot API remains session-scoped for each visitor", () => {

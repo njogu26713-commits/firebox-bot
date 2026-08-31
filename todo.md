@@ -155,10 +155,10 @@
 - [x] Add regression coverage for the `.menu` forwarded-channel behavior
 - [x] Test and push the forwarded-channel repair
 
-- [ ] Integrate Groq AI replies when `aichat` is enabled
-- [ ] Preserve commands, owner controls, and disabled-AI behavior
-- [ ] Add Groq configuration guidance and secure secret handling
-- [ ] Add tests for AI on/off behavior and push the feature
+- [x] Integrate Groq AI replies when `aichat` is enabled
+- [x] Preserve commands, owner controls, and disabled-AI behavior
+- [x] Add Groq configuration guidance and secure secret handling
+- [x] Add tests for AI on/off behavior and push the feature
 
 - [x] Add staged token-generation animation: storing number, typewriter generation, animated reveal
 - [x] Handle animation cancellation, API errors, and reduced-motion preferences
@@ -215,3 +215,9 @@
 - [x] Test and push the simplified Firebox-only admin dashboard
 
 - [x] Apply the Firebox cyberpunk visual system to the simplified `/admin` dashboard
+
+- [x] Make `chatbot`/`aichat` reply to every incoming private WhatsApp message when enabled
+- [x] Ignore all group messages
+- [x] Preserve command and owner-handler precedence
+- [x] Add tests for enabled, disabled, group, command, and Groq failure cases
+- [ ] Configure the Groq key requirement and push the feature
