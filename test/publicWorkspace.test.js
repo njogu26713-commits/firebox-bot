@@ -29,6 +29,12 @@ test("the public entry point separates reusable token and pairing-code pages", (
     assert.match(tokenSource, /async function typewrite/);
     assert.match(codeSource, /FIREBOX/);
     assert.match(codeSource, /\/api\/bot\/token\/pair-code/);
+    for (const source of [tokenSource, codeSource]) {
+        assert.match(source, /KSh 29/);
+        assert.match(source, /KSh 49/);
+        assert.match(source, /KSh 99/);
+        assert.match(source, /\/api\/bot\/payment-config/);
+    }
     assert.doesNotMatch(tokenSource, /Continue to pairing|Create account|Sign in/);
     assert.doesNotMatch(codeSource, /Continue to pairing|Create account|Sign in/);
     assert.doesNotMatch(workspaceSource, /dashboard\/auth\/me/);
@@ -43,6 +49,8 @@ test("the bot API remains session-scoped for each visitor", () => {
     const routes = fs.readFileSync(path.join(__dirname, "../saas/userApiRoutes.js"), "utf8");
     assert.match(routes, /return req\.session\.id/);
     assert.match(routes, /botManager\.instances\.get\(userId\(req\)\)/);
+    assert.match(routes, /router\.get\("\/payment-config"/);
+    assert.match(routes, /MPESA_ENABLED/);
     assert.match(routes, /router\.post\("\/token"/);
     assert.match(routes, /router\.post\("\/token\/pair-code"/);
 });

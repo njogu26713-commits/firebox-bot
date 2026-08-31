@@ -21,6 +21,13 @@ router.post("/hub-sync", async (req, res) => {
         return res.json({ synced: true, bot });
     } catch (error) { return res.status(400).json({ error: error.message }); }
 });
+// Public payment configuration is safe to expose; credentials remain server-only.
+router.get("/payment-config", (_req, res) => res.json({
+    enabled: String(process.env.MPESA_ENABLED || "false").toLowerCase() === "true",
+    currency: "KSh",
+    plans: [{ days: 7, amount: 29 }, { days: 14, amount: 49 }, { days: 30, amount: 99 }]
+}));
+
 // Public Firebox pairing endpoints intentionally do not require an account.
 router.post("/token", (req, res) => {
     try {

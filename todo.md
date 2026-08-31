@@ -173,3 +173,14 @@
 - [x] Make each of the six token-generation stages last exactly 3 seconds
 - [x] Ensure the real token is revealed only after the complete 18-second sequence
 - [x] Verify and push the exact timing update
+
+- [ ] Add M-Pesa STK Push plans: 7 days KSh 29, 14 days KSh 49, 30 days KSh 99
+- [ ] Allow payment to activate a new token or extend an existing token
+- [ ] Add secure payment callback, idempotency, and token expiry handling
+- [ ] Add payment UI and status polling
+- [ ] Add tests and push the payment implementation
+
+- [x] Add disabled M-Pesa configuration scaffolding with `MPESA_ENABLED=false`
+- [x] Show 7-day KSh 29, 14-day KSh 49, and 30-day KSh 99 plans in the UI
+- [x] Make the UI read the disabled-payment state without attempting STK Push
+- [x] Test and push the disabled payment scaffolding
