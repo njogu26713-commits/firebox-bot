@@ -6,13 +6,14 @@ const test = require("node:test");
 const indexSource = fs.readFileSync(path.join(__dirname, "../index.js"), "utf8");
 const workspaceSource = fs.readFileSync(path.join(__dirname, "../public/servers.html"), "utf8");
 const adminSource = fs.readFileSync(path.join(__dirname, "../public/admin.html"), "utf8");
+const adminAccessSource = fs.readFileSync(path.join(__dirname, "../public/admin-access.html"), "utf8");
 
 test("the public entry point separates reusable token and pairing-code pages", () => {
     assert.match(indexSource, /app\.get\("\/", \(_req, res\) => res\.redirect\("\/token"\)\)/);
     assert.match(indexSource, /app\.get\("\/token", \(_req, res\) => res\.sendFile\(tokenWorkspace\)\)/);
     assert.match(indexSource, /app\.get\("\/code", \(_req, res\) => res\.sendFile\(codeWorkspace\)\)/);
     assert.match(indexSource, /app\.use\("\/api\/auth", require\("\.\/saas\/authApiRoutes"\)\)/);
-    assert.match(indexSource, /app\.get\("\/admin", \(req, res\) => \{ if \(!req\.session\.accountId\) return res\.sendFile\(authWorkspace\); if \(!isAdminAccount\(req\)\) return res\.status\(403\)/);
+    assert.match(indexSource, /app\.get\("\/admin", \(req, res\) => \{ if \(!req\.session\.accountId\) return res\.sendFile\(adminAccessWorkspace\); if \(!isAdminAccount\(req\)\) return res\.status\(403\)/);
     assert.match(indexSource, /app\.get\("\/bot-dashboard", \(_req, res\) => res\.redirect\("\/token"\)\)/);
     assert.match(indexSource, /app\.get\("\/connect", \(_req, res\) => res\.redirect\("\/token"\)\)/);
     assert.match(indexSource, /app\.get\("\/auth", \(_req, res\) => res\.redirect\("\/"\)\)/);
@@ -55,6 +56,8 @@ test("the public entry point separates reusable token and pairing-code pages", (
     assert.match(adminSource, /id="tokens"/);
     assert.match(adminSource, /data-copy-token/);
     assert.match(adminSource, /wa\.me\/254769564723/);
+    assert.match(adminAccessSource, /\/api\/auth\/login/);
+    assert.match(adminAccessSource, /OPEN ADMIN CONSOLE/);
 });
 
 test("the bot API remains session-scoped for each visitor", () => {

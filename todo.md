@@ -205,3 +205,7 @@
 - [x] Add a Forgot token WhatsApp contact link for +254769564723
 - [x] Add tests for authorization, masking, token access, and contact-link behavior
 - [x] Verify and push the admin feature
+
+- [x] Stop `/admin` from redirecting to the removed login page
+- [x] Provide a valid protected administrator access path
+- [x] Test `/admin` and legacy authentication routes, then push the repair

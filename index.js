@@ -98,6 +98,7 @@ const tokenWorkspace = path.join(__dirname, "public", "token.html");
 const codeWorkspace = path.join(__dirname, "public", "code.html");
 const adminWorkspace = path.join(__dirname, "public", "admin.html");
 const authWorkspace = path.join(__dirname, "public", "auth.html");
+const adminAccessWorkspace = path.join(__dirname, "public", "admin-access.html");
 const settingsWorkspace = path.join(__dirname, "public", "settings.html");
 
 // Every visitor gets the current bot workspace. express-session provides the
@@ -106,7 +107,7 @@ const settingsWorkspace = path.join(__dirname, "public", "settings.html");
 app.get("/", (_req, res) => res.redirect("/token"));
 app.get("/token", (_req, res) => res.sendFile(tokenWorkspace));
 app.get("/code", (_req, res) => res.sendFile(codeWorkspace));
-app.get("/admin", (req, res) => { if (!req.session.accountId) return res.sendFile(authWorkspace); if (!isAdminAccount(req)) return res.status(403).send("Administrator access required."); return res.sendFile(adminWorkspace); });
+app.get("/admin", (req, res) => { if (!req.session.accountId) return res.sendFile(adminAccessWorkspace); if (!isAdminAccount(req)) return res.status(403).send("Administrator access required."); return res.sendFile(adminWorkspace); });
 app.get("/auth", (_req, res) => res.redirect("/"));
 app.get("/settings", (_req, res) => res.redirect("/token"));
 
