@@ -165,3 +165,7 @@
 - [x] Verify and push the token-page animation update
 
 - [x] Expand token-generation animation beyond the example messages into a full staged cyberpunk status sequence
+
+- [x] Reduce excess side and bottom whitespace on `/token` and `/code`
+- [x] Increase the main container and card height while preserving responsive behavior
+- [x] Verify and push the spacing adjustment
