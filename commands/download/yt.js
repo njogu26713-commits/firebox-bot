@@ -11,15 +11,13 @@ module.exports = {
             return await sock.sendMessage(jid, { text: "❓ *Usage:* `.yt <link>`" });
         }
 
-        await sock.sendMessage(jid, { text: "⏳ *Processing your video...* Please wait." });
+        await sock.sendMessage(jid, { text: "⬇️ *DOWNLOADING...*" }, { quoted: msg });
 
         try {
             const audio = await mediaApi.ytDownload(url);
             
             if (!audio) {
-                return await sock.sendMessage(jid, { 
-                    text: `❌ *Download service unavailable.*\n\n🔗 *Original Link:* ${url}\n\n_The bot could not process the download, but you can use the link above._` 
-                }, { quoted: msg });
+                return await sock.sendMessage(jid, { text: "❌ *ERROR OCCURRED — TRY AGAIN LATER.*" }, { quoted: msg });
             }
 
 
@@ -31,16 +29,14 @@ module.exports = {
                     fileName: `${audio.title || "audio"}.mp3`,
                     caption: `🎵 *YouTube Audio*\n\n✨ *Title:* ${audio.title || "Unknown"}\n📦 *Format:* MP3\n\n_Firebox Bot • Media Delivery_`
                 }, { quoted: msg });
-            } else if (audio.url) {
-                await sock.sendMessage(jid, { 
-                    text: `🎵 *YouTube Audio*\n\n✨ *Title:* ${audio.title || "Unknown"}\n⚠️ *Buffer download failed.*\n🔗 *Link:* ${audio.url}`
-                }, { quoted: msg });
+            } else {
+                await sock.sendMessage(jid, { text: "❌ *ERROR OCCURRED — TRY AGAIN LATER.*" }, { quoted: msg });
             }
 
 
         } catch (err) {
             console.error("YouTube error:", err);
-            await sock.sendMessage(jid, { text: "❌ Connection error while downloading video." });
+            await sock.sendMessage(jid, { text: "❌ *ERROR OCCURRED — TRY AGAIN LATER.*" }, { quoted: msg });
         }
     }
 };

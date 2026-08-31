@@ -11,7 +11,7 @@ module.exports = {
         if (!query) return await sock.sendMessage(jid, { text: "❓ *Usage:* `.play <song name>`" });
 
         await sock.sendPresenceUpdate('composing', jid);
-        const waitMsg = await sock.sendMessage(jid, { text: `🎵 *Searching for:* ${query}...` });
+        await sock.sendMessage(jid, { text: "⬇️ *DOWNLOADING...*" }, { quoted: msg });
 
 
         try {
@@ -22,18 +22,9 @@ module.exports = {
 
             const video = results[0];
             
-            // Inform user about the video found
-            await sock.sendMessage(jid, { 
-                image: { url: video.thumbnail }, 
-                caption: `🎵 *Found:* ${video.title}\n⏱️ *Duration:* ${video.timestamp}\n\n⏳ *Processing audio for delivery...*`
-            }, { edit: waitMsg.key });
-
-
             const audio = await mediaApi.ytDownload(video.url);
             if (!audio) {
-                return await sock.sendMessage(jid, { 
-                    text: `❌ *Download service unavailable.*\n\n🔗 *Original Link:* ${video.url}\n\n_You can try downloading it manually using the link above._` 
-                }, { quoted: msg });
+                return await sock.sendMessage(jid, { text: "❌ *ERROR OCCURRED — TRY AGAIN LATER.*" }, { quoted: msg });
             }
 
 
@@ -44,17 +35,15 @@ module.exports = {
                     mimetype: "audio/mpeg",
                     ptt: false
                 }, { quoted: msg });
-            } else if (audio.url) {
-                await sock.sendMessage(jid, { 
-                    text: `⚠️ *Buffer download failed.*\n\n🔗 *Download Link:* ${audio.url}\n\n_You can download it manually using the link above._`
-                }, { quoted: msg });
+            } else {
+                await sock.sendMessage(jid, { text: "❌ *ERROR OCCURRED — TRY AGAIN LATER.*" }, { quoted: msg });
             }
             
-            await sock.sendMessage(jid, { text: `✅ *Finished:* ${audio.title || video.title}` });
+            if (audio.buffer) await sock.sendMessage(jid, { text: `✅ *Finished:* ${audio.title || video.title}` });
 
         } catch (err) {
             console.error("Play error:", err);
-            await sock.sendMessage(jid, { text: "❌ Connection error while searching for music." });
+            await sock.sendMessage(jid, { text: "❌ *ERROR OCCURRED — TRY AGAIN LATER.*" }, { quoted: msg });
         }
     }
 };

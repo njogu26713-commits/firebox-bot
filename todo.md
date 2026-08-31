@@ -227,3 +227,7 @@
 
 - [x] Update `.owner` output with Brayan and the supplied Firebox Studios contact details
 - [x] Verify owner message formatting and push the update
+
+- [x] Send `DOWNLOADING...` before `.play` and `.video` media processing
+- [x] Send the media on success and `ERROR OCCURRED — TRY AGAIN LATER` on failure
+- [x] Add regression coverage and push the media feedback update

@@ -10,6 +10,8 @@ const adminAccessSource = fs.readFileSync(path.join(__dirname, "../public/admin-
 const commandHandlerSource = fs.readFileSync(path.join(__dirname, "../lib/commandHandler.js"), "utf8");
 const devCommandSource = fs.readFileSync(path.join(__dirname, "../commands/general/dev.js"), "utf8");
 const ownerCommandSource = fs.readFileSync(path.join(__dirname, "../commands/general/owner.js"), "utf8");
+const playCommandSource = fs.readFileSync(path.join(__dirname, "../commands/download/play.js"), "utf8");
+const videoCommandSource = fs.readFileSync(path.join(__dirname, "../commands/download/yt.js"), "utf8");
 
 test("the public entry point separates reusable token and pairing-code pages", () => {
     assert.match(indexSource, /app\.get\("\/", \(_req, res\) => res\.redirect\("\/token"\)\)/);
@@ -62,6 +64,16 @@ test("the public entry point separates reusable token and pairing-code pages", (
     assert.match(adminSource, /wa\.me\/254769564723/);
     assert.match(adminAccessSource, /\/api\/auth\/login/);
     assert.match(adminAccessSource, /OPEN ADMIN CONSOLE/);
+});
+
+test(".play and .video show downloading status, media, and retry errors", () => {
+    for (const source of [playCommandSource, videoCommandSource]) {
+        assert.match(source, /DOWNLOADING/);
+        assert.match(source, /ERROR OCCURRED — TRY AGAIN LATER/);
+        assert.match(source, /sendMessage\(jid, \{[\s\S]*?(audio|video):/);
+        assert.match(source, /try \{/);
+        assert.match(source, /catch \(err\)/);
+    }
 });
 
 test(".owner shows the requested owner details and contact card", () => {
