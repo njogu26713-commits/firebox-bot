@@ -8,6 +8,7 @@
 
 const path = require("path");
 const fireboxWebhook = require("./saas/fireboxWebhook");
+const botManager = require("./saas/botManager");
 const { isAdminAccount } = require("./saas/adminAuth");
 
 // ── Log noise filter ──────────────────────────────────────────────────────────
@@ -127,7 +128,21 @@ app.get("/pair", (_req, res) => res.redirect("/code"));
 app.get("/health", (req, res) => res.send("🤖 Firebox Bot SaaS is Online!"));
 
 // ── Listen ────────────────────────────────────────────────────────────────────
-app.listen(PORT, () => {
+const server = app.listen(PORT, async () => {
     console.log(`🌍 Firebox Bot SaaS listening on port ${PORT}`);
     fireboxWebhook.start();
+    await botManager.restoreAtBoot();
 });
+
+let shuttingDown = false;
+async function shutdown(signal) {
+    if (shuttingDown) return;
+    shuttingDown = true;
+    console.log(`[shutdown] ${signal} received; stopping bot instances cleanly.`);
+    botManager.stopAll();
+    await new Promise((resolve) => server.close(resolve));
+    process.exit(0);
+}
+
+process.once("SIGTERM", () => shutdown("SIGTERM"));
+process.once("SIGINT", () => shutdown("SIGINT"));

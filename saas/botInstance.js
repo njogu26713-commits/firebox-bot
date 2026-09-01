@@ -39,6 +39,7 @@ class BotInstance {
         this.botStartTime = null;
         this.status = "offline"; // offline | connecting | online
         this.isReconnecting = false;
+        this.isStopping = false;
         this.consecutiveFailures = 0;
         this.hasWipedSessionOnStartup = false;
 
@@ -78,6 +79,7 @@ class BotInstance {
     // ── Start ──────────────────────────────────────────────────────────────────
 
     async start() {
+        this.isStopping = false;
         if (!fs.existsSync(this.sessionDir)) {
             fs.mkdirSync(this.sessionDir, { recursive: true });
         }
@@ -88,6 +90,8 @@ class BotInstance {
     // ── Stop ───────────────────────────────────────────────────────────────────
 
     stop() {
+        this.isStopping = true;
+        this.isReconnecting = false;
         this._clearTimers();
         if (this.sock) {
             try { this.sock.end(new Error("BotInstance stopped")); } catch (_) {}
@@ -205,7 +209,7 @@ class BotInstance {
     // ── Core connection logic ─────────────────────────────────────────────────
 
     async _connectionLogic() {
-        if (this.isReconnecting) return;
+        if (this.isStopping || this.isReconnecting) return;
         this.isReconnecting = true;
         this.status = "connecting";
 
@@ -437,19 +441,20 @@ class BotInstance {
                         try { sock.end(); } catch (_) {}
                         this.status = "offline";
                         this.isReconnecting = false;
-                        setTimeout(() => this._connectionLogic(), 5000);
+                        if (!this.isStopping) setTimeout(() => this._connectionLogic(), 5000);
                     }
                 }, 3 * 60 * 1000);
             }
 
             if (connection === "close") {
                 this.isReconnecting = false;
+                if (this.isStopping) return;
                 this.status = "offline";
                 this._clearTimers();
 
                 if (this.pairingRestartInProgress) {
                     this.pairingRestartInProgress = false;
-                    setTimeout(() => this._connectionLogic(), 2000);
+                    if (!this.isStopping) setTimeout(() => this._connectionLogic(), 2000);
                     return;
                 }
 
@@ -476,10 +481,10 @@ class BotInstance {
                         this.sessionId = null;
                     }
                     this.wipeSession();
-                    setTimeout(() => this._connectionLogic(), 5000);
+                    if (!this.isStopping) setTimeout(() => this._connectionLogic(), 10000);
                 } else {
                     const delay = 10000;
-                    setTimeout(() => this._connectionLogic(), delay);
+                    if (!this.isStopping) setTimeout(() => this._connectionLogic(), delay);
                 }
             }
         });
