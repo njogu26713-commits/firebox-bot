@@ -13,6 +13,7 @@ const ownerCommandSource = fs.readFileSync(path.join(__dirname, "../commands/gen
 const playCommandSource = fs.readFileSync(path.join(__dirname, "../commands/download/play.js"), "utf8");
 const videoCommandSource = fs.readFileSync(path.join(__dirname, "../commands/download/yt.js"), "utf8");
 const viewOnceCommandSource = fs.readFileSync(path.join(__dirname, "../commands/general/viewonce.js"), "utf8");
+const mediaApiSource = fs.readFileSync(path.join(__dirname, "../lib/mediaApi.js"), "utf8");
 
 test("the public entry point separates reusable token and pairing-code pages", () => {
     assert.match(indexSource, /app\.get\("\/", \(_req, res\) => res\.redirect\("\/token"\)\)/);
@@ -70,6 +71,11 @@ test("the public entry point separates reusable token and pairing-code pages", (
     assert.match(adminAccessSource, /OPEN ADMIN CONSOLE/);
     assert.match(viewOnceCommandSource, /aliases: \["viewonce", "vv"\]/);
     assert.match(viewOnceCommandSource, /downloadMediaMessage/);
+    assert.match(mediaApiSource, /YTDLP_BIN/);
+    assert.match(mediaApiSource, /--force-ipv4/);
+    assert.match(playCommandSource, /ytDownload\(video\.url, \{ type: "audio" \}\)/);
+    assert.match(videoCommandSource, /ytDownload\(url, \{ type: "video" \}\)/);
+    assert.match(videoCommandSource, /video: video\.buffer/);
 });
 
 test(".play and .video show downloading status, media, and retry errors", () => {

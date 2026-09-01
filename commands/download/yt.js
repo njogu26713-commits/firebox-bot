@@ -14,20 +14,19 @@ module.exports = {
         await sock.sendMessage(jid, { text: "⬇️ *DOWNLOADING...*" }, { quoted: msg });
 
         try {
-            const audio = await mediaApi.ytDownload(url);
+            const video = await mediaApi.ytDownload(url, { type: "video" });
             
-            if (!audio) {
+            if (!video) {
                 return await sock.sendMessage(jid, { text: "❌ *ERROR OCCURRED — TRY AGAIN LATER.*" }, { quoted: msg });
             }
 
-
-            if (audio.buffer) {
+            if (video.buffer) {
                 await sock.sendPresenceUpdate('recording', jid);
-                await sock.sendMessage(jid, { 
-                    audio: audio.buffer,
-                    mimetype: "audio/mpeg",
-                    fileName: `${audio.title || "audio"}.mp3`,
-                    caption: `🎵 *YouTube Audio*\n\n✨ *Title:* ${audio.title || "Unknown"}\n📦 *Format:* MP3\n\n_Firebox Bot • Media Delivery_`
+                await sock.sendMessage(jid, {
+                    video: video.buffer,
+                    mimetype: "video/mp4",
+                    fileName: `${video.title || "video"}.mp4`,
+                    caption: `🎬 *YouTube Video*\n\n✨ *Title:* ${video.title || "Unknown"}\n📦 *Format:* MP4\n\n_Firebox Bot • Media Delivery_`
                 }, { quoted: msg });
             } else {
                 await sock.sendMessage(jid, { text: "❌ *ERROR OCCURRED — TRY AGAIN LATER.*" }, { quoted: msg });

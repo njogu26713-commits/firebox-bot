@@ -22,7 +22,7 @@ module.exports = {
 
             const video = results[0];
             
-            const audio = await mediaApi.ytDownload(video.url);
+            const audio = await mediaApi.ytDownload(video.url, { type: "audio" });
             if (!audio) {
                 return await sock.sendMessage(jid, { text: "❌ *ERROR OCCURRED — TRY AGAIN LATER.*" }, { quoted: msg });
             }

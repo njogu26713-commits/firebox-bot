@@ -4,6 +4,7 @@ FROM node:20-slim
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     ffmpeg \
+    yt-dlp \
     imagemagick \
     webp \
     python3 \
