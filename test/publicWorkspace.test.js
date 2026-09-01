@@ -69,7 +69,7 @@ test("the public entry point separates reusable token and pairing-code pages", (
     assert.match(adminAccessSource, /\/api\/auth\/login/);
     assert.match(adminAccessSource, /OPEN ADMIN CONSOLE/);
     assert.match(viewOnceCommandSource, /aliases: \["viewonce", "vv"\]/);
-    assert.match(viewOnceCommandSource, /downloadContentFromMessage/);
+    assert.match(viewOnceCommandSource, /downloadMediaMessage/);
 });
 
 test(".play and .video show downloading status, media, and retry errors", () => {

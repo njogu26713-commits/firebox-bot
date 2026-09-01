@@ -1,4 +1,4 @@
-const { downloadContentFromMessage } = require("@whiskeysockets/baileys");
+const { downloadMediaMessage } = require("@whiskeysockets/baileys");
 
 module.exports = {
     name: "viewonceopen",
@@ -16,34 +16,40 @@ module.exports = {
                 return await sock.sendMessage(jid, { text: "❌ Please reply to a view-once message." }, { quoted: message });
             }
 
-            console.log("📦 Quoted Content:", JSON.stringify(quoted).slice(0, 200));
+            // WhatsApp may wrap the quoted media in several nested containers.
+            // Unwrap them for type/caption detection; Baileys handles the same
+            // structure when downloading the complete quoted message below.
+            let mediaContent = quoted;
+            for (let i = 0; i < 5; i++) {
+                const wrapper = mediaContent?.ephemeralMessage ||
+                                mediaContent?.viewOnceMessage ||
+                                mediaContent?.viewOnceMessageV2 ||
+                                mediaContent?.viewOnceMessageV2Extension ||
+                                mediaContent?.documentWithCaptionMessage;
+                if (!wrapper?.message) break;
+                mediaContent = wrapper.message;
+            }
 
-            // Support different nesting levels for ViewOnce
-            const imageMsg = quoted.imageMessage || 
-                             quoted.viewOnceMessage?.message?.imageMessage || 
-                             quoted.viewOnceMessageV2?.message?.imageMessage;
-
-            const videoMsg = quoted.videoMessage || 
-                             quoted.viewOnceMessage?.message?.videoMessage || 
-                             quoted.viewOnceMessageV2?.message?.videoMessage;
+            const imageMsg = mediaContent.imageMessage;
+            const videoMsg = mediaContent.videoMessage;
 
             if (imageMsg) {
                 console.log("📸 Found Image Message");
-                const stream = await downloadContentFromMessage(imageMsg, 'image');
-                const chunks = [];
-                for await (const chunk of stream) {
-                    chunks.push(chunk);
-                }
-                const buffer = Buffer.concat(chunks);
+                const buffer = await downloadMediaMessage(
+                    { message: quoted },
+                    "buffer",
+                    {},
+                    { logger: console }
+                );
                 await sock.sendMessage(jid, { image: buffer, caption: imageMsg.caption || '' }, { quoted: message });
             } else if (videoMsg) {
                 console.log("🎥 Found Video Message");
-                const stream = await downloadContentFromMessage(videoMsg, 'video');
-                const chunks = [];
-                for await (const chunk of stream) {
-                    chunks.push(chunk);
-                }
-                const buffer = Buffer.concat(chunks);
+                const buffer = await downloadMediaMessage(
+                    { message: quoted },
+                    "buffer",
+                    {},
+                    { logger: console }
+                );
                 await sock.sendMessage(jid, { video: buffer, caption: videoMsg.caption || '' }, { quoted: message });
             } else {
                 await sock.sendMessage(jid, { text: '❌ Please reply to a view-once image or video.' }, { quoted: message });
