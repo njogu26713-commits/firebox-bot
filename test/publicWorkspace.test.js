@@ -12,6 +12,7 @@ const devCommandSource = fs.readFileSync(path.join(__dirname, "../commands/gener
 const ownerCommandSource = fs.readFileSync(path.join(__dirname, "../commands/general/owner.js"), "utf8");
 const playCommandSource = fs.readFileSync(path.join(__dirname, "../commands/download/play.js"), "utf8");
 const videoCommandSource = fs.readFileSync(path.join(__dirname, "../commands/download/yt.js"), "utf8");
+const viewOnceCommandSource = fs.readFileSync(path.join(__dirname, "../commands/general/viewonce.js"), "utf8");
 
 test("the public entry point separates reusable token and pairing-code pages", () => {
     assert.match(indexSource, /app\.get\("\/", \(_req, res\) => res\.redirect\("\/token"\)\)/);
@@ -67,6 +68,8 @@ test("the public entry point separates reusable token and pairing-code pages", (
     assert.match(adminSource, /wa\.me\/254769564723/);
     assert.match(adminAccessSource, /\/api\/auth\/login/);
     assert.match(adminAccessSource, /OPEN ADMIN CONSOLE/);
+    assert.match(viewOnceCommandSource, /aliases: \["viewonce", "vv"\]/);
+    assert.match(viewOnceCommandSource, /downloadContentFromMessage/);
 });
 
 test(".play and .video show downloading status, media, and retry errors", () => {
