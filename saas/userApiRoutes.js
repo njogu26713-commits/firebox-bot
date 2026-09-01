@@ -55,15 +55,9 @@ router.use((req, res, next) => {
     return res.status(401).json({ error: "Sign in required." });
 });
 
-// Use a stable deployment identity when SESSION_ID is configured. This keeps
-// the public workspace attached to the same bot after a container redeploy.
-// Multi-user deployments without SESSION_ID continue using browser sessions.
-function sessionUserId(req) {
-    return req.session.id;
-}
-
+// Use the express-session ID as the user/bot identifier
 function userId(req) {
-    return process.env.SESSION_ID ? (process.env.BOT_USER_ID || "default") : sessionUserId(req);
+    return req.session.id;
 }
 
 // ── Status ────────────────────────────────────────────────────────────────────
