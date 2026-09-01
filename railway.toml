@@ -3,5 +3,5 @@ builder = "DOCKERFILE"
 
 [deploy]
 startCommand = "node index.js"
-restartPolicyType = "ALWAYS"
+restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
