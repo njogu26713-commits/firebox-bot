@@ -44,6 +44,12 @@ module.exports = {
     create(phone) {
         const normalized = normalizePhone(phone);
         const records = readRecords();
+        const alreadyHasToken = records.some(record => {
+            try { return decryptPhone(record) === normalized; } catch (_) { return false; }
+        });
+        if (alreadyHasToken) {
+            throw new Error("This phone number already has a Firebox token. Use the existing token instead.");
+        }
         let token;
         do { token = makeToken(); } while (records.some(record => record.tokenHash === hashToken(token)));
         records.push({ tokenHash: hashToken(token), tokenCiphertext: encryptText(token), phone: encryptPhone(normalized), status: "active", createdAt: new Date().toISOString(), lastUsedAt: null, expiresAt: null, pairingAttempts: 0 });

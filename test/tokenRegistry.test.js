@@ -7,6 +7,7 @@ const registry = require("../saas/tokenRegistry");
 const storePath = path.join(__dirname, "../database/firebox_tokens.json");
 
 test("token registry creates opaque tokens and resolves the protected phone internally", () => {
+    try { fs.unlinkSync(storePath); } catch {}
     const token = registry.create("+254 769 564 723");
     assert.match(token, /^FIREBOX-[A-Z0-9]{4}-[A-Z0-9]{4}$/);
     const resolved = registry.resolve(token);
@@ -19,6 +20,10 @@ test("token registry creates opaque tokens and resolves the protected phone inte
     const adminRecords = registry.listAdmin();
     assert.equal(adminRecords[0].token, token);
     assert.equal(adminRecords[0].phone, "254769564723");
+    assert.throws(
+        () => registry.create("254769564723"),
+        /already has a Firebox token/
+    );
 });
 
 test.after(() => { try { fs.unlinkSync(storePath); } catch {} });
