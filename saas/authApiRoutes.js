@@ -1,5 +1,6 @@
 const express = require("express");
 const userRegistry = require("./userRegistry");
+const { verifyAdminPasscode } = require("./adminAuth");
 const router = express.Router();
 router.use(express.json());
 
@@ -25,6 +26,14 @@ router.post("/login", async (req, res) => {
         req.session.accountUser = user;
         res.json({ user });
     } catch (error) { res.status(503).json({ error: error.message }); }
+});
+
+router.post("/admin-login", (req, res) => {
+    if (!verifyAdminPasscode(req.body?.passcode)) {
+        return res.status(401).json({ error: "Invalid administrator passcode." });
+    }
+    req.session.adminAuthenticated = true;
+    res.json({ ok: true });
 });
 
 router.post("/logout", (req, res) => {

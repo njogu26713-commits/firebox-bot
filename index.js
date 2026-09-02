@@ -8,7 +8,7 @@
 
 const path = require("path");
 const fireboxWebhook = require("./saas/fireboxWebhook");
-const { isAdminAccount } = require("./saas/adminAuth");
+const { isAdminAuthenticated } = require("./saas/adminAuth");
 
 // ── Log noise filter ──────────────────────────────────────────────────────────
 const _origError = console.error.bind(console);
@@ -107,7 +107,7 @@ const settingsWorkspace = path.join(__dirname, "public", "settings.html");
 app.get("/", (_req, res) => res.redirect("/token"));
 app.get("/token", (_req, res) => res.sendFile(tokenWorkspace));
 app.get("/code", (_req, res) => res.sendFile(codeWorkspace));
-app.get("/admin", (req, res) => { if (!req.session.accountId) return res.sendFile(adminAccessWorkspace); if (!isAdminAccount(req)) return res.status(403).send("Administrator access required."); return res.sendFile(adminWorkspace); });
+app.get("/admin", (req, res) => { if (!isAdminAuthenticated(req)) return res.sendFile(adminAccessWorkspace); return res.sendFile(adminWorkspace); });
 app.get("/auth", (_req, res) => res.redirect("/"));
 app.get("/settings", (_req, res) => res.redirect("/token"));
 

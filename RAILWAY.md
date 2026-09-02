@@ -18,10 +18,10 @@ The webhook hub URL is not the MongoDB URL. Each actual bot deployment still use
 Add this variable to the Firebox Bot panel service in Railway:
 
 ```env
-FIREBOX_ADMIN_EMAIL=your-email@example.com
+FIREBOX_ADMIN_PASSCODE=replace-with-a-long-random-passcode
 ```
 
-The value must exactly match the email used to create or sign into your Firebox account. Only that account can open `/admin`, add or remove bot servers, or read the users-and-bots overview. The dashboard shows registered user IDs, email addresses, selected bot IDs, bot names, and last activity. Bot keys are never included in the report.
+The passcode is checked only on the server and is never sent to the browser. After a successful passcode login, the browser receives the normal signed session cookie and can open `/admin`, add or remove bot servers, or read the users-and-bots overview. Use a long random value and keep it private.
 
 ## Automatic bot registration from the Webhook Hub
 

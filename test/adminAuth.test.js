@@ -1,12 +1,15 @@
 const assert = require("node:assert/strict");
 const test = require("node:test");
-const { isAdminAccount } = require("../saas/adminAuth");
+const { isAdminAuthenticated, verifyAdminPasscode } = require("../saas/adminAuth");
 
-test("admin access matches the configured email only", () => {
-    const previous = process.env.FIREBOX_ADMIN_EMAIL;
-    process.env.FIREBOX_ADMIN_EMAIL = "owner@example.com";
-    assert.equal(isAdminAccount({ session: { accountId: "1", accountUser: { email: "OWNER@example.com" } } }), true);
-    assert.equal(isAdminAccount({ session: { accountId: "2", accountUser: { email: "user@example.com" } } }), false);
-    assert.equal(isAdminAccount({ session: {} }), false);
-    if (previous === undefined) delete process.env.FIREBOX_ADMIN_EMAIL; else process.env.FIREBOX_ADMIN_EMAIL = previous;
+test("admin access uses the configured passcode only", () => {
+    const previous = process.env.FIREBOX_ADMIN_PASSCODE;
+    process.env.FIREBOX_ADMIN_PASSCODE = "correct-admin-passcode";
+    assert.equal(verifyAdminPasscode("correct-admin-passcode"), true);
+    assert.equal(verifyAdminPasscode("wrong-admin-passcode"), false);
+    assert.equal(verifyAdminPasscode(""), false);
+    assert.equal(isAdminAuthenticated({ session: { adminAuthenticated: true } }), true);
+    assert.equal(isAdminAuthenticated({ session: { adminAuthenticated: false } }), false);
+    assert.equal(isAdminAuthenticated({ session: {} }), false);
+    if (previous === undefined) delete process.env.FIREBOX_ADMIN_PASSCODE; else process.env.FIREBOX_ADMIN_PASSCODE = previous;
 });

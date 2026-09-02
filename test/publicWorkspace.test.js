@@ -20,7 +20,7 @@ test("the public entry point separates reusable token and pairing-code pages", (
     assert.match(indexSource, /app\.get\("\/token", \(_req, res\) => res\.sendFile\(tokenWorkspace\)\)/);
     assert.match(indexSource, /app\.get\("\/code", \(_req, res\) => res\.sendFile\(codeWorkspace\)\)/);
     assert.match(indexSource, /app\.use\("\/api\/auth", require\("\.\/saas\/authApiRoutes"\)\)/);
-    assert.match(indexSource, /app\.get\("\/admin", \(req, res\) => \{ if \(!req\.session\.accountId\) return res\.sendFile\(adminAccessWorkspace\); if \(!isAdminAccount\(req\)\) return res\.status\(403\)/);
+    assert.match(indexSource, /app\.get\("\/admin", \(req, res\) => \{ if \(!isAdminAuthenticated\(req\)\) return res\.sendFile\(adminAccessWorkspace\)/);
     assert.match(indexSource, /app\.get\("\/bot-dashboard", \(_req, res\) => res\.redirect\("\/token"\)\)/);
     assert.match(indexSource, /app\.get\("\/connect", \(_req, res\) => res\.redirect\("\/token"\)\)/);
     assert.match(indexSource, /app\.get\("\/auth", \(_req, res\) => res\.redirect\("\/"\)\)/);
@@ -67,7 +67,9 @@ test("the public entry point separates reusable token and pairing-code pages", (
     assert.match(adminSource, /data-copy-token/);
     assert.doesNotMatch(adminSource, /Add bot server|Webhook hub URL|Public bot URL|Bot key|Registered bots|Tracked bot usage/);
     assert.match(adminSource, /wa\.me\/254769564723/);
-    assert.match(adminAccessSource, /\/api\/auth\/login/);
+    assert.match(adminAccessSource, /\/api\/auth\/admin-login/);
+    assert.match(adminAccessSource, /id="passcode"/);
+    assert.doesNotMatch(adminAccessSource, /ADMIN EMAIL|id="email"/);
     assert.match(adminAccessSource, /OPEN ADMIN CONSOLE/);
     assert.match(viewOnceCommandSource, /aliases: \["viewonce", "vv"\]/);
     assert.match(viewOnceCommandSource, /downloadMediaMessage/);
