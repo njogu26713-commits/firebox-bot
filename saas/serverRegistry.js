@@ -1,7 +1,7 @@
 const crypto = require("crypto");
 const { MongoClient } = require("mongodb");
 
-function connectionUri() { return process.env.MONGODB_URI || process.env.MONGO_URL || process.env.MONGO_PUBLIC_URL; }
+function connectionUri() { return process.env.MONGO_URL || process.env.MONGODB_URI || process.env.MONGO_PUBLIC_URL; }
 const databaseName = process.env.MONGODB_DATABASE || "firebox";
 const collectionName = process.env.MONGODB_SERVERS_COLLECTION || "servers";
 let client;
