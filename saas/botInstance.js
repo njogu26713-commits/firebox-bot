@@ -105,7 +105,7 @@ class BotInstance {
     // ── Pairing trigger (called from API route) ────────────────────────────────
 
     triggerPairingRestart(phone) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             this.pairingCodeResolve = resolve;
             this.pairingCodeReject = reject;
 
@@ -113,9 +113,9 @@ class BotInstance {
                 if (this.pairingCodeResolve === resolve) {
                     this.pairingCodeResolve = null;
                     this.pairingCodeReject = null;
-                    reject(new Error("Timed out waiting for pairing code (25s)."));
+                    reject(new Error("Timed out waiting for pairing code (45s)."));
                 }
-            }, 25000);
+            }, 45000);
             if (timer.unref) timer.unref();
 
             this.pendingPairingNumber = phone;
@@ -124,13 +124,14 @@ class BotInstance {
             this.sessionIdFailed = false;
 
             // Wipe stale session
+            this.wipeSession();
+
             try {
-                if (fs.existsSync(this.sessionDir)) {
-                    fs.readdirSync(this.sessionDir).forEach(f => {
-                        try { fs.unlinkSync(path.join(this.sessionDir, f)); } catch (_) {}
-                    });
-                }
-            } catch (_) {}
+                const { clearDatabaseAuthState } = require("../firebox/dbAuth");
+                await clearDatabaseAuthState(`saas_${this.userId}`);
+            } catch (e) {
+                console.error(`[${this.userId}] Failed to clear database auth on pairing restart:`, e.message);
+            }
 
             this.pairingRestartInProgress = true;
 
