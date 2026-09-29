@@ -171,6 +171,7 @@ function createPaystackService({
         return {
             reference,
             paymentMethod,
+            accessCode: isCard ? String(charge.access_code || "") : "",
             authorizationUrl: isCard ? String(charge.authorization_url || "") : "",
             status: String(charge.status || (isCard ? "redirect" : "pending")),
             displayText: isCard

@@ -26,6 +26,7 @@ router.post("/hub-sync", async (req, res) => {
 // Public payment configuration is safe to expose; credentials remain server-only.
 router.get("/payment-config", (_req, res) => res.json({
     enabled: String(process.env.PAYSTACK_ENABLED || "false").toLowerCase() === "true" && !!process.env.PAYSTACK_SECRET_KEY,
+    publicKey: process.env.PAYSTACK_PUBLIC_KEY || "",
     provider: "Paystack",
     providers: ["mpesa", "airtel", "card"],
     currency: "KSh",
