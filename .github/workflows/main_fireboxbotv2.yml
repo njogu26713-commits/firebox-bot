@@ -28,6 +28,15 @@ jobs:
           npm install
           npm run build --if-present
           npm run test --if-present
+      - name: Bundle media tools for Azure App Service
+        run: |
+          mkdir -p bin
+          curl -L --fail --retry 3 https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o bin/yt-dlp
+          chmod +x bin/yt-dlp
+          curl -L --fail --retry 3 https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz -o /tmp/ffmpeg.tar.xz
+          tar -xJf /tmp/ffmpeg.tar.xz -C /tmp
+          cp /tmp/ffmpeg-*-static/ffmpeg bin/ffmpeg
+          chmod +x bin/ffmpeg
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
