@@ -28,6 +28,11 @@ jobs:
           npm install
           npm run build --if-present
           npm run test --if-present
+      - name: Bundle yt-dlp for Azure App Service
+        run: |
+          mkdir -p bin
+          curl -L --fail --retry 3 --connect-timeout 20 --max-time 120 https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o bin/yt-dlp
+          chmod +x bin/yt-dlp
       - name: Bundle media tools for Azure App Service
         run: |
           mkdir -p bin

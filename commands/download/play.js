@@ -32,7 +32,7 @@ module.exports = {
                 await sock.sendPresenceUpdate('recording', jid);
                 await sock.sendMessage(jid, { 
                     audio: audio.buffer,
-                    mimetype: "audio/mpeg",
+                    mimetype: audio.mimetype || "audio/mpeg",
                     ptt: false
                 }, { quoted: msg });
             } else {
@@ -47,4 +47,3 @@ module.exports = {
         }
     }
 };
-
