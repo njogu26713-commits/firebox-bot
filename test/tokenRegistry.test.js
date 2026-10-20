@@ -57,6 +57,18 @@ test("verified paid plans issue expiring tokens and repeated references do not d
     assert.equal((await registry.getPaidTokenByReference(secondReference)).token, first.token);
 });
 
+test("expired tokens remain eligible for renewal payment", async () => {
+    const phone = "254700000002";
+    const reference = `fb-${"3".repeat(32)}`;
+    const paid = await registry.applyPaidPlan({ phone, days: 7, reference });
+    const records = JSON.parse(fs.readFileSync(storePath, "utf8"));
+    const record = records.find(item => item.tokenHash === require("crypto").createHash("sha256").update(paid.token).digest("hex"));
+    record.expiresAt = new Date(Date.now() - 1000).toISOString();
+    fs.writeFileSync(storePath, JSON.stringify(records));
+    const resolved = await registry.resolveForPayment(paid.token);
+    assert.equal(resolved.token, paid.token);
+    assert.equal(resolved.phone, phone);
+});
 test("admin token listing tolerates a record encrypted with an unavailable secret", async () => {
     const records = JSON.parse(fs.readFileSync(storePath, "utf8"));
     records.push({

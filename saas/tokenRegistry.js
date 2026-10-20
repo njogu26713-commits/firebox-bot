@@ -125,7 +125,8 @@ module.exports = {
         if (!record || !["active", "payment_required"].includes(record.status)) {
             throw new Error("Firebox token not found or inactive.");
         }
-        if (record.expiresAt && Date.parse(record.expiresAt) < Date.now()) throw new Error("Firebox token has expired.");
+        // Expiry is enforced when generating pairing codes. An expired token
+        // must remain selectable here so its owner can renew the same token.
         return { token: normalized, phone: decryptPhone(record), record, records, mongo };
     },
     async create(phone) {
