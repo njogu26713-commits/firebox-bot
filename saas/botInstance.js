@@ -548,6 +548,17 @@ class BotInstance {
                         this.sessionIdInvalid = true;
                         this.sessionId = null;
                     }
+                    // A repeated 515 can come from stale persisted Baileys
+                    // credentials. Clearing only the local folder causes the
+                    // next MongoDB-backed reconnect to reuse the same session.
+                    try {
+                        const { clearDatabaseAuthState } = require("../firebox/dbAuth");
+                        await clearDatabaseAuthState(`saas_${this.userId}`);
+                        this.sessionInvalidated = true;
+                        console.log(`[${this.userId}] 🧹 Cleared stale MongoDB auth state after repeated disconnects. Pair again.`);
+                    } catch (error) {
+                        console.error(`[${this.userId}] Failed to clear stale MongoDB auth:`, error.message);
+                    }
                     this.wipeSession();
                     setTimeout(() => this._connectionLogic(), 5000);
                 } else {
