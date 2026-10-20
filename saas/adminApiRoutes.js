@@ -62,4 +62,13 @@ router.post("/tokens/free-mode", async (req, res) => {
     }
 });
 
+router.post("/tokens/remove-unreadable", async (_req, res) => {
+    try {
+        const removed = await tokenRegistry.removeUnreadable();
+        return res.json({ ok: true, removed });
+    } catch (error) {
+        return res.status(400).json({ error: safeErrorMessage(error) });
+    }
+});
+
 module.exports = router;

@@ -331,6 +331,22 @@ module.exports = {
         writeRecords(records);
         return plain(record);
     },
+    async removeUnreadable() {
+        const unreadable = record => {
+            try { decryptText(record.tokenCiphertext); decryptPhone(record); return false; } catch (_) { return true; }
+        };
+        if (await useMongo()) {
+            const records = await FireboxToken.find({}).lean();
+            const targets = records.filter(unreadable);
+            if (targets.length) await FireboxToken.deleteMany({ tokenHash: { $in: targets.map(item => item.tokenHash) } });
+            return targets.length;
+        }
+        const records = readRecords();
+        const remaining = records.filter(item => !unreadable(item));
+        const removed = records.length - remaining.length;
+        if (removed) writeRecords(remaining);
+        return removed;
+    },
     async listActiveBotIds() {
         const isValid = item => item.status === "active" && (!item.expiresAt || Date.parse(item.expiresAt) >= Date.now());
         if (await useMongo()) {

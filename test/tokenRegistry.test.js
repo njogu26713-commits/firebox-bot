@@ -95,6 +95,7 @@ test("admin token listing tolerates a record encrypted with an unavailable secre
     assert.ok(unreadable);
     assert.equal(unreadable.decryptionError, "TOKEN_SECRET_MISMATCH");
     assert.equal(listed.length, records.length);
+    assert.equal(await registry.removeUnreadable(), 1);
 });
 
 test("token deletion removes the token from the registry", async () => {
