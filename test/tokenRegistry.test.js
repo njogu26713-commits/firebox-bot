@@ -69,6 +69,17 @@ test("expired tokens remain eligible for renewal payment", async () => {
     assert.equal(resolved.token, paid.token);
     assert.equal(resolved.phone, phone);
 });
+test("administrator can make a token permanently free", async () => {
+    const token = await registry.create("254700000003");
+    const free = await registry.enableFreeMode(token);
+    assert.equal(free.token, token);
+    assert.equal(free.status, "active");
+    assert.equal(free.requiresPayment, false);
+    assert.equal(free.expiresAt, null);
+    assert.equal(free.planDays, null);
+    const resolved = await registry.resolve(token);
+    assert.equal(resolved.phone, "254700000003");
+});
 test("admin token listing tolerates a record encrypted with an unavailable secret", async () => {
     const records = JSON.parse(fs.readFileSync(storePath, "utf8"));
     records.push({

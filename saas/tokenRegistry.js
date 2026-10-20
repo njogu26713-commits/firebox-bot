@@ -308,6 +308,29 @@ module.exports = {
         writeRecords(remaining);
         return true;
     },
+    async enableFreeMode(token) {
+        const normalized = String(token || "").trim().toUpperCase();
+        if (!tokenPattern.test(normalized)) throw new Error("Invalid Firebox token format.");
+        const tokenHash = hashToken(normalized);
+        if (await useMongo()) {
+            const updated = await FireboxToken.findOneAndUpdate(
+                { tokenHash },
+                { $set: { status: "active", expiresAt: null, planDays: null, requiresPayment: false } },
+                { new: true },
+            ).lean();
+            if (!updated) throw new Error("Firebox token not found.");
+            return plain(updated);
+        }
+        const records = readRecords();
+        const record = records.find(item => item.tokenHash === tokenHash);
+        if (!record) throw new Error("Firebox token not found.");
+        record.status = "active";
+        record.expiresAt = null;
+        record.planDays = null;
+        record.requiresPayment = false;
+        writeRecords(records);
+        return plain(record);
+    },
     async listActiveBotIds() {
         const isValid = item => item.status === "active" && (!item.expiresAt || Date.parse(item.expiresAt) >= Date.now());
         if (await useMongo()) {

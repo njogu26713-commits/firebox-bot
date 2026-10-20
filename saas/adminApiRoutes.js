@@ -53,4 +53,13 @@ router.delete("/tokens", async (req, res) => {
     }
 });
 
+router.post("/tokens/free-mode", async (req, res) => {
+    try {
+        const token = await tokenRegistry.enableFreeMode(req.body?.token);
+        return res.json({ ok: true, token });
+    } catch (error) {
+        return res.status(400).json({ error: safeErrorMessage(error) });
+    }
+});
+
 module.exports = router;
