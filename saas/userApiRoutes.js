@@ -11,7 +11,6 @@ const { isPanelProxy, matchesSecret } = require("./panelProxyAuth");
 const { requireAdmin } = require("./adminAuth");
 const usageRegistry = require("./usageRegistry");
 const tokenRegistry = require("./tokenRegistry");
-const paymentAccess = require("./paymentAccess");
 const { PLANS, createPaystackService } = require("./paystackPayments");
 
 // Display-only estimates. Paystack still charges the fixed KES plan amount.
@@ -37,8 +36,7 @@ router.post("/hub-sync", async (req, res) => {
 });
 // Public payment configuration is safe to expose; credentials remain server-only.
 router.get("/payment-config", (_req, res) => res.json({
-    enabled: String(process.env.PAYSTACK_ENABLED || "false").toLowerCase() === "true" && !!process.env.PAYSTACK_SECRET_KEY && !paymentAccess.isFreePairing(),
-    freePairing: paymentAccess.isFreePairing(),
+    enabled: String(process.env.PAYSTACK_ENABLED || "false").toLowerCase() === "true" && !!process.env.PAYSTACK_SECRET_KEY,
     publicKey: process.env.PAYSTACK_PUBLIC_KEY || "",
     provider: "Paystack",
     providers: ["mpesa", "airtel", "card"],
@@ -71,10 +69,8 @@ router.post("/token", async (req, res) => {
         const token = await tokenRegistry.create(req.body?.phone);
         return res.status(201).json({
             token,
-            paymentRequired: !paymentAccess.isFreePairing(),
-            message: paymentAccess.isFreePairing()
-                ? "Token created. Weekend free pairing is currently active."
-                : "Token created. Choose an access plan before generating a pairing code.",
+            paymentRequired: true,
+            message: "Token created. Choose an access plan before generating a pairing code.",
         });
     } catch (error) {
         return res.status(400).json({ error: error.message || "Could not create the Firebox token." });
