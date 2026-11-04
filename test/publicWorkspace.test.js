@@ -157,7 +157,8 @@ test("the bot API remains session-scoped for each visitor", () => {
     assert.match(routes, /rateFromKes/);
     assert.match(routes, /router\.post\("\/token"/);
     assert.match(routes, /status\(201\)\.json/);
-    assert.match(routes, /paymentRequired: true/);
+    assert.match(routes, /paymentRequired: !paymentAccess\.isFreePairing\(\)/);
+    assert.match(routes, /freePairing: paymentAccess\.isFreePairing\(\)/);
     assert.match(routes, /router\.post\("\/token\/pair-code"/);
 });
 

@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const mongoose = require("mongoose");
 const { initDb, isOnline } = require("../firebox/db");
+const paymentAccess = require("./paymentAccess");
 
 const storePath = path.join(__dirname, "..", "database", "firebox_tokens.json");
 const configuredSecrets = [
@@ -273,12 +274,14 @@ module.exports = {
             records = readRecords();
             record = records.find(item => item.tokenHash === hash);
         }
-        if (!record || record.status !== "active") {
+        const freePairing = paymentAccess.isFreePairing();
+        const canUsePaymentRequiredToken = freePairing && record && record.requiresPayment === true && record.status === "payment_required";
+        if (!record || (record.status !== "active" && !canUsePaymentRequiredToken)) {
             if (record && record.requiresPayment === true) throw new Error("A paid access plan is required before this token can generate a pairing code.");
             throw new Error("Firebox token not found or inactive.");
         }
         if (record.expiresAt && Date.parse(record.expiresAt) < Date.now()) throw new Error("Firebox token has expired.");
-        if (record.requiresPayment === true) throw new Error("A paid access plan is required before this token can generate a pairing code.");
+        if (record.requiresPayment === true && !freePairing) throw new Error("A paid access plan is required before this token can generate a pairing code.");
         return { token: normalized, phone: decryptPhone(record), record, records, mongo: await useMongo() };
     },
     async markUsed(resolved) {

@@ -3,6 +3,7 @@ const serverRegistry = require("./serverRegistry");
 const userRegistry = require("./userRegistry");
 const usageRegistry = require("./usageRegistry");
 const tokenRegistry = require("./tokenRegistry");
+const paymentAccess = require("./paymentAccess");
 const { requireAdmin } = require("./adminAuth");
 const router = express.Router();
 router.use(express.json(), requireAdmin);
@@ -41,6 +42,13 @@ router.get("/overview", async (_req, res) => {
     }
     const data = Object.fromEntries(parts.map(part => [part.name, part.value]));
     res.json(data);
+});
+
+router.get("/payment-mode", (_req, res) => res.json(paymentAccess.getStatus()));
+
+router.post("/payment-mode", (req, res) => {
+    const enabled = req.body?.freePairing === true;
+    return res.json({ ok: true, ...paymentAccess.setManualFreeMode(enabled) });
 });
 
 router.delete("/tokens", async (req, res) => {

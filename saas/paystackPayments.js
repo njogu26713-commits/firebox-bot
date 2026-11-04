@@ -1,4 +1,5 @@
 const crypto = require("crypto");
+const paymentAccess = require("./paymentAccess");
 
 const PLANS = Object.freeze({
     7: Object.freeze({ days: 7, amount: 29 }),
@@ -68,7 +69,7 @@ function createPaystackService({
     tokenRegistry,
     fetchImpl = globalThis.fetch,
     getSecret = () => process.env.PAYSTACK_SECRET_KEY,
-    isEnabled = () => String(process.env.PAYSTACK_ENABLED || "false").toLowerCase() === "true",
+        isEnabled = () => String(process.env.PAYSTACK_ENABLED || "false").toLowerCase() === "true" && !paymentAccess.isFreePairing(),
 } = {}) {
     if (!tokenRegistry) throw new TypeError("tokenRegistry is required");
     if (typeof fetchImpl !== "function") throw new TypeError("fetch implementation is required");
